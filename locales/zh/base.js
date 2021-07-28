@@ -37,8 +37,8 @@ module.exports = {
   Monitors: '监控',
   Events: '事件',
   Labels: '标签',
-  'Application Workloads': '应用负载',
-  Application: '应用',
+  'Application Workloads': '容器管理',
+  Application: '应用列表',
   Container: '容器',
   Containers: '容器',
   Terminal: '终端',
@@ -550,4 +550,14 @@ module.exports = {
   CREATE_BY_YAML_DESC: '通过 YAML 定义您要创建的资源',
   Bill: '资源消费统计',
   BILLING_OPERATING_DESC: '查看消费情况',
+
+  PLATFORM_TITLE: '网进AI基础资源管理平台',
+
+  DockerService: 'Docker服务发布',
+  Gitlab: 'Gitlab代码管理',
+  DockerManageMent: '容器服务管理',
+  AppTemplate: '模板仓库管理',
+  ApplyResource: '容器资源申请',
+  AppApproval: '容器资源审批',
+  LifeCircle: '生命周期管理',
 }

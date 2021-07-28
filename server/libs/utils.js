@@ -58,14 +58,18 @@ const getServerConfig = key => {
   let config = cache.get(server_conf_key)
   if (!config) {
     // parse config yaml
-    config = loadYaml(root('server/config.yaml')) || {}
+    // config = loadYaml(root('server/config.yaml')) || {}
+    config = {}
     const tryFile = root('server/local_config.yaml')
+    // ai-platform 不需要merge，直接使用全量配置
     if (fs.existsSync(tryFile)) {
       // merge local_config
       const local_config = loadYaml(tryFile)
       if (typeof local_config === 'object') {
         merge(config, local_config)
       }
+    } else {
+      config = loadYaml(root('server/config.yaml'))
     }
 
     cache.set(server_conf_key, config)

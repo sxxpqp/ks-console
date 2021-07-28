@@ -56,6 +56,7 @@ module.exports = {
   Jobs: '任务',
   CronJobs: '定时任务',
   Pods: '容器组',
+  // ai-platform
   Services: '服务',
   Routes: '应用路由',
   Volumes: '存储卷',

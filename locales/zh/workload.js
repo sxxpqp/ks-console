@@ -17,8 +17,8 @@
  */
 
 module.exports = {
-  Workload: '工作负载',
-  Workloads: '工作负载',
+  Workload: '容器智能调度',
+  Workloads: '容器智能调度',
   'Service Configuration': '服务配置',
 
   'Available number of nodes scheduled': '可用节点数',
