@@ -16,6 +16,10 @@ $trans-speed: 0.2s;
       border-radius: 18px;
       border: solid 1px transparent;
       transition: all $trans-speed ease-in-out;
+      // 侧边栏的字体大小
+      // a {
+      //   font-size: 14px;
+      // }
 
       & > a,
       .title {
@@ -24,6 +28,8 @@ $trans-speed: 0.2s;
         color: #4a5974;
         font-weight: 500;
         cursor: pointer;
+        // 侧边栏的字体大小
+        // font-size: 18px;
 
         @media (max-width: 1366px) {
           padding: 7px 0;
@@ -32,7 +38,8 @@ $trans-speed: 0.2s;
         :global {
           .icon {
             margin-right: 8px;
-            vertical-align: text-bottom;
+            vertical-align: middle;
+            // vertical-align: text-bottom;
           }
 
           .kubed-icon-chevron-down {
@@ -46,7 +53,6 @@ $trans-speed: 0.2s;
       &.open {
         & > a {
           color: $primary;
-
           :global .kubed-icon {
             color: #00aa72;
             fill: #90e0c5;

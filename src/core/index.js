@@ -51,7 +51,9 @@ window.onunhandledrejection = function(e) {
   }
 }
 
+// 全局注册t，国际化
 window.t = i18n.t
+// 全局注册request
 window.request = request
 
 globals.app = new GlobalValue()

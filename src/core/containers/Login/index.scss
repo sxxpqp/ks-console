@@ -6,17 +6,21 @@
   top: 80px;
   left: 50%;
   transform: translateX(-50%);
-}
-
-.logo img {
-  width: 180px;
-  height: 40px;
+  font-size: 24px;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  img {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+  }
 }
 
 .login {
   position: relative;
   width: 320px;
-  margin: 140px auto 40px;
+  margin: 240px auto 40px;
   padding: 20px;
   background-color: #fff;
   border-radius: 4px;

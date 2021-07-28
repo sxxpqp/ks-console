@@ -123,7 +123,7 @@ module.exports = {
   'Circuit Breaker': '熔断器',
 
   APPLICATIONS_DESC:
-    '应用为用户提供完整的业务功能，由一个或多个特定功能的组件组成。',
+    '容器应用列表是用户已经创建的所有容器，可以显示容器的运行状态、版本与更新时间',
   APP_DEPLOYMENT_DESC:
     '轻量级、可移植、自包含的软件打包技术，使应用可以在几乎任何地方以相同的方式运行。',
   APP_GOVERNANCE_DESC:
@@ -208,7 +208,7 @@ module.exports = {
   WORKLOAD_NAME_EXIST: '工作负载 {name} 已存在',
 
   APPLICATION_TYPE_DESC:
-    'KubeSphere 支持来自于应用商店和应用仓库的应用部署(基于 Helm)，同样也支持自制应用 (Application CRD)。',
+    '人工智能平台支持来自于应用商店和应用仓库的应用部署(基于 Helm)，同样也支持自制应用 (Application CRD)。',
 
   APPLICATION_SERVICE_DESC:
     '根据应用中服务类型的不同设置不同类型的服务组件，支持无状态服务和有状态服务',
@@ -220,7 +220,7 @@ module.exports = {
 
   'App Types': '应用的类型',
   TIP_APP_TYPE:
-    'KubeSphere 支持来自于应用商店和应用仓库的应用部署(基于 Helm)，同样也支持自制应用 (Application CRD)。',
+    '人工智能平台支持来自于应用商店和应用仓库的应用部署(基于 Helm)，同样也支持自制应用 (Application CRD)。',
   'How to use Application Governance': '如何使用应用治理',
   TIP_APP_GOVERNANCE:
     '使用应用治理需要创建自制应用并对每项服务开启服务治理功能',
@@ -234,9 +234,9 @@ module.exports = {
     '来自于企业空间的自制应用模板以及应用仓库中添加的第三方Helm 应用模板',
   COMPOSING_APP_DESC: '通过资源编排的方式发布服务构建应用(支持应用治理功能)',
   APP_TEMPLATES_MODAL_DESC:
-    '应用模板来自于企业空间和第三方的 Helm 应用模板，支持一键部署并可通过可视化的方式在 KubeSphere 中展示并提供部署及管理的功能',
+    '应用模板来自于企业空间和第三方的 Helm 应用模板，支持一键部署并可通过可视化的方式在 人工智能平台中展示并提供部署及管理的功能',
   APP_REPOS_DESC:
-    '应用仓库来自于第三方的 Helm Chart Repo，通过可视化的方式在 KubeSphere 中展示并提供部署及管理功能，用户可以基于应用仓库中的模板快速地一键部署应用。',
+    '应用仓库来自于第三方的 Helm Chart Repo，通过可视化的方式在 人工智能平台中展示并提供部署及管理功能，用户可以基于应用仓库中的模板快速地一键部署应用。',
   SEARCH_TIPS: '您可以根据相关条件进行过滤',
 
   'From workspace': '来自企业空间',

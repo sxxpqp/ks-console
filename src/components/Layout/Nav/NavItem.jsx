@@ -91,7 +91,8 @@ export default class NavItem extends React.Component {
           })}
         >
           <div className={styles.title} onClick={this.handleOpen}>
-            <Icon name={item.icon} /> {t(item.title)}
+            <Icon name={item.icon} />
+            {t(item.title)}
             {!item.open && (
               <Icon name="chevron-down" className={styles.rightIcon} />
             )}

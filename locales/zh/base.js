@@ -551,7 +551,7 @@ module.exports = {
   Bill: '资源消费统计',
   BILLING_OPERATING_DESC: '查看消费情况',
 
-  PLATFORM_TITLE: '网进AI基础资源管理平台',
+  PLATFORM_TITLE: '人工智能容器管理平台',
 
   DockerService: 'Docker服务发布',
   Gitlab: 'Gitlab代码管理',

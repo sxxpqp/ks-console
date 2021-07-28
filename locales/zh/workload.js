@@ -129,10 +129,9 @@ module.exports = {
   REQUEST_EXCCED: '资源预留不能超过资源限制',
 
   WORKLOAD_DESC:
-    '工作负载 (Workload) 通常是访问服务的实际载体, 也是对节点日志收集、监控等系统应用的实际运行载体，是对一组容器组 (Pod) 的抽象模型。',
+    '基于Gitlab，Jenkins、docker环境的代码管理、构建、部署、发布等全流程智能调度。',
 
-  WORKLOAD_CREATE_DESC:
-    '工作负载 (Workload) 通常是访问服务的实际载体, 也是对节点日志收集、监控等系统应用的实际运行载体，是对一组容器组 (Pod) 的抽象模型。',
+  WORKLOAD_CREATE_DESC: '人工智能容器管理平台',
 
   JOB_DESC:
     '任务 (Job) 负责批量处理短暂的一次性任务，即仅执行一次的任务，它保证批处理任务的一个或多个容器组成功结束。',

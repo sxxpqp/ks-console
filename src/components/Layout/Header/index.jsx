@@ -16,15 +16,13 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
-import PropTypes from 'prop-types'
+import { Icon, Menu } from '@kube-design/components'
 import classnames from 'classnames'
+import PropTypes from 'prop-types'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Icon, Menu, Dropdown } from '@kube-design/components'
 import { isAppsPage } from 'utils'
-
 import LoginInfo from '../LoginInfo'
-
 import styles from './index.scss'
 
 class Header extends React.Component {
@@ -60,7 +58,7 @@ class Header extends React.Component {
   }
 
   render() {
-    const { className, innerRef, location } = this.props
+    const { className, innerRef } = this.props
     const logo = globals.config.logo || '/assets/logo.svg'
 
     return (
@@ -80,9 +78,10 @@ class Header extends React.Component {
             src={isAppsPage() ? `/assets/login-logo.svg` : logo}
             alt=""
           />
+          <span className={styles.mytitle}>{t('PLATFORM_TITLE')}</span>
         </Link>
         <div className="header-bottom" />
-        {this.isLoggedIn && (
+        {/* {this.isLoggedIn && (
           <div className={styles.navs}>
             {globals.app.enableGlobalNav && (
               <Button
@@ -116,13 +115,13 @@ class Header extends React.Component {
               {t('Workbench')}
             </Button>
           </div>
-        )}
+        )} */}
         <div className={styles.right}>
-          {this.isLoggedIn && (
+          {/* {this.isLoggedIn && (
             <Dropdown content={this.renderDocumentList()}>
               <Button type="flat" icon="documentation" />
             </Dropdown>
-          )}
+          )} */}
           <LoginInfo className={styles.loginInfo} isAppsPage={isAppsPage()} />
         </div>
       </div>

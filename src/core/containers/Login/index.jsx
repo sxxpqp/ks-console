@@ -97,10 +97,13 @@ export default class Login extends Component {
 
   render() {
     const { formData, isSubmmiting, errorMessage } = this.state
+    const logo = globals.config.logo || '/assets/logo.svg'
+    // console.log('🚀 ~ file: index.jsx ~ line 101 ~ Login ~ render ~ logo', logo)
     return (
       <div>
         <a href="/" className={styles.logo}>
-          <img src="/assets/logo.svg" alt="" />
+          <img src={logo} alt="" />
+          <div>{t('PLATFORM_TITLE')}</div>
         </a>
         <div className={styles.login}>
           <div className={styles.header}>{t('Please Log In')}</div>

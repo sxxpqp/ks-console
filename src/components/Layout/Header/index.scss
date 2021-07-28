@@ -4,6 +4,14 @@
   position: relative;
   height: $header-height;
   background-color: $body-bg-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  a {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+  }
 
   &.inAppsPage {
     background-color: rgba(24, 29, 40, 0.2);
@@ -39,12 +47,14 @@
 }
 
 .logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 150px;
+  position: relative;
+  // top: 50%;
+  // left: 50%;
+  // top: 8px;
+  width: 30px;
   height: 30px;
-  transform: translate(-50%, -50%);
+  margin-left: 15px;
+  // transform: translate(-50%, -50%);
 
   .inAppsPage & {
     color: white;
@@ -73,10 +83,10 @@
 }
 
 .right {
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
+  position: relative;
+  // top: 50%;
+  margin-right: 20px;
+  // transform: translateY(-50%);
 
   button {
     padding: 5px 19px !important;
@@ -85,4 +95,9 @@
 
 .loginInfo {
   margin-left: 33px;
+}
+
+.mytitle {
+  font-size: 22px;
+  padding-left: 10px;
 }
