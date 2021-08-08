@@ -328,6 +328,7 @@ client:
             - { name: audit, title: AppApproval, icon: application }
             - { name: applications, title: Applications, icon: application }
             - { name: services, title: DockerService }
+            - { name: pods, title: Pods }
         # - { name: services, title: Services }
         # - name: workloads
         #   title: Workloads

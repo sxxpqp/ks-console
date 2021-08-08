@@ -26,7 +26,7 @@ import OPApps from '../containers/Applications/OPApps'
 import Deployments from '../containers/Deployments'
 import StatefulSets from '../containers/StatefulSets'
 import DaemonSets from '../containers/DaemonSets'
-// import Pods from '../containers/Pods'
+import Pods from '../containers/Pods'
 // import Jobs from '../containers/Jobs'
 import ImageBuilder from '../containers/ImageBuilder'
 import CronJobs from '../containers/CronJobs'
@@ -92,7 +92,7 @@ export default [
         exact: true,
       },
       // 关闭容器组、任务
-      // { path: `${PATH}/pods`, component: Pods, exact: true },
+      { path: `${PATH}/pods`, component: Pods, exact: true },
       // { path: `${PATH}/jobs`, component: Jobs, exact: true },
       {
         path: `${PATH}/s2ibuilders`,

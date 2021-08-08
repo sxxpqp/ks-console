@@ -21,8 +21,8 @@ import StatefulSetDetail from '../containers/StatefulSets/Detail'
 import DaemonSetDetail from '../containers/DaemonSets/Detail'
 import JobDetail from '../containers/Jobs/Detail'
 import CronJobDetail from '../containers/CronJobs/Detail'
-// import PodDetail from '../containers/Pods/Detail'
-// import ContainerDetail from '../containers/Pods/Containers/Detail'
+import PodDetail from '../containers/Pods/Detail'
+import ContainerDetail from '../containers/Pods/Containers/Detail'
 import ServiceDetail from '../containers/Services/Detail'
 import RouteDetail from '../containers/Routes/Detail'
 import VolumeDetail from '../containers/Volumes/Detail'
@@ -57,14 +57,15 @@ export default PATH => [
     path: `${PATH}/cronjobs/:name`,
     component: CronJobDetail,
   },
-  // {
-  //   path: `${PATH}/pods/:podName/containers/:containerName`,
-  //   component: ContainerDetail,
-  // },
-  // {
-  //   path: `${PATH}/pods/:podName`,
-  //   component: PodDetail,
-  // },
+  // 容器组详情
+  {
+    path: `${PATH}/pods/:podName/containers/:containerName`,
+    component: ContainerDetail,
+  },
+  {
+    path: `${PATH}/pods/:podName`,
+    component: PodDetail,
+  },
   {
     path: `${PATH}/services/:name`,
     component: ServiceDetail,
