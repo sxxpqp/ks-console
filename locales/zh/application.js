@@ -77,6 +77,9 @@ module.exports = {
 
   'Composing Apps': '自制应用',
   'Composing App': '自制应用',
+  // 流水线
+  // 'Composing Apps': '自制应用',
+  // 'Composing App': '自制应用',
 
   'Workload Type': '负载类型',
 

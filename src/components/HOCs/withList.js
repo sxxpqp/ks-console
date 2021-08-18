@@ -37,7 +37,8 @@ export default function withList(options) {
         this.module = options.module || ''
         this.authKey = options.authKey || options.module
         this.name = options.name || ''
-        this.title = `${options.name}s`
+        this.title = `${options.name}`
+        // this.title = `${options.name}s`
         this.rowKey = options.rowKey || 'name'
         this.query = {}
       }

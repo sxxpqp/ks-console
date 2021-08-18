@@ -109,10 +109,24 @@ export default class NavItem extends React.Component {
                     [styles.disabled]: childDisabled,
                   })}
                 >
-                  <Link to={`${prefix}/${child.name}`} disabled={childDisabled}>
-                    {t(child.title)}
-                    {childDisabled && this.renderDisabledTip(child)}
-                  </Link>
+                  {/* 增加链接的场景 */}
+                  {child.link ? (
+                    <a
+                      href={child.link}
+                      disabled={childDisabled}
+                      target="_blank"
+                    >
+                      {t(child.title)}
+                    </a>
+                  ) : (
+                    <Link
+                      to={`${prefix}/${child.name}`}
+                      disabled={childDisabled}
+                    >
+                      {t(child.title)}
+                      {childDisabled && this.renderDisabledTip(child)}
+                    </Link>
+                  )}
                 </li>
               )
             })}
