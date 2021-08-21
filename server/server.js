@@ -46,6 +46,7 @@ app.keys = ['kubesphere->_<']
 
 app
   .apply(boot)
+  // 提供翻译
   .apply(locale)
   .apply(logging)
   .apply(errorProcess)
