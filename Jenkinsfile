@@ -30,12 +30,12 @@ pipeline {
     stage('k8s发布镜像') {
       agent {
         node {
-          label 'base'
+          label 'nodejs'
         }
 
       }
       steps {
-        container('base') {
+        container('nodejs') {
           git(url: 'http://test.bontor.cn:30000/sxxpqp/ks-console.git', credentialsId: 'gitlab-sxxpqp', branch: '3.1', changelog: true, poll: false)
           sh 'cat deploy.yaml'
           sh 'kubectl version'
