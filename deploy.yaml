@@ -1,0 +1,102 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ks-console1
+  namespace: kubesphere-system
+  labels:
+    app: ks-console1
+    tier: frontend1
+    version: v3.1.11
+  annotations:
+    deployment.kubernetes.io/revision: "10"
+    kubectl.kubernetes.io/last-applied-configuration: >
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"deployment.kubernetes.io/revision":"1"},"labels":{"app":"ks-console1","tier":"frontend1","version":"v3.1.11"},"name":"ks-console1","namespace":"kubesphere-system"},"spec":{"progressDeadlineSeconds":600,"replicas":1,"revisionHistoryLimit":10,"selector":{"matchLabels":{"app":"ks-console1","tier":"frontend1","version":"v3.1.11"}},"strategy":{"rollingUpdate":{"maxSurge":0,"maxUnavailable":"25%"},"type":"RollingUpdate"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"ks-console1","tier":"frontend1","version":"v3.1.11"}},"spec":{"affinity":{"nodeAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"preference":{"matchExpressions":[{"key":"node-role.kubernetes.io/master","operator":"In","values":[""]}]},"weight":100}]}},"containers":[{"image":"lw96/ks-console","imagePullPolicy":"IfNotPresent","livenessProbe":{"failureThreshold":8,"initialDelaySeconds":15,"periodSeconds":10,"successThreshold":1,"tcpSocket":{"port":8000},"timeoutSeconds":15},"name":"ks-console","resources":{"limits":{"cpu":"1","memory":"512Mi"},"requests":{"cpu":"20m","memory":"100Mi"}},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","volumeMounts":[{"mountPath":"/opt/kubesphere/console/server/local_config.yaml","name":"ks-console-config","subPath":"local_config.yaml"},{"mountPath":"/opt/kubesphere/console/server/sample","name":"sample-bookinfo"},{"mountPath":"/etc/localtime","name":"host-time"}]}],"dnsPolicy":"ClusterFirst","restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"serviceAccount":"kubesphere","serviceAccountName":"kubesphere","terminationGracePeriodSeconds":30,"tolerations":[{"effect":"NoSchedule","key":"node-role.kubernetes.io/master"},{"key":"CriticalAddonsOnly","operator":"Exists"},{"effect":"NoExecute","key":"node.kubernetes.io/not-ready","operator":"Exists","tolerationSeconds":60},{"effect":"NoExecute","key":"node.kubernetes.io/unreachable","operator":"Exists","tolerationSeconds":60}],"volumes":[{"configMap":{"defaultMode":420,"items":[{"key":"local_config.yaml","path":"local_config.yaml"}],"name":"ks-console-config1"},"name":"ks-console-config"},{"configMap":{"defaultMode":420,"name":"sample-bookinfo"},"name":"sample-bookinfo"},{"hostPath":{"path":"/etc/localtime","type":""},"name":"host-time"}]}}}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ks-console1
+      tier: frontend1
+      version: v3.1.11
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ks-console1
+        tier: frontend1
+        version: v3.1.11
+      annotations:
+        kubesphere.io/restartedAt: "2021-08-08T04:17:45.687Z"
+    spec:
+      volumes:
+        - name: sample-bookinfo
+          configMap:
+            name: sample-bookinfo
+            defaultMode: 420
+        - name: host-time
+          hostPath:
+            path: /etc/localtime
+            type: ""
+      containers:
+        - name: ks-console
+          image: 192.168.4.31:30002/sxxpqp/ks-console
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 20m
+              memory: 100Mi
+          volumeMounts:
+            - name: sample-bookinfo
+              mountPath: /opt/kubesphere/console/server/sample
+            - name: host-time
+              mountPath: /etc/localtime
+          livenessProbe:
+            tcpSocket:
+              port: 8000
+            initialDelaySeconds: 15
+            timeoutSeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 8
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: kubesphere
+      serviceAccount: kubesphere
+      securityContext: {}
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              preference:
+                matchExpressions:
+                  - key: node-role.kubernetes.io/master
+                    operator: In
+                    values:
+                      - ""
+      schedulerName: default-scheduler
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - key: node.kubernetes.io/not-ready
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 60
+        - key: node.kubernetes.io/unreachable
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 60
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

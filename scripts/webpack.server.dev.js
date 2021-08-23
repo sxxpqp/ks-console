@@ -20,6 +20,7 @@ const { resolve } = require('path')
 const webpack = require('webpack')
 const WebpackBar = require('webpackbar')
 const NodemonPlugin = require('nodemon-webpack-plugin')
+const nodeExternals = require('webpack-node-externals')
 const HappyPack = require('happypack')
 
 const root = path => resolve(__dirname, `../${path}`)
@@ -44,11 +45,19 @@ module.exports = {
   optimization: {
     minimize: false,
   },
-  externals: {
-    hiredis: 'hiredis',
-    webpack: 'webpack',
-    'koa-webpack-middleware': 'koa-webpack-middleware',
-  }, // Need this to avoid error when working with Express
+  externals: [
+    nodeExternals(),
+    {
+      hiredis: 'hiredis',
+      webpack: 'webpack',
+      'koa-webpack-middleware': 'koa-webpack-middleware',
+    },
+  ], // in order to ignore all modules in node_modules folder
+  // externals: {
+  //   hiredis: 'hiredis',
+  //   webpack: 'webpack',
+  //   'koa-webpack-middleware': 'koa-webpack-middleware',
+  // }, // Need this to avoid error when working with Express
   module: {
     rules: [
       {
