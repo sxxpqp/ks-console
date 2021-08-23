@@ -15,7 +15,7 @@ pipeline {
       }
       steps {
         container('nodetest') {
-          git(url: 'http://test.bontor.cn:30000/sxxpqp/ks-console.git', credentialsId: 'gitlab-sxxpqp', branch: '3.1', changelog: true, poll: false)
+          git(url: 'https://server.bontor.cn:12300/liwei/ks-console.git', credentialsId: 'gitlab-liwei', branch: '3.1', changelog: true, poll: false)
           sh 'yarn install'
           sh 'npm rebuild node-sass'
           sh 'npm run build'
@@ -36,7 +36,7 @@ pipeline {
       }
       steps {
         container('base') {
-          git(url: 'http://test.bontor.cn:30000/sxxpqp/ks-console.git', credentialsId: 'gitlab-sxxpqp', branch: '3.1', changelog: true, poll: false)
+          git(url: 'https://server.bontor.cn:12300/liwei/ks-console.git', credentialsId: 'gitlab-liwei', branch: '3.1', changelog: true, poll: false)
           sh 'cat deploy.yaml'
           sh 'kubectl version'
           sh 'kubectl apply -f deploy.yaml'
