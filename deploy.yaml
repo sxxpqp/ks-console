@@ -39,7 +39,7 @@ spec:
             type: ""
       containers:
         - name: ks-console
-          image: 192.168.4.31:30002/sxxpqp/ks-console
+          image: 192.168.4.31:30002/sxxpqp/ks-console:latest
           resources:
             limits:
               cpu: "1"
