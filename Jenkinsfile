@@ -30,12 +30,12 @@ pipeline {
     stage('k8s发布镜像') {
       agent {
         node {
-          label 'nodejs'
+          label 'nodetest'
         }
 
       }
       steps {
-        container('base') {
+        container('nodetest') {
           git(url: 'https://server.bontor.cn:12300/liwei/ks-console.git', credentialsId: 'gitlab-liwei', branch: '3.1', changelog: true, poll: false)
           sh 'cat deploy.yaml'
           sh 'kubectl version'
