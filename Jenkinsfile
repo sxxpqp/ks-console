@@ -20,7 +20,7 @@ pipeline {
           sh 'npm rebuild node-sass'
           sh 'npm run build'
           sh 'docker build -t 192.168.4.31:30002/sxxpqp/ks-console .'
-          sh 'docker login $REGISTRY -u "$HARBOR_USERNAME" -p "$HARBOR_PASSWORD"'
+          sh 'docker login 192.168.4.31:30002 -u sxxpqp -p Xl123456..'
           sh 'docker push 192.168.4.31:30002/sxxpqp/ks-console'
         }
 
