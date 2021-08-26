@@ -50,6 +50,7 @@ import AlertingPolicies from '../containers/Alerting/Policies'
 import AlertingMessages from '../containers/Alerting/Messages'
 import CustomMonitoring from '../containers/CustomMonitoring'
 import NetworkPolicies from '../containers/Network/Policies'
+import StoreManage from '../containers/StoreManage'
 
 import grayReleaseRoutes from './grayrelease'
 
@@ -76,16 +77,22 @@ export default [
         exact: true,
       }),
       // 审核相关路由
-      // 申请
       {
+        // 申请
         path: `${PATH}/apply`,
         component: Apply,
         exact: true,
       },
-      // 审批
       {
+        // 审批
         path: `${PATH}/audit`,
         component: Audit,
+        exact: true,
+      },
+      {
+        // 模板仓库管理
+        path: `${PATH}/template`,
+        component: StoreManage,
         exact: true,
       },
       {
