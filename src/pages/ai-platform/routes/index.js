@@ -18,6 +18,10 @@
 
 import { getIndexRoute } from 'utils/router.config'
 
+import PipelinesList from 'ai-devops/containers/Pipelines/PipelinesList'
+import Credential from 'ai-devops/containers/Credential'
+import Apply from 'ai-review/containers/apply'
+import Audit from 'ai-review/containers/audit'
 import ListLayout from '../containers/Base/List'
 
 import Overview from '../containers/Overview'
@@ -50,17 +54,50 @@ import NetworkPolicies from '../containers/Network/Policies'
 import grayReleaseRoutes from './grayrelease'
 
 import getDetailPath from './detail'
+// devops详情
+import devopsRoutes from './devops'
 
 // const PATH = '/harbor/clusters/default/projects/harbor'
 const PATH = '/:workspace/clusters/:cluster/projects/:namespace'
 
 export default [
+  ...devopsRoutes,
   ...getDetailPath(PATH),
   {
     path: PATH,
     component: ListLayout,
     routes: [
       ...grayReleaseRoutes,
+      // ...devopsRoutes,
+      // const PATH = '/:workspace/clusters/:cluster/projects/:namespace/devops/:devops'
+      getIndexRoute({
+        path: `${PATH}/devops/:devops`,
+        to: `${PATH}/devops/:devops/pipelines`,
+        exact: true,
+      }),
+      // 审核相关路由
+      // 申请
+      {
+        path: `${PATH}/apply`,
+        component: Apply,
+        exact: true,
+      },
+      // 审批
+      {
+        path: `${PATH}/audit`,
+        component: Audit,
+        exact: true,
+      },
+      {
+        path: `${PATH}/devops/:devops/pipelines`,
+        component: PipelinesList,
+        exact: true,
+      },
+      {
+        path: `${PATH}/devops/:devops/credentials`,
+        component: Credential,
+        exact: true,
+      },
       {
         path: `${PATH}/overview`,
         component: Overview,
@@ -144,6 +181,12 @@ export default [
         component: CustomMonitoring,
         exact: true,
       },
+      // gitlab
+      {
+        name: 'gitlab',
+        path: `${PATH}/gitlab`,
+        link: 'http://test.bontor.cn:30000',
+      },
       getIndexRoute({
         path: `${PATH}/workloads`,
         to: `${PATH}/deployments`,
@@ -155,6 +198,11 @@ export default [
         exact: true,
       }),
       getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
+      // 测试重定向
+      // {
+      //   path: `${PATH}/devops1`,
+      //   redirect: { from: `${PATH}/devops1`, to: `${DevOpsPATH}`, exact: true },
+      // },
       getIndexRoute({ path: '*', to: '/404', exact: true }),
     ],
   },

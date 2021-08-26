@@ -16,15 +16,14 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { lazy } from 'react'
-
-import BaseLayout from 'core/layouts/Base'
 import Login from 'core/containers/Login'
 import LoginConfirm from 'core/containers/LoginConfirm'
 import PasswordConfirm from 'core/containers/PasswordConfirm'
+import BaseLayout from 'core/layouts/Base'
+import { lazy } from 'react'
 
 const AiPlatform = lazy(() =>
-  import(/* webpackChunkName: "platform" */ 'ai-platform/App.jsx')
+  import(/* webpackChunkName: "platform" */ 'ai-platform/App')
 )
 
 const Console = lazy(() =>
@@ -49,7 +48,7 @@ const Console = lazy(() =>
 //   import(/* webpackChunkName: "fedprojects" */ 'fedprojects/App.jsx')
 // )
 // const DevOps = lazy(() =>
-//   import(/* webpackChunkName: "devops" */ 'devops/App.jsx')
+//   import(/* webpackChunkName: "devops" */ 'ai-devops/App.jsx')
 // )
 // const App = lazy(() => import(/* webpackChunkName: "apps" */ 'apps/App.jsx'))
 

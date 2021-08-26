@@ -25,6 +25,7 @@ import { renderRoutes } from 'utils/router.config'
 
 import ProjectStore from 'stores/project'
 import ClusterStore from 'stores/cluster'
+import DevOpsStore from 'stores/devops'
 
 import routes from './routes'
 
@@ -36,8 +37,26 @@ class ProjectLayout extends Component {
 
     this.store = new ProjectStore()
     this.clusterStore = new ClusterStore()
+    // 加入store
+    this.devopsStore = new DevOpsStore()
 
     this.init(props.match.params)
+  }
+
+  get cluster() {
+    return this.props.match.params.cluster
+  }
+
+  get devops() {
+    return this.props.match.params.devops
+  }
+
+  get workspace() {
+    return this.props.match.params.workspace
+  }
+
+  get project() {
+    return this.props.match.params.namespace
   }
 
   componentDidUpdate(prevProps) {
@@ -61,8 +80,17 @@ class ProjectLayout extends Component {
     if (!this.store.detail.name) {
       return this.props.rootStore.routing.push('/404')
     }
-
+    // const tmp = {
+    //   ...omit(params, 'namespace'),
+    //   devops: 'default5tmqc',
+    // }
+    // console.log(
+    //   '🚀 ~ file: App.jsx ~ line 80 ~ ProjectLayout ~ init ~ tmp',
+    //   tmp
+    // )
     await this.props.rootStore.getRules(params)
+    // await this.props.rootStore.getRules(tmp)
+    // await this.props.rootStore.getRules(tmp)
 
     set(
       globals,
@@ -84,14 +112,6 @@ class ProjectLayout extends Component {
     this.store.initializing = false
   }
 
-  get project() {
-    return this.props.match.params.namespace
-  }
-
-  get cluster() {
-    return this.props.match.params.cluster
-  }
-
   render() {
     const { initializing } = this.store
 
@@ -99,7 +119,11 @@ class ProjectLayout extends Component {
       return <Loading className="ks-page-loading" />
     }
 
-    return <Provider projectStore={this.store}>{renderRoutes(routes)}</Provider>
+    return (
+      <Provider projectStore={this.store} devopsStore={this.devopsStore}>
+        {renderRoutes(routes)}
+      </Provider>
+    )
   }
 }
 

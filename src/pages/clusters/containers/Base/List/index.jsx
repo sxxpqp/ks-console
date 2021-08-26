@@ -21,7 +21,7 @@ import { inject, observer } from 'mobx-react'
 
 import { renderRoutes } from 'utils/router.config'
 
-import { Nav } from 'components/Layout'
+// import { Nav } from 'components/Layout'
 import Selector from 'clusters/components/Selector'
 
 @inject('rootStore', 'clusterStore')
@@ -39,7 +39,8 @@ class ClusterLayout extends Component {
     this.routing.push(`/clusters/${cluster}/overview`)
 
   render() {
-    const { match, route, location } = this.props
+    const { route } = this.props
+    // const { match, route, location } = this.props
     const { detail } = this.props.clusterStore
 
     return (
@@ -50,13 +51,13 @@ class ClusterLayout extends Component {
             value={this.cluster}
             onChange={this.enterCluster}
           />
-          <Nav
+          {/* <Nav
             className="ks-page-nav"
             navs={globals.app.getClusterNavs(this.cluster)}
             location={location}
             match={match}
             disabled={!detail.isReady}
-          />
+          /> */}
         </div>
         <div className="ks-page-main">{renderRoutes(route.routes)}</div>
       </div>

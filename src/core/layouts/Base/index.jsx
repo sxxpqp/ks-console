@@ -23,7 +23,8 @@ import { isAppsPage } from 'utils'
 import { getScrollTop } from 'utils/dom'
 import { renderRoutes } from 'utils/router.config'
 
-import { Header, GlobalNav } from 'components/Layout'
+import { Header } from 'components/Layout'
+// import { Header, GlobalNav } from 'components/Layout'
 import Tools from 'components/KubeTools'
 import GlobalSVG from 'components/SVG'
 
@@ -120,13 +121,13 @@ class BaseLayout extends Component {
           onToggleNav={rootStore.toggleGlobalNav}
           jumpTo={this.handleJumpTo}
         />
-        {globals.user && globals.app.enableGlobalNav && (
+        {/* {globals.user && globals.app.enableGlobalNav && (
           <GlobalNav
             visible={rootStore.showGlobalNav}
             navs={globals.app.getGlobalNavs()}
             onCancel={rootStore.hideGlobalNav}
           />
-        )}
+        )} */}
         <div className={styles.main}>{renderRoutes(this.routes)}</div>
         {globals.user && <Tools />}
       </div>

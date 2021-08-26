@@ -8,6 +8,7 @@
     "@kube-design/components": "^1.1.19",
     "ace-builds": "^1.4.7",
     "ansi_up": "^5.0.0",
+    "antd": "^4.16.13",
     "async-validator": "^1.8.5",
     "classnames": "^2.2.5",
     "d3-selection": "^1.4.1",

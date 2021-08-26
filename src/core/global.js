@@ -45,6 +45,7 @@ export default class GlobalValue {
       return arr
     }
 
+    // 项目
     if (project) {
       const defaultActions = get(
         globals.user,
@@ -61,6 +62,7 @@ export default class GlobalValue {
       ])
     }
 
+    // 流水线
     if (devops) {
       const defaultActions = get(
         globals.user,
@@ -77,6 +79,7 @@ export default class GlobalValue {
       ])
     }
 
+    // 工作空间
     if (workspace) {
       const defaultActions = get(
         globals.user,
