@@ -133,6 +133,8 @@ const config = {
     host: '0.0.0.0',
     port: 8001,
   },
+  // 关闭console提示
+  stats: 'errors-only',
 }
 
 module.exports = [config, localeConfig]

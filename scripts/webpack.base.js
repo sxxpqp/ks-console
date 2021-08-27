@@ -29,7 +29,7 @@ const isDev = process.env.NODE_ENV === 'development'
 module.exports = {
   entry: {
     main: './src/core/index.js',
-    terminalEntry:'./src/core/terminal.js'
+    terminalEntry: './src/core/terminal.js',
   },
   moduleRules: [
     {
@@ -40,9 +40,7 @@ module.exports = {
     {
       test: /\.svg$/,
       issuer: { test: /\.jsx?$/ },
-      use: [
-        { loader: '@svgr/webpack', options: { icon: true } },
-      ],
+      use: [{ loader: '@svgr/webpack', options: { icon: true } }],
     },
     {
       test: /\.(jpg|png|svg)(\?.+)?$/,
@@ -54,6 +52,10 @@ module.exports = {
     extensions: ['.js', '.jsx', '.scss'],
     symlinks: false,
     modules: [root('src'), root('src/pages'), 'node_modules'],
+    // 添加server的alias配置
+    alias: {
+      '@': root('server'),
+    },
   },
   plugins: [
     new HappyPack({
@@ -85,4 +87,5 @@ module.exports = {
       }),
     ],
   },
+  stats: 'errors-only',
 }

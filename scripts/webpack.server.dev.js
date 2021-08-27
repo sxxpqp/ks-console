@@ -16,82 +16,30 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { resolve } = require('path')
 const webpack = require('webpack')
-const WebpackBar = require('webpackbar')
 const NodemonPlugin = require('nodemon-webpack-plugin')
 const nodeExternals = require('webpack-node-externals')
-const HappyPack = require('happypack')
+const { merge } = require('webpack-merge')
+const baseConfig = require('./webpack.server.base')
 
-const root = path => resolve(__dirname, `../${path}`)
-
-module.exports = {
+const config = merge(baseConfig, {
   mode: 'development',
-  entry: {
-    server: './server/server.js',
-  },
-  output: {
-    path: root('dist/'),
-    publicPath: '/',
-    filename: '[name].js',
-    libraryTarget: 'commonjs',
-  },
-  target: 'node',
-  node: {
-    // Need this when working with express, otherwise the build fails
-    __dirname: false, // if you don't put this is, __dirname
-    __filename: false, // and __filename return blank or /
-  },
-  optimization: {
-    minimize: false,
-  },
-  externals: [
-    nodeExternals(),
-    {
-      hiredis: 'hiredis',
-      webpack: 'webpack',
-      'koa-webpack-middleware': 'koa-webpack-middleware',
-    },
-  ], // in order to ignore all modules in node_modules folder
+  externals: [nodeExternals()], // in order to ignore all modules in node_modules folder
   // externals: {
   //   hiredis: 'hiredis',
   //   webpack: 'webpack',
   //   'koa-webpack-middleware': 'koa-webpack-middleware',
   // }, // Need this to avoid error when working with Express
   module: {
-    rules: [
-      {
-        test: /\.(yml|html|css|svg|properties|ttf|otf|eot|woff2?)(\?.+)?$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: '[path][name].[ext]',
-          },
-        },
-      },
-      {
-        test: /\.jsx?$/,
-        use: 'happypack/loader?id=jsx',
-      },
-    ],
+    rules: [],
   },
   plugins: [
-    new HappyPack({
-      id: 'jsx',
-      loaders: [
-        {
-          loader: 'babel-loader',
-          options: {
-            cacheDirectory: true,
-          },
-        },
-      ],
-    }),
     new webpack.DefinePlugin({
       'process.env.BROWSER': false,
       'process.env.NODE_ENV': JSON.stringify('development'),
     }),
     new NodemonPlugin(),
-    new WebpackBar(),
   ],
-}
+})
+
+module.exports = config
