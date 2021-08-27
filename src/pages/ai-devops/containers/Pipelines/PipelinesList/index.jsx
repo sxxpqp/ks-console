@@ -54,6 +54,14 @@ export default class PipelinesList extends React.Component {
     this.refreshTimer = setInterval(() => this.refreshHandler(), 4000)
   }
 
+  componentDidMount() {
+    const tmp = {
+      ...omit(this.props.match.params, 'namespace'),
+      devops: 'default5tmqc',
+    }
+    this.props.rootStore.getRules(tmp)
+  }
+
   componentWillReceiveProps(nextProps) {
     const { params } = this.props.match
     const { params: nextParams } = nextProps.match
@@ -94,7 +102,7 @@ export default class PipelinesList extends React.Component {
   get enabledActions() {
     return globals.app.getActions({
       module: 'pipelines',
-      cluster: this.props.match.params.cluster,
+      cluster: this.cluster,
       devops: this.devops,
     })
   }
@@ -198,11 +206,11 @@ export default class PipelinesList extends React.Component {
       ...this.props.match.params,
       ...params,
     })
-    const tmp = {
-      ...omit(this.props.match.params, 'namespace'),
-      devops: 'default5tmqc',
-    }
-    this.props.rootStore.getRules(tmp)
+    // const tmp = {
+    //   ...omit(this.props.match.params, 'namespace'),
+    //   devops: 'default5tmqc',
+    // }
+    // this.props.rootStore.getRules(tmp)
   }
 
   async handleRun(record) {
@@ -312,6 +320,12 @@ export default class PipelinesList extends React.Component {
       dataIndex: 'name',
       width: '20%',
       render: (name, record) => {
+        // /harbor/clusters/default/projects/harbor/devops/default5tmqc/pipelines
+        // const url = `/${this.workspace}/clusters/${this.cluster}/projects/${
+        //   this.workspace
+        // }/devops/${this.devops}/pipelines/${encodeURIComponent(record.name)}${
+        //   !isEmpty(record.scmSource) ? '/activity' : ''
+        // }`
         const url = `/${this.workspace}/clusters/${this.cluster}/devops/${
           this.devops
         }/pipelines/${encodeURIComponent(record.name)}${

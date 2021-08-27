@@ -16,33 +16,17 @@
  * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import Layout from 'ai-devops/containers/layout'
+import Layout from '../containers/layout'
+import CredentialDetail from '../containers/Credential/detail'
+import PipelineDetail from '../containers/Pipelines/Detail/layout'
 
-import CredentialDetail from 'ai-devops/containers/Credential/detail'
-import PipelineDetail from 'ai-devops/containers/Pipelines/Detail/layout'
-// import { getIndexRoute } from 'utils/router.config'
-
-// const PATH = '/:workspace/clusters/:cluster/devops/:devops'
 const PATH = '/:workspace/clusters/:cluster/devops'
 
 export default [
   {
     path: PATH,
-    components: Layout,
+    component: Layout,
     routes: [
-      // getIndexRoute({
-      //   path: `${PATH}`,
-      //   to: `${PATH}/pipelines/:name`,
-      //   exact: true,
-      // }),
-      // {
-      //   path: `${PATH}/pipelines/:name`,
-      //   component: PipelineDetail,
-      // },
-      // {
-      //   path: `${PATH}/credentials/:credential_id`,
-      //   component: CredentialDetail,
-      // },
       {
         path: `${PATH}/:devops/pipelines/:name`,
         component: PipelineDetail,
@@ -53,7 +37,4 @@ export default [
       },
     ],
   },
-  // detail devops
-  // const PATH = '/:workspace/clusters/:cluster/devops'
-  // }getIndexRoute({ path: '*', to: '/404', exact: true }),
 ]

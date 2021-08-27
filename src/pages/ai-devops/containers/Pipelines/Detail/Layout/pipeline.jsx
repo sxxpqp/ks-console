@@ -302,7 +302,10 @@ export default class PipelineDetailLayout extends React.Component {
       breadcrumbs: [
         {
           label: t('Pipeline List'),
-          url: `/${workspace}/clusters/${cluster}/devops/${devops}/pipelines`,
+          // url: `/${workspace}/clusters/${cluster}/devops/${devops}/pipelines`,
+          // todo namespace
+          // '/:workspace/clusters/:cluster/projects/:namespace'
+          url: `/${workspace}/clusters/${cluster}/projects/${workspace}/devops/${devops}/pipelines`,
         },
       ],
     }

@@ -31,6 +31,14 @@ export default class Layout extends Component {
   constructor(props) {
     super(props)
     this.store = new DevOpsStore()
+    // console.log(
+    //   '🚀 ~ file: layout.jsx ~ line 63 ~ Layout ~ constructor ~ props',
+    //   props
+    // )
+    // console.log(
+    //   '🚀 ~ file: layout.jsx ~ line 34 ~ Layout ~ constructor ~ this.store',
+    //   this.store
+    // )
     this.clusterStore = new ClusterStore()
   }
 

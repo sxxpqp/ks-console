@@ -44,6 +44,10 @@ class Credential extends React.Component {
     super(props)
 
     this.store = new CredentialStore()
+    // console.log(
+    //   '🚀 ~ file: index.jsx ~ line 47 ~ Credential ~ constructor ~ this.store',
+    //   this.store
+    // )
     this.formTemplate = {}
   }
 
@@ -60,6 +64,14 @@ class Credential extends React.Component {
     })
   }
 
+  // componentDidUpdate() {
+  //   const tmp = {
+  //     ...omit(this.props.match.params, 'namespace'),
+  //     devops: 'default5tmqc',
+  //   }
+  //   this.props.rootStore.getRules(tmp)
+  // }
+
   componentWillUnmount() {
     this.unsubscribe && this.unsubscribe()
   }
@@ -67,9 +79,21 @@ class Credential extends React.Component {
   get enabledActions() {
     return globals.app.getActions({
       module: 'credentials',
-      cluster: this.props.match.params.cluster,
-      devops: this.props.devopsStore.devops,
+      cluster: this.cluster,
+      devops: this.devops,
     })
+  }
+
+  get devops() {
+    return this.props.match.params.devops
+  }
+
+  get cluster() {
+    return this.props.match.params.cluster
+  }
+
+  get workspace() {
+    return this.props.match.params.workspace
   }
 
   getData() {
@@ -123,7 +147,10 @@ class Credential extends React.Component {
       dataIndex: 'name',
       width: '35%',
       render: id => {
-        const url = `${this.prefix}/${encodeURIComponent(id)}`
+        const url = `/${this.workspace}/clusters/${this.cluster}/devops/${
+          this.devops
+        }/credentials/${encodeURIComponent(id)}`
+        // const url = `${this.prefix}/${encodeURIComponent(id)}`
         return <Avatar to={this.isRuning ? null : url} title={id} />
       },
     },

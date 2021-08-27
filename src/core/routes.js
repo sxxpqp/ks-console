@@ -47,9 +47,9 @@ const Console = lazy(() =>
 // const FederatedProjects = lazy(() =>
 //   import(/* webpackChunkName: "fedprojects" */ 'fedprojects/App.jsx')
 // )
-// const DevOps = lazy(() =>
-//   import(/* webpackChunkName: "devops" */ 'ai-devops/App.jsx')
-// )
+const DevOps = lazy(() =>
+  import(/* webpackChunkName: "devops" */ 'ai-devops/App')
+)
 // const App = lazy(() => import(/* webpackChunkName: "apps" */ 'apps/App.jsx'))
 
 export default [
@@ -75,10 +75,10 @@ export default [
         path: '/:workspace/clusters/:cluster/projects/:namespace',
         component: AiPlatform,
       },
-      // {
-      //   path: '/:workspace/clusters/:cluster/devops/:devops',
-      //   component: DevOps,
-      // },
+      {
+        path: '/:workspace/clusters/:cluster/devops/:devops',
+        component: DevOps,
+      },
       // {
       //   path: '/:workspace/federatedprojects/:namespace',
       //   component: FederatedProjects,

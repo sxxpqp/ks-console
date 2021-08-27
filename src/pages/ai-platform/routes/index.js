@@ -51,26 +51,19 @@ import AlertingMessages from '../containers/Alerting/Messages'
 import CustomMonitoring from '../containers/CustomMonitoring'
 import NetworkPolicies from '../containers/Network/Policies'
 import StoreManage from '../containers/StoreManage'
-
 import grayReleaseRoutes from './grayrelease'
 
 import getDetailPath from './detail'
-// devops详情
-import devopsRoutes from './devops'
 
-// const PATH = '/harbor/clusters/default/projects/harbor'
 const PATH = '/:workspace/clusters/:cluster/projects/:namespace'
 
 export default [
-  ...devopsRoutes,
   ...getDetailPath(PATH),
   {
     path: PATH,
     component: ListLayout,
     routes: [
       ...grayReleaseRoutes,
-      // ...devopsRoutes,
-      // const PATH = '/:workspace/clusters/:cluster/projects/:namespace/devops/:devops'
       getIndexRoute({
         path: `${PATH}/devops/:devops`,
         to: `${PATH}/devops/:devops/pipelines`,

@@ -183,6 +183,11 @@ export default class CredentialDetail extends React.Component {
   render() {
     const { detail } = this.store
     const stores = { detailStore: this.store }
+    const { devops, cluster, workspace } = this.props.match.params
+    // console.log(
+    //   '🚀 ~ file: index.jsx ~ line 187 ~ CredentialDetail ~ render ~ this.props.match.params',
+    //   this.props.match.params
+    // )
 
     const sideProps = {
       module: this.module,
@@ -194,7 +199,8 @@ export default class CredentialDetail extends React.Component {
       breadcrumbs: [
         {
           label: t('Credentials'),
-          url: this.listUrl,
+          url: `/${workspace}/clusters/${cluster}/devops/${devops}/credentials`,
+          // url: this.listUrl,
         },
       ],
     }
