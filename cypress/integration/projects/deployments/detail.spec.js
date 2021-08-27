@@ -1,21 +1,3 @@
-/*
- * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
- *
- * KubeSphere Console is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * KubeSphere Console is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 const formData = {
   kind: 'Deployment',
   apiVersion: 'apps/v1',
@@ -88,9 +70,7 @@ describe('The Deployment Detail Page', function() {
 
     cy.request({
       method: 'GET',
-      url: `/apis/apps/v1/namespaces/e2e-test/deployments/${
-        formData.metadata.name
-      }`,
+      url: `/apis/apps/v1/namespaces/e2e-test/deployments/${formData.metadata.name}`,
       headers: { 'x-check-exist': true },
     }).then(resp => {
       if (!resp.body.exist) {
@@ -102,9 +82,7 @@ describe('The Deployment Detail Page', function() {
       } else {
         cy.request({
           method: 'PATCH',
-          url: `/apis/apps/v1/namespaces/e2e-test/deployments/${
-            formData.metadata.name
-          }`,
+          url: `/apis/apps/v1/namespaces/e2e-test/deployments/${formData.metadata.name}`,
           headers: {
             'content-type': 'application/merge-patch+json',
           },
@@ -252,9 +230,7 @@ describe('The Deployment Detail Page', function() {
 
   it('detail page revision', function() {
     cy.visit(
-      `/projects/e2e-test/deployments/${
-        formData.metadata.name
-      }/revision-control`
+      `/projects/e2e-test/deployments/${formData.metadata.name}/revision-control`
     )
     cy.wait('@getDeployment')
     cy.wait('@getRules')
@@ -275,9 +251,7 @@ describe('The Deployment Detail Page', function() {
     cy.url().should('include', 'revisions')
 
     cy.visit(
-      `/projects/e2e-test/deployments/${
-        formData.metadata.name
-      }/revision-control`
+      `/projects/e2e-test/deployments/${formData.metadata.name}/revision-control`
     )
     cy.wait('@getDeployment')
     cy.wait('@getReplicasets')

@@ -1,21 +1,3 @@
-/*
- * This file is part of KubeSphere Console.
- * Copyright (C) 2019 The KubeSphere Console Authors.
- *
- * KubeSphere Console is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * KubeSphere Console is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with KubeSphere Console.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 const formData = {
   name: 'tester-random-list-aaxx',
   desc: 'tester-random-list-aaxx desc',
@@ -162,7 +144,9 @@ describe('The Deployments Page', function() {
     }
 
     function test_editBaseInfo() {
-      cy.get(`[data-row-key="${formData.name}"] button .kubed-icon-more`).click()
+      cy.get(
+        `[data-row-key="${formData.name}"] button .kubed-icon-more`
+      ).click()
       cy.get(
         `[data-row-key="${formData.name}"] [data-test="table-item-edit"]`
       ).click()
@@ -179,7 +163,9 @@ describe('The Deployments Page', function() {
     }
 
     function test_editYaml() {
-      cy.get(`[data-row-key="${formData.name}"] button .kubed-icon-more`).click()
+      cy.get(
+        `[data-row-key="${formData.name}"] button .kubed-icon-more`
+      ).click()
       cy.get(
         `[data-row-key="${formData.name}"] [data-test="table-item-editYaml"]`
       ).click()
@@ -194,7 +180,9 @@ describe('The Deployments Page', function() {
     }
 
     function test_redeploy() {
-      cy.get(`[data-row-key="${formData.name}"] button .kubed-icon-more`).click()
+      cy.get(
+        `[data-row-key="${formData.name}"] button .kubed-icon-more`
+      ).click()
       cy.get(
         `[data-row-key="${formData.name}"] [data-test="table-item-redeploy"]`
       ).click()
@@ -206,7 +194,9 @@ describe('The Deployments Page', function() {
     }
 
     function test_deleteItem() {
-      cy.get(`[data-row-key="${formData.name}"] button .kubed-icon-more`).click()
+      cy.get(
+        `[data-row-key="${formData.name}"] button .kubed-icon-more`
+      ).click()
       cy.get(
         `[data-row-key="${formData.name}"] [data-test="table-item-delete"]`
       ).click()
