@@ -15,6 +15,7 @@ const config = merge(baseConfig, {
   module: {
     rules: [],
   },
+  devtool: 'cheap-module-eval-source-map',
   plugins: [
     new webpack.DefinePlugin({
       'process.env.BROWSER': false,

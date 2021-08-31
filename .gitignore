@@ -24,3 +24,7 @@ yarn-error.log*
 *.rdb
 /build
 .cache-loader
+
+logs/
+*-lock.json
+*.lock

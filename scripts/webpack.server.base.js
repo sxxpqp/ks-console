@@ -32,6 +32,12 @@ const config = {
       'koa-webpack-middleware': 'koa-webpack-middleware',
     },
   ], // in order to ignore all modules in node_modules folder
+  resolve: {
+    // 添加server的alias配置
+    alias: {
+      '@': root('server'),
+    },
+  },
   // externals: {
   //   hiredis: 'hiredis',
   //   webpack: 'webpack',

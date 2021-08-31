@@ -5,6 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Launch Server via NPM",
+      "request": "launch",
+      "runtimeArgs": ["run-script", "dev:nodemon"],
+      "runtimeVersion": "12.22.1",
+      "runtimeExecutable": "npm",
+      "internalConsoleOptions": "neverOpen",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node"
+    },
+    {
       "name": "Launch via NPM",
       "request": "launch",
       "runtimeArgs": ["run-script", "start"],
