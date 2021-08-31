@@ -163,6 +163,8 @@ const getLocaleManifest = () => {
   return manifestCache
 }
 
+const firstUpperCase = str => `${str[0].toUpperCase()}${str.slice(1)}`
+
 module.exports = {
   root,
   loadYaml,
@@ -174,4 +176,5 @@ module.exports = {
   isAppsRoute,
   decryptPassword,
   safeParseJSON,
+  firstUpperCase,
 }

@@ -12,10 +12,14 @@ global.APP_ROOT = path.resolve(__dirname, '../')
 const { getServerConfig } = require('./libs/utils')
 const boot = require('./components/boot')
 const locale = require('./components/locale')
+// 日志
 const logging = require('./components/logging')
 const wsProxy = require('./components/wsProxy')
 const errorProcess = require('./components/errorProcess')
 const routes = require('./routes')
+
+const { sequelize } = require('./config/sequelize')
+const { initModels } = require('./models/init-models')
 
 const app = new Koa()
 
@@ -23,6 +27,12 @@ const serverConfig = getServerConfig().server
 
 global.HOSTNAME = serverConfig.http.hostname || 'localhost'
 global.PORT = serverConfig.http.port || 8000
+
+const db = sequelize(serverConfig.db)
+global.models = initModels(db)
+// global.models.resources.findAll().then(res => {
+//   console.log(res)
+// })
 
 app.keys = ['kubesphere->_<']
 
