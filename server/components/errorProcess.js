@@ -33,7 +33,7 @@ module.exports = function(app) {
      *   ...
      */
     console.error(err)
-    global.logError(err)
+    global.logError.error(err)
   })
 
   // catch uncaught error

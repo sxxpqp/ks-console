@@ -1,13 +1,13 @@
 @import '~scss/variables';
 
 .main {
-  padding-top: $header-height;
+  // padding-top: $header-height;
   min-width: $content-width;
 }
 
-.nav {
-  left: -($nav-width + 10px);
-}
+// .nav {
+//   left: -($nav-width + 10px);
+// }
 
 .header {
   position: fixed;

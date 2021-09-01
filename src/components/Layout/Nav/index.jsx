@@ -3,9 +3,31 @@ import PropTypes from 'prop-types'
 
 import { trimEnd } from 'lodash'
 
-import NavItem from './NavItem'
+import { Menu } from 'antd'
+import {
+  HomeOutlined,
+  AppstoreAddOutlined,
+  ClusterOutlined,
+  HddOutlined,
+  LockOutlined,
+  ToolOutlined,
+  SettingOutlined,
+  DashboardOutlined,
+} from '@ant-design/icons'
+import Link from './Link'
 
-import styles from './index.scss'
+const { SubMenu } = Menu
+
+const icons = {
+  HomeOutlined: <HomeOutlined />,
+  AppstoreAddOutlined: <AppstoreAddOutlined />,
+  ClusterOutlined: <ClusterOutlined />,
+  HddOutlined: <HddOutlined />,
+  DashboardOutlined: <DashboardOutlined />,
+  LockOutlined: <LockOutlined />,
+  ToolOutlined: <ToolOutlined />,
+  SettingOutlined: <SettingOutlined />,
+}
 
 class Nav extends React.Component {
   static propTypes = {
@@ -29,6 +51,7 @@ class Nav extends React.Component {
 
     this.state = {
       openedNav: this.getOpenedNav(),
+      openKeys: [],
     }
   }
 
@@ -75,42 +98,62 @@ class Nav extends React.Component {
     }))
   }
 
-  render() {
-    const {
-      className,
-      navs,
-      match,
-      innerRef,
-      onItemClick,
-      disabled,
-    } = this.props
+  getKeys = items => {
+    let arr = []
+    items.forEach(item => {
+      arr.push(item.name)
+      if (item.children) {
+        arr = [...arr, ...this.getKeys(item.children)]
+      }
+    })
+    return arr
+  }
 
-    const { openedNav } = this.state
-    const current = this.currentPath
+  render() {
+    // const [openKeys, setOpenKeys] = React.useState([])
+    const { openKeys } = this.state
+
+    const { className, navs, innerRef, onItemClick, match } = this.props
+    const allKeys = this.getKeys(navs[0].items)
+
+    const onOpenChange = keys => {
+      const latestOpenKey = keys.find(key => openKeys.indexOf(key) === -1)
+      if (allKeys.indexOf(latestOpenKey) === -1) {
+        this.setState({ openKeys: keys })
+      } else {
+        this.setState({ openKeys: latestOpenKey ? [latestOpenKey] : [] })
+      }
+    }
     const prefix = trimEnd(match.url, '/')
 
+    const arr = navs.length > 0 ? navs[0] : []
+    // console.log(arr)
     return (
-      <div ref={innerRef} className={className}>
-        {navs.map(nav => (
-          <div key={nav.cate} className={styles.subNav}>
-            {nav.title && <p>{t(nav.title)}</p>}
-            <ul>
-              {nav.items.map(item => (
-                <NavItem
-                  key={item.name}
-                  item={item}
-                  prefix={prefix}
-                  current={current}
-                  onClick={onItemClick}
-                  isOpen={item.name === openedNav}
-                  onOpen={this.handleItemOpen}
-                  disabled={disabled}
-                />
+      <Menu
+        ref={innerRef}
+        className={className}
+        mode="inline"
+        theme="dark"
+        openKeys={openKeys}
+        onOpenChange={onOpenChange}
+        onClick={onItemClick}
+      >
+        {arr.items.map(nav =>
+          nav.children ? (
+            <SubMenu key={nav.name} title={t(nav.title)} icon={icons[nav.icon]}>
+              {nav.children.map(item => (
+                <Menu.Item key={item.name}>
+                  <Link to={`${prefix}/${item.name}`}>{t(item.title)}</Link>
+                </Menu.Item>
               ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+            </SubMenu>
+          ) : (
+            <Menu.Item key={nav.name} icon={icons[nav.icon]}>
+              <Link to={`${prefix}/${nav.name}`}>{t(nav.title)}</Link>
+            </Menu.Item>
+          )
+        )}
+      </Menu>
     )
   }
 }

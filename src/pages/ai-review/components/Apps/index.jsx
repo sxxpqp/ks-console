@@ -1,5 +1,4 @@
 import React from 'react'
-import classnames from 'classnames'
 import { observer, inject } from 'mobx-react'
 import qs from 'qs'
 
@@ -8,7 +7,6 @@ import {
   LevelLeft,
   LevelRight,
   InputSearch,
-  Icon,
 } from '@kube-design/components'
 
 import { getScrollTop } from 'utils/dom'
@@ -21,8 +19,6 @@ import AppList from './components/AppList'
 import styles from './index.scss'
 
 const noCategories = ['new', 'all']
-const cateLatest = 'new'
-const uncateKey = 'ctg-uncategorized'
 const scrollThreshold = 200
 
 @inject('rootStore')
@@ -122,10 +118,6 @@ export default class Home extends React.Component {
     }
   }
 
-  handleClickCate = category => {
-    this.props.rootStore.query({ category })
-  }
-
   handleSearch = keyword => {
     this.props.rootStore.query({ keyword })
   }
@@ -153,61 +145,11 @@ export default class Home extends React.Component {
     )
   }
 
-  renderCategories() {
-    const { data } = this.categoryStore.list
-    const { category } = this.queryParams
-
-    return (
-      <div className={styles.cates} ref={this.cateRef}>
-        <div className={styles.group}>
-          <p className={styles.title}>{t('Discoveries')}</p>
-          <ul className={styles.menu}>
-            <li
-              key={cateLatest}
-              className={classnames(styles.item, {
-                [styles.active]: category === cateLatest,
-              })}
-              onClick={() => this.handleClickCate(cateLatest)}
-            >
-              <Icon name="cart" size={16} type="dark" className={styles.icon} />
-              <span className={styles.name}>{t('New Apps')}</span>
-            </li>
-          </ul>
-        </div>
-        <div className={styles.group}>
-          <p className={styles.title}>{t('Categories')}</p>
-          <ul className={styles.menu}>
-            {data.map(({ category_id, name, description }, idx) => (
-              <li
-                key={category_id || idx}
-                className={classnames(styles.item, {
-                  [styles.active]: category === category_id,
-                })}
-                onClick={() => this.handleClickCate(category_id)}
-              >
-                <Icon
-                  name={category_id === uncateKey ? 'tag' : description}
-                  size={16}
-                  type={category === category_id ? 'coloured' : 'dark'}
-                  className={styles.icon}
-                />
-                <span className={styles.name}>
-                  {t(`APP_CATE_${name.toUpperCase()}`, {
-                    defaultValue: name,
-                  })}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    )
-  }
-
   render() {
     const { list, allApps } = this.appStore
     const { isLoading, total } = list
     const { workspace, namespace, cluster } = this.queryParams
+    const { onClickAppItem } = this.props
 
     return (
       <div className={styles.wrapper}>
@@ -225,6 +167,8 @@ export default class Home extends React.Component {
             workspace={workspace}
             namespace={namespace}
             cluster={cluster}
+            onClickAppItem={onClickAppItem}
+            disableLink
           />
         </div>
       </div>

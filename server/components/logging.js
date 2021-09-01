@@ -1,4 +1,4 @@
-const log4js = require('../config/log4j')
+const log4js = require('../services/log4j')
 
 // 全局错误日志
 global.logError = log4js.getLogger('error')

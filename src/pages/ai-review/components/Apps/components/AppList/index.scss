@@ -66,3 +66,11 @@
     }
   }
 }
+
+.active {
+  :global(.src-components-Cards-App-index__wrapper) {
+    transform: translateY(-4px);
+    border: 1px solid #79879c;
+    box-shadow: 0 4px 8px 0 rgba(36, 46, 66, 0.2);
+  }
+}

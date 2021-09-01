@@ -82,7 +82,7 @@ export default class Login extends Component {
     const logo = globals.config.logo || '/assets/logo.svg'
     // console.log('🚀 ~ file: index.jsx ~ line 101 ~ Login ~ render ~ logo', logo)
     return (
-      <div>
+      <div className={styles.wrapper}>
         <a href="/" className={styles.logo}>
           <img src={logo} alt="" />
           <div>{t('PLATFORM_TITLE')}</div>

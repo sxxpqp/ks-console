@@ -1,3 +1,5 @@
+const { Sequelize } = require('sequelize')
+
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define(
     'resources',
@@ -20,21 +22,25 @@ module.exports = function(sequelize, DataTypes) {
       cpu: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
         comment: 'cpu',
       },
       mem: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
         comment: '内存',
       },
       disk: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 0,
         comment: '磁盘',
       },
       gpu: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 0,
         comment: 'gpu',
       },
       reason: {
@@ -44,7 +50,7 @@ module.exports = function(sequelize, DataTypes) {
       },
       nid: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         comment: '标签，关联节点id',
         references: {
           model: 'nodes',
@@ -72,9 +78,20 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: true,
         comment: '审核消息',
       },
+      app: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: '应用配置',
+      },
+      type: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: '部署方式：0-不限，1-优先自有，2-仅自有',
+      },
       created: {
         type: DataTypes.DATE,
         allowNull: true,
+        defaultValue: Sequelize.NOW,
         comment: '创建时间',
       },
       updated: {

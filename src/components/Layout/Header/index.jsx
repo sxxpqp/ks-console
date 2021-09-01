@@ -2,7 +2,7 @@ import { Icon, Menu } from '@kube-design/components'
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import { isAppsPage } from 'utils'
 import LoginInfo from '../LoginInfo'
 import styles from './index.scss'
@@ -41,7 +41,6 @@ class Header extends React.Component {
 
   render() {
     const { className, innerRef } = this.props
-    const logo = globals.config.logo || '/assets/logo.svg'
 
     return (
       <div
@@ -54,14 +53,6 @@ class Header extends React.Component {
           className
         )}
       >
-        <Link to={isAppsPage() && !globals.user ? '/apps' : '/'}>
-          <img
-            className={styles.logo}
-            src={isAppsPage() ? `/assets/login-logo.svg` : logo}
-            alt=""
-          />
-          <span className={styles.mytitle}>{t('PLATFORM_TITLE')}</span>
-        </Link>
         <div className="header-bottom" />
         {/* {this.isLoggedIn && (
           <div className={styles.navs}>

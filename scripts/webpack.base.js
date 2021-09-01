@@ -31,7 +31,7 @@ module.exports = {
     },
   ],
   resolve: {
-    extensions: ['.js', '.jsx', '.scss'],
+    extensions: ['.js', '.jsx', '.scss', '.ts', '.tsx'],
     symlinks: false,
     modules: [root('src'), root('src/pages'), 'node_modules'],
     // 添加server的alias配置

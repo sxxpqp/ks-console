@@ -9,7 +9,14 @@ import { stringify } from 'qs'
 
 import styles from './index.scss'
 
-export default class AppList extends React.PureComponent {
+export default class AppList extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      current: '',
+    }
+  }
+
   static propTypes = {
     apps: PropTypes.array,
     isLoading: PropTypes.bool,
@@ -40,7 +47,6 @@ export default class AppList extends React.PureComponent {
       disableLink,
       onClickAppItem,
     } = this.props
-
     if (apps.length === 0 && !isLoading) {
       return (
         <div className={styles.noApp}>
@@ -52,6 +58,14 @@ export default class AppList extends React.PureComponent {
 
     const query = stringify({ workspace, cluster, namespace })
 
+    const { current } = this.state
+    const onClick = app => {
+      this.setState({
+        current: app.app_id,
+      })
+      onClickAppItem(app)
+    }
+
     return (
       <>
         {apps.map(app => {
@@ -60,8 +74,12 @@ export default class AppList extends React.PureComponent {
             return (
               <div
                 key={app.app_id}
-                className={classnames(styles.appItem, itemCls)}
-                onClick={() => onClickAppItem(app)}
+                className={classnames(
+                  styles.appItem,
+                  itemCls,
+                  current === app.app_id ? styles.active : ''
+                )}
+                onClick={() => onClick(app)}
               >
                 <AppCard app={app} />
               </div>

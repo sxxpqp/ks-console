@@ -3,7 +3,13 @@ import { inject, observer } from 'mobx-react'
 import { get } from 'lodash'
 
 import { renderRoutes } from 'utils/router.config'
-import { Nav } from 'components/Layout'
+import { Nav, Header } from 'components/Layout'
+import { Layout } from 'antd'
+import { Link } from 'react-router-dom'
+
+import styles from './index.scss'
+
+const { Header: OuterHeader, Sider, Content } = Layout
 // import Selector from 'projects/components/Selector'
 
 @inject('rootStore', 'projectStore')
@@ -31,8 +37,12 @@ class ProjectLayout extends Component {
 
   handleChange = url => this.props.rootStore.routing.push(url)
 
+  handleJumpTo = link => {
+    this.props.rootStore.routing.push(link)
+  }
+
   render() {
-    const { match, location } = this.props
+    const { match, location, rootStore } = this.props
     const { workspace, cluster, namespace } = match.params
     // const { detail } = this.props.projectStore
 
@@ -42,25 +52,39 @@ class ProjectLayout extends Component {
       workspace,
       project: namespace,
     })
+    // const logo = globals.config.logo || '/assets/logo.svg'
 
     return (
-      <div className="ks-page">
-        <div className="ks-page-side">
-          {/* 关闭Select显示 */}
-          {/* <Selector
-            title={t('Projects')}
-            detail={detail}
-            onChange={this.handleChange}
-          /> */}
+      <Layout style={{ minHeight: '100vh' }}>
+        <Sider width={220}>
+          <Link to={'/'}>
+            {/* <img className={styles.logo} src={logo} alt="" /> */}
+            <span className={styles.mytitle}>{t('PLATFORM_TITLE')}</span>
+          </Link>
           <Nav
             className="ks-page-nav"
             navs={navs}
             location={location}
             match={match}
           />
-        </div>
-        <div className="ks-page-main">{renderRoutes(this.getRoutes(navs))}</div>
-      </div>
+        </Sider>
+        <Layout style={{ overflow: 'hidden', height: '100vh' }}>
+          <OuterHeader
+            className="site-layout-background"
+            style={{ padding: 0 }}
+          >
+            <Header
+              innerRef={this.headerRef}
+              location={location}
+              onToggleNav={rootStore.toggleGlobalNav}
+              jumpTo={this.handleJumpTo}
+            />
+          </OuterHeader>
+          <Content style={{ padding: '10px 20px', overflowX: 'hidden' }}>
+            {renderRoutes(this.getRoutes(navs))}
+          </Content>
+        </Layout>
+      </Layout>
     )
   }
 }

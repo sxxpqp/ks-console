@@ -8,7 +8,7 @@ import request from 'utils/request'
 import App from './App'
 import GlobalValue from './global'
 import i18n from './i18n'
-// import 'antd/dist/antd.css'
+import 'antd/dist/antd.css'
 
 require('@babel/polyfill')
 

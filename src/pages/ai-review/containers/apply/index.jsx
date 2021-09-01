@@ -1,18 +1,18 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-import Steps from 'apps/containers/AppDeploy/Steps'
 import Banner from 'components/Cards/Banner'
-// import { isEmpty } from 'lodash'
-import { Button } from '@kube-design/components'
-import ResourceLimit from 'ai-review/components/ResourceLimit'
-import ClusterNodes from 'ai-review/components/ClusterNodes'
+import { Button, Notify } from '@kube-design/components'
 import Apps from 'ai-review/components/Apps'
 import { Panel } from 'components/Base'
+import { Select, InputNumber, Radio, Input, Table } from 'antd'
 // import { Radio, Space } from 'antd'
 
-import classnames from 'classnames'
+import { applyRes } from 'api/apply'
 import styles from './index.scss'
 
+const { TextArea } = Input
+
+const { Option } = Select
 @inject('rootStore')
 @observer
 export default class ApplyDefault extends React.Component {
@@ -20,9 +20,61 @@ export default class ApplyDefault extends React.Component {
     super(props)
 
     this.state = {
-      currentStep: 0,
-      formData: {},
       value: 1,
+      formData: {
+        cpu: null,
+        gpu: null,
+        mem: null,
+        disk: 40,
+      },
+      isSubmitting: false,
+      cpuChoose: '',
+      cpuOptions: [
+        1,
+        2,
+        4,
+        8,
+        12,
+        16,
+        20,
+        24,
+        32,
+        40,
+        48,
+        52,
+        64,
+        72,
+        80,
+        96,
+        104,
+        208,
+      ],
+      memOptions: [
+        1,
+        2,
+        4,
+        8,
+        16,
+        24,
+        32,
+        48,
+        64,
+        88,
+        96,
+        128,
+        176,
+        192,
+        256,
+        288,
+        352,
+        384,
+        512,
+        768,
+        1536,
+        3072,
+      ],
+      gpuOptions: [0, 1, 2, 4, 8, 12, 16, 20, 24, 32],
+      reason: '',
     }
 
     this.formRef = React.createRef()
@@ -37,27 +89,6 @@ export default class ApplyDefault extends React.Component {
       {
         title: '应用选择',
         description: t('SCENARIOS_FOR_SERVICES_A'),
-      },
-    ]
-  }
-
-  get steps() {
-    return [
-      {
-        title: '资源选择',
-        // component: BasicInfo,
-        required: true,
-        isForm: true,
-      },
-      {
-        title: '应用选择',
-        // component: AppConfig,
-        required: true,
-      },
-      {
-        title: '完成',
-        // component: AppConfig,
-        required: true,
       },
     ]
   }
@@ -88,188 +119,330 @@ export default class ApplyDefault extends React.Component {
     //   })
   }
 
-  handleRadioChange = e => {
-    // console.log('🚀 ~ file: index.jsx ~ line 108 ~ ApplyDefault ~ e', e)
-    const { value } = this.state
-    let result = ''
-    if (value !== e.id) {
-      result = e.id
-    }
-    this.setState({
-      value: result,
-    })
-  }
-
-  renderSteps() {
-    return (
-      <div className={styles.steps}>
-        <Steps steps={this.steps} current={this.state.currentStep} />
-      </div>
-    )
-  }
-
   renderRadios() {
     const { value } = this.state
+    const onChange = e => {
+      this.setState({
+        value: e.target.value,
+      })
+    }
     const items = [
       {
         id: 1,
-        name: 'tensorflow',
-        res: {
-          cpu: 32,
-          gpu: 2,
-          mem: 64 * 1024,
-          disk: 400,
-        },
+        name: '不限',
+        label: 'no-limit',
+        desc: '随机在用户公共节点下进行后续的容器应用部署',
       },
       {
         id: 2,
-        name: 'torch',
-        res: {
-          cpu: 16,
-          gpu: 1,
-          mem: 32 * 1024,
-          disk: 100,
-        },
+        name: '优先自有',
+        label: 'res-prompt',
+        desc: '优先选择用户组织下的节点进行容器应用部署',
       },
       {
         id: 3,
-        name: 'mysql',
-        res: {
-          cpu: 2,
-          gpu: 0,
-          mem: 4 * 1024,
-          disk: 10,
-        },
-      },
-      {
-        id: 4,
-        name: 'tomcat',
-        res: {
-          cpu: 4,
-          gpu: 0,
-          mem: 8 * 1024,
-          disk: 40,
-        },
+        name: '仅自有',
+        label: 'res-limit',
+        desc: '仅在用户归属组织的节点下进行容器应用部署',
       },
     ]
     return (
-      <ul>
-        {items.map(item => (
-          <li
-            className={classnames(styles.itemWrapper, {
-              [styles.active]: value === item.id,
-            })}
-            key={item.id}
-            onClick={() => this.handleRadioChange(item)}
-          >
-            <div className={styles.name}>{item.name}</div>
-            <div className={styles.resource}>
-              <span>CPU: {item.res.cpu} core</span>
-              <span>内存: {(item.res.mem / 1024).toFixed(2)} G</span>
-              <span>GPU: {item.res.gpu} core</span>
-              <span>磁盘: {item.res.disk} G</span>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <div>
+        <Radio.Group onChange={onChange} value={value}>
+          {items.map(item => (
+            <Radio value={item.id} key={item.id}>
+              {item.name}
+            </Radio>
+          ))}
+        </Radio.Group>
+        <div className={styles.desc}>说明：{items[value - 1].desc}</div>
+      </div>
     )
   }
 
   renderHome() {
-    return (
-      <div className={styles.wrapper}>
-        {/* 资源面板 */}
-        <div className={styles.left}>
-          <ResourceLimit
-          // defaultValue={this.resourceLimit}
-          // onChange={this.handleChange}
-          // onError={this.handleError}
-          />
-        </div>
-        <div className={styles.right}>
-          <ClusterNodes />
-          <Panel title="选择应用模板">{this.renderRadios()}</Panel>
-        </div>
-      </div>
-    )
+    return <div className={styles.wrapper}></div>
   }
 
   renderFooter() {
-    const { currentStep } = this.state
-    const { okBtnText, isSubmitting } = this.props
-    const showCreate = this.steps.every((step, index) =>
-      step.required ? currentStep >= index : true
-    )
-
-    const showNext = currentStep < this.steps.length - 1
+    const { okBtnText } = this.props
+    const { isSubmitting, formData, reason, value } = this.state
+    const onClick = async () => {
+      // console.log(111)
+      const res = await applyRes({ formData, uid: 1, reason, type: value })
+      // console.log(
+      //   '🚀 ~ file: index.jsx ~ line 172 ~ ApplyDefault ~ onClick ~ res',
+      //   res
+      // )
+      if (res.code === 200) {
+        Notify.success({ content: `${t('Updated Successfully')}` })
+      }
+    }
 
     return (
       <div className={styles.footer}>
-        {currentStep ? (
-          <Button
-            type="default"
-            onClick={this.handlePrev}
-            data-test="modal-previous"
-          >
-            {t('Previous')}
-          </Button>
-        ) : null}
-        {showNext && (
-          <Button
-            type="control"
-            onClick={this.handleNext}
-            // disabled={!isEmpty(subRoute)}
-            data-test="modal-next"
-          >
-            {t('Next')}
-          </Button>
-        )}
-        {showCreate && (
-          <Button
-            type="control"
-            // onClick={this.handleCreate}
-            loading={isSubmitting}
-            // disabled={isSubmitting || !isEmpty(subRoute)}
-            data-test="modal-create"
-          >
-            {okBtnText || '确认申请'}
-          </Button>
-        )}
+        <Button
+          type="control"
+          // onClick={this.handleCreate}
+          loading={isSubmitting}
+          // disabled={isSubmitting || !isEmpty(subRoute)}
+          data-test="modal-create"
+          onClick={onClick}
+        >
+          {okBtnText || '确认申请'}
+        </Button>
       </div>
     )
   }
 
-  // 应用列表
-  renderApps() {
+  renderRecommend() {
+    const rowSelection = {
+      onChange: (selectedRowKeys, selectedRows) => {
+        // console.log(
+        //   `selectedRowKeys: ${selectedRowKeys}`,
+        //   'selectedRows: ',
+        //   selectedRows
+        // )
+        const { formData } = this.state
+        this.setState({
+          formData: {
+            ...formData,
+            ...selectedRows[0],
+          },
+        })
+      },
+    }
+
+    const items = [
+      {
+        id: 1,
+        name: 'tensorflow普通型',
+        cpu: 8,
+        mem: 48,
+        gpu: 1,
+        disk: 200,
+      },
+      {
+        id: 2,
+        name: 'tensorflow增强型',
+        cpu: 16,
+        mem: 64,
+        gpu: 2,
+        disk: 400,
+      },
+      {
+        id: 3,
+        name: 'tensorflow至强型',
+        cpu: 32,
+        mem: 128,
+        gpu: 3,
+        disk: 600,
+      },
+      {
+        id: 4,
+        name: 'torch普通型',
+        cpu: 8,
+        mem: 48,
+        gpu: 1,
+        disk: 100,
+      },
+      {
+        id: 5,
+        name: 'mysql普通型',
+        cpu: 2,
+        mem: 8,
+        gpu: 0,
+        disk: 100,
+      },
+      {
+        id: 6,
+        name: 'mysql增强型',
+        cpu: 4,
+        mem: 16,
+        gpu: 0,
+        disk: 200,
+      },
+      {
+        id: 7,
+        name: 'mysql高主频型',
+        cpu: 8,
+        mem: 32,
+        gpu: 0,
+        disk: 200,
+      },
+      {
+        id: 8,
+        name: 'tomcat普通型',
+        cpu: 2,
+        mem: 8,
+        gpu: 0,
+        disk: 100,
+      },
+      {
+        id: 9,
+        name: 'tomcat增强型',
+        cpu: 4,
+        mem: 16,
+        gpu: 0,
+        disk: 200,
+      },
+      {
+        id: 10,
+        name: 'tomcat高主频型',
+        cpu: 8,
+        mem: 32,
+        gpu: 0,
+        disk: 200,
+      },
+    ]
+    const columns = [
+      {
+        title: '推荐配置',
+        dataIndex: 'name',
+      },
+      {
+        title: 'vCPU',
+        dataIndex: 'cpu',
+        render: item => `${item} vCPU`,
+      },
+      {
+        title: '内存',
+        dataIndex: 'mem',
+        render: item => `${item} GiB`,
+      },
+      {
+        title: 'vGPU',
+        dataIndex: 'gpu',
+        render: item => `${item} vGPU`,
+      },
+      {
+        title: '磁盘',
+        dataIndex: 'disk',
+        render: item => `${item} GiB`,
+      },
+    ]
     return (
-      <div>
-        <Apps {...this.props} />
-      </div>
+      <Table
+        bordered={true}
+        rowKey="id"
+        rowSelection={{
+          type: 'radio',
+          ...rowSelection,
+        }}
+        columns={columns}
+        dataSource={items}
+        pagination={{ position: ['none', 'none'] }}
+        scroll={{ y: 320 }}
+      />
     )
   }
 
   renderApply() {
-    return <div>apply</div>
+    const { cpuOptions, memOptions, gpuOptions, formData } = this.state
+    const handleChange = (e, type) => {
+      this.setState({
+        formData: {
+          ...formData,
+          [type]: e,
+        },
+      })
+    }
+    return (
+      <Panel title="资源选择">
+        <div className={styles.flex}>
+          {/* panel */}
+          <div className={styles.wrapper}>
+            <div>
+              <span>CPU：</span>
+              <Select
+                placeholder="选择 vCPU"
+                style={{ width: 120 }}
+                allowClear
+                onChange={e => handleChange(e, 'cpu')}
+                value={formData.cpu}
+              >
+                {cpuOptions.map(item => {
+                  return (
+                    <Option value={item} key={item}>
+                      {item} vCPU
+                    </Option>
+                  )
+                })}
+              </Select>
+            </div>
+            <div>
+              <span>内存：</span>
+              <Select
+                placeholder="选择内存"
+                style={{ width: 120 }}
+                allowClear
+                onChange={e => handleChange(e, 'mem')}
+                value={formData.mem}
+              >
+                {memOptions.map(item => {
+                  return (
+                    <Option value={item} key={item}>
+                      {item} GiB
+                    </Option>
+                  )
+                })}
+              </Select>
+            </div>
+            <div>
+              <span>GPU：</span>
+              <Select
+                placeholder="选择GPU"
+                style={{ width: 120 }}
+                allowClear
+                onChange={e => handleChange(e, 'gpu')}
+                value={formData.gpu}
+              >
+                {gpuOptions.map(item => {
+                  return (
+                    <Option key={item} value={item}>
+                      {item > 0 ? `${item}vGPU` : '不需要'}
+                    </Option>
+                  )
+                })}
+              </Select>
+            </div>
+            <div>
+              <span>磁盘：</span>
+              <InputNumber
+                min={1}
+                max={100000}
+                defaultValue={40}
+                onChange={e => handleChange(e, 'disk')}
+                value={formData.disk}
+              />
+              &nbsp;GiB
+            </div>
+          </div>
+          {/* 推荐区域 */}
+          <div className="recommend">{this.renderRecommend()}</div>
+        </div>
+      </Panel>
+    )
   }
 
-  renderSwitch() {
-    const { currentStep } = this.state
-    let result
-    switch (currentStep) {
-      case 0:
-        result = this.renderHome()
-        break
-      case 1:
-        result = this.renderApps()
-        break
-      case 2:
-        result = this.renderApply()
-        break
-      default:
-        result = this.renderHome()
-        break
+  renderReasonArea() {
+    const { reason } = this.state
+    const onChange = e => {
+      this.setState({
+        reason: e.target.value,
+      })
     }
-    return result
+
+    return (
+      <Panel title="申请说明">
+        <TextArea
+          rows={4}
+          placeholder="请说明申请的资源的事项..."
+          value={reason}
+          onChange={onChange}
+        ></TextArea>
+      </Panel>
+    )
   }
 
   render() {
@@ -280,12 +453,22 @@ export default class ApplyDefault extends React.Component {
       description: '需要有足够的资源配额，才能使用容器平台创建应用。',
       module: 'review',
     }
+    const onClickAppItem = app => {
+      // eslint-disable-next-line no-console
+      console.log(app)
+    }
+
     return (
       <div>
         <Banner {...bannerProps} tips={this.tips} />
-        {/* 进度条 */}
-        {this.renderSteps()}
-        {this.renderSwitch()}
+        {this.renderApply()}
+        <Panel title="选择部署方式">{this.renderRadios()}</Panel>
+        {/* 应用列表 */}
+        <Panel title="选择应用模板">
+          <Apps {...this.props} onClickAppItem={onClickAppItem} />
+        </Panel>
+        {/* 申请原因 */}
+        {this.renderReasonArea()}
         {/* 底部操作按钮 */}
         {this.renderFooter()}
       </div>

@@ -1,13 +1,13 @@
 @import '~scss/variables';
 
-$content-width: 1258px;
+$content-width: 100%;
 $toolbar-height: 52px;
 // $category-width: 193px;
 $category-width: 0;
 
 %centerItem {
   width: 100vw;
-  padding: 0 24px;
+  padding: 0 10px;
   @media (max-width: 768px) {
     width: 1024px;
   }
@@ -26,7 +26,7 @@ $category-width: 0;
 
     .apps {
       position: relative;
-      margin-left: $category-width + 20px;
+      // margin-left: $category-width + 20px;
       @media (max-width: 768px) {
         margin-left: $category-width + 20px;
       }
