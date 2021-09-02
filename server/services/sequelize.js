@@ -1,6 +1,7 @@
 /* eslint-disable prefer-rest-params */
 const { Sequelize } = require('sequelize')
 const SequelizeModel = require('sequelize/lib/model')
+const mysql2 = require('mysql2')
 
 const orgFindAll = SequelizeModel.findAll
 const orgCreate = SequelizeModel.create
@@ -27,6 +28,7 @@ const sequelize = ({ db, user, password, host, port }) => {
     host,
     port,
     dialect: 'mysql',
+    dialectModule: mysql2,
     logging: false, // 关闭日志
     typeValidation: true,
     timezone: '+08:00',

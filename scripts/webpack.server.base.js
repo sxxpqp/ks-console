@@ -31,6 +31,9 @@ const config = {
       webpack: 'webpack',
       'koa-webpack-middleware': 'koa-webpack-middleware',
     },
+    {
+      formidable: 'commonjs formidable',
+    },
   ], // in order to ignore all modules in node_modules folder
   resolve: {
     // 添加server的alias配置
