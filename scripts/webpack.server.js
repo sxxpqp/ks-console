@@ -7,9 +7,6 @@ const baseConfig = require('./webpack.server.base')
 
 const config = merge(baseConfig, {
   mode: 'production',
-  module: {
-    rules: [],
-  },
   plugins: [
     new webpack.DefinePlugin({
       'process.env.BROWSER': false,

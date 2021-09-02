@@ -20,6 +20,7 @@ export default class ApplyDefault extends React.Component {
     super(props)
 
     this.state = {
+      key: [],
       value: 1,
       formData: {
         cpu: null,
@@ -28,7 +29,6 @@ export default class ApplyDefault extends React.Component {
         disk: 40,
       },
       isSubmitting: false,
-      cpuChoose: '',
       cpuOptions: [
         1,
         2,
@@ -160,22 +160,35 @@ export default class ApplyDefault extends React.Component {
     )
   }
 
-  renderHome() {
-    return <div className={styles.wrapper}></div>
-  }
-
   renderFooter() {
     const { okBtnText } = this.props
     const { isSubmitting, formData, reason, value } = this.state
     const onClick = async () => {
       // console.log(111)
-      const res = await applyRes({ formData, uid: 1, reason, type: value })
+      const { status, data } = await applyRes({
+        formData,
+        uid: 1,
+        reason,
+        type: value,
+      })
       // console.log(
       //   '🚀 ~ file: index.jsx ~ line 172 ~ ApplyDefault ~ onClick ~ res',
-      //   res
+      //   data,
+      //   Status
       // )
-      if (res.code === 200) {
-        Notify.success({ content: `${t('Updated Successfully')}` })
+      if (status === 200 && data.code) {
+        Notify.success({ content: `申请成功` })
+        this.setState({
+          value: 1,
+          formData: {
+            cpu: null,
+            gpu: null,
+            mem: null,
+            disk: 40,
+          },
+          reason: '',
+          key: [],
+        })
       }
     }
 
@@ -196,6 +209,7 @@ export default class ApplyDefault extends React.Component {
   }
 
   renderRecommend() {
+    const { key } = this.state
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
         // console.log(
@@ -205,6 +219,7 @@ export default class ApplyDefault extends React.Component {
         // )
         const { formData } = this.state
         this.setState({
+          key: selectedRowKeys,
           formData: {
             ...formData,
             ...selectedRows[0],
@@ -333,6 +348,7 @@ export default class ApplyDefault extends React.Component {
         dataSource={items}
         pagination={{ position: ['none', 'none'] }}
         scroll={{ y: 320 }}
+        defaultSelectedRowKeys={key}
       />
     )
   }

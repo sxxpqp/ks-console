@@ -25,6 +25,17 @@
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"],
       "type": "pwa-node"
+    },
+    {
+      "name": "Debug Webpack via NPM",
+      "request": "launch",
+      "runtimeArgs": ["run-script", "build:server"],
+      "runtimeVersion": "12.22.1",
+      "runtimeExecutable": "npm",
+      "internalConsoleOptions": "neverOpen",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node"
     }
   ]
 }
