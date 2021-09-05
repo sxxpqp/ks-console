@@ -10,12 +10,12 @@ import { stringify } from 'qs'
 import styles from './index.scss'
 
 export default class AppList extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      current: '',
-    }
-  }
+  // constructor(props) {
+  //   super(props)
+  //   this.state = {
+  //     current: '',
+  //   }
+  // }
 
   static propTypes = {
     apps: PropTypes.array,
@@ -46,6 +46,7 @@ export default class AppList extends React.Component {
       itemCls,
       disableLink,
       onClickAppItem,
+      defaultApp,
     } = this.props
     if (apps.length === 0 && !isLoading) {
       return (
@@ -58,10 +59,9 @@ export default class AppList extends React.Component {
 
     const query = stringify({ workspace, cluster, namespace })
 
-    const { current } = this.state
     const onClick = app => {
       this.setState({
-        current: app.app_id,
+        defaultApp: app.app_id,
       })
       onClickAppItem(app)
     }
@@ -77,7 +77,7 @@ export default class AppList extends React.Component {
                 className={classnames(
                   styles.appItem,
                   itemCls,
-                  current === app.app_id ? styles.active : ''
+                  defaultApp === app.app_id ? styles.active : ''
                 )}
                 onClick={() => onClick(app)}
               >

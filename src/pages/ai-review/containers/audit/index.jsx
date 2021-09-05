@@ -1,31 +1,66 @@
 import React from 'react'
-// import { inject, observer } from 'mobx-react'
+import { inject, observer, Provider } from 'mobx-react'
 import Banner from 'components/Cards/Banner'
-import { withDevOpsList, ListPage } from 'components/HOCs/withList'
+// import { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 import { toJS } from 'mobx'
 // import { cloneDeep, get, isEmpty, omit } from 'lodash'
-import { omit, isEmpty } from 'lodash'
-import PipelineStore from 'stores/devops/pipelines'
+import { omit } from 'lodash'
+import ApplyStore from 'stores/apply'
+import { parse } from 'qs'
+import dayjs from 'dayjs'
 
-// @inject('rootStore')
-// @observer
-@withDevOpsList({
-  store: new PipelineStore(),
-  module: 'pipelines',
-  name: 'DevOps Projects',
-  rowKey: 'name',
-})
+import { Button } from 'antd'
+
+import {
+  EyeOutlined,
+  AuditOutlined,
+  ExportOutlined,
+  // DeleteOutlined,
+} from '@ant-design/icons'
+import styles from './index.scss'
+
+@inject('rootStore')
+@observer
 export default class ApplyDefault extends React.Component {
   constructor(props) {
     super(props)
+    this.store = new ApplyStore()
+  }
 
-    this.state = {
-      currentStep: 0,
-      formData: {},
-    }
+  getData = params => {
+    this.props.store.fetchList({
+      ...this.props.match.params,
+      ...params,
+    })
+    // const tmp = {
+    //   ...omit(this.props.match.params, 'namespace'),
+    //   devops: 'default5tmqc',
+    // }
+    // this.props.rootStore.getRules(tmp)
+  }
 
-    this.formRef = React.createRef()
+  get routing() {
+    return this.props.rootStore.routing
+  }
+
+  // 请求列表
+  componentDidMount() {
+    this.unsubscribe = this.routing.history.subscribe(location => {
+      const params = parse(location.search.slice(1))
+      this.store.fetchList({
+        ...this.props.match.params,
+        filters: {
+          page: 1,
+          limit: 10,
+        },
+        ...params,
+      })
+    })
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe && this.unsubscribe()
   }
 
   // get tips() {
@@ -41,136 +76,92 @@ export default class ApplyDefault extends React.Component {
   //   ]
   // }
 
-  get itemActions() {
-    const { trigger, name } = this.props
-
-    return [
-      {
-        key: 'run',
-        icon: 'triangle-right',
-        text: t('Run'),
-        action: 'edit',
-        onClick: record => {
-          this.handleRun(record)
-        },
-      },
-      {
-        key: 'activity',
-        icon: 'calendar',
-        text: t('Activity'),
-        action: 'view',
-        onClick: record => {
-          this.props.rootStore.routing.push(
-            `${this.prefix}/${encodeURIComponent(record.name)}/activity`
-          )
-        },
-      },
-      {
-        key: 'edit',
-        icon: 'pen',
-        text: t('Edit'),
-        action: 'edit',
-        onClick: record => {
-          this.handleAdvanceEdit(record.name)
-        },
-      },
-      {
-        key: 'copy',
-        icon: 'copy',
-        text: t('Copy Pipeline'),
-        action: 'edit',
-        onClick: record => {
-          this.handleCopy(record.name)
-        },
-      },
-      {
-        key: 'delete',
-        icon: 'trash',
-        text: t('Delete'),
-        action: 'delete',
-        onClick: record => {
-          trigger('resource.delete', {
-            type: t(name),
-            resource: record.name,
-            detail: {
-              name: record.name,
-              devops: this.devops,
-              cluster: this.cluster,
-            },
-            success: () => {
-              this.handleFetch()
-            },
-          })
-        },
-      },
-    ]
-  }
-
   getColumns = () => [
     {
       title: '序号',
-      dataIndex: 'name',
-      width: '10%',
-      render: (name, record) => {
-        // const url = ''
-        const url = `/${this.workspace}/clusters/${this.cluster}/devops/${
-          this.devops
-        }/pipelines/${encodeURIComponent(record.name)}${
-          !isEmpty(record.scmSource) ? '/activity' : ''
-        }`
-
-        return <Avatar to={this.isRuning ? null : url} title={name} />
+      dataIndex: 'id',
+      width: '7%',
+      render: val => {
+        const { data, limit, page } = toJS(this.store.list)
+        // 计算val的index
+        // console.log(
+        //   '🚀 ~ file: index.jsx ~ line 88 ~ ApplyDefault ~ data',
+        //   data
+        // )
+        const index = data.findIndex(i => i.id === val)
+        return index + limit * (page - 1) + 1
       },
     },
-
     {
-      title: 'Cpu',
+      title: 'CPU',
       dataIndex: 'cpu',
-      width: '10%',
+      width: '7%',
       isHideable: true,
-      render: weatherScore => <Health score={weatherScore} />,
+      render: val => `${val}vCPU`,
     },
     {
-      title: '内存(Mi)',
+      title: '内存',
       dataIndex: 'mem',
-      width: '10%',
+      width: '7%',
       isHideable: true,
-      render: totalNumberOfBranches =>
-        totalNumberOfBranches === undefined ? '-' : totalNumberOfBranches,
+      render: val => `${val}GiB`,
     },
     {
       title: '磁盘',
       dataIndex: 'disk',
-      width: '10%',
+      width: '7%',
       isHideable: true,
-      render: totalNumberOfPullRequests =>
-        totalNumberOfPullRequests === undefined
-          ? '-'
-          : totalNumberOfPullRequests,
+      render: val => `${val}GiB`,
     },
     {
       title: 'GPU',
       dataIndex: 'gpu',
-      width: '10%',
+      width: '7%',
       isHideable: true,
+      render: val => `${val}vGPU`,
     },
     {
       title: '申请人',
-      dataIndex: 'creator',
-      width: '15%',
-      isHideable: true,
+      dataIndex: 'uid_user',
+      width: '10%',
+      render: obj => obj.name || '未知',
     },
     {
       title: '创建时间',
       dataIndex: 'created',
       width: '15%',
-      isHideable: true,
+      render: time => dayjs(time).format('YYYY年MM月DD hh:mm:ss'),
     },
     {
-      title: '详情',
-      dataIndex: 'more',
+      title: '事由',
+      dataIndex: 'reason',
+    },
+    {
+      title: '操作',
       width: '20%',
-      isHideable: true,
+      // eslint-disable-next-line no-unused-vars
+      render: (_, record) => {
+        return (
+          <div className={styles.btns}>
+            <Button type="text" size="small" style={{ color: '#096dd9' }}>
+              <EyeOutlined />
+              查看详情
+            </Button>
+            <Button type="text" size="small" style={{ color: '#389e0d' }}>
+              <AuditOutlined />
+              审批
+            </Button>
+            <Button type="text" size="small" danger>
+              <ExportOutlined />
+              驳回
+            </Button>
+            {/* <Button type="text" danger size="small">
+              <DeleteOutlined />
+              删除
+            </Button> */}
+          </div>
+        )
+      },
     },
   ]
 
@@ -182,16 +173,20 @@ export default class ApplyDefault extends React.Component {
     })
   }
 
+  handleFetch = (params, refresh) => {
+    this.routing.query(params, refresh)
+  }
+
   renderContent() {
     const {
-      data = [],
+      data,
       filters,
       isLoading,
       total,
       page,
       limit,
       selectedRowKeys,
-    } = toJS(this.props.store.list)
+    } = toJS(this.store.list)
 
     const isEmptyList = isLoading === false && total === 0
     const omitFilters = omit(filters, ['limit', 'page'])
@@ -219,7 +214,7 @@ export default class ApplyDefault extends React.Component {
 
     const defaultTableProps = {
       hideCustom: false,
-      onSelectRowKeys: this.props.store.setSelectRowKeys,
+      onSelectRowKeys: this.store.onSelectRowKeys,
       selectedRowKeys,
       selectActions: [
         {
@@ -252,18 +247,18 @@ export default class ApplyDefault extends React.Component {
 
     return (
       <Table
-        rowKey="name"
+        rowKey="id"
         data={data}
         columns={this.getColumns()}
         // filters={omitFilters}
         pagination={pagination}
         isLoading={isLoading}
         // isLoading={isLoading}
-        // onFetch={this.handleFetch}
+        onFetch={this.handleFetch}
         // onCreate={showCreate}
         searchType="name"
         tableActions={defaultTableProps}
-        itemActions={this.itemActions}
+        // itemActions={this.itemActions}
         enabledActions={this.enabledActions}
       />
     )
@@ -279,10 +274,10 @@ export default class ApplyDefault extends React.Component {
       module: 'review',
     }
     return (
-      <ListPage getData={this.getData} {...this.props}>
+      <Provider getData={this.getData} {...this.props}>
         <Banner {...bannerProps} />
         {this.renderContent()}
-      </ListPage>
+      </Provider>
     )
   }
 }

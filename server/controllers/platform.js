@@ -18,3 +18,27 @@ export const applyRes = async ctx => {
     data: res,
   }
 }
+
+export const getApply = async ctx => {
+  const params = ctx.query
+  const { limit, start } = params
+  const { resources, users } = global.models
+  const res = await resources.findAll({
+    order: [['created', 'desc']],
+    limit: parseInt(limit || 10, 10),
+    offset: parseInt(start || 0, 10),
+    include: [
+      {
+        model: users,
+        attributes: ['id', 'name'],
+        as: 'uid_user',
+      },
+    ],
+  })
+  const resCount = await resources.findAndCountAll({})
+  ctx.body = {
+    code: 200,
+    data: res,
+    total_count: resCount.count,
+  }
+}

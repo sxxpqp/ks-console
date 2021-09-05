@@ -149,7 +149,7 @@ export default class Home extends React.Component {
     const { list, allApps } = this.appStore
     const { isLoading, total } = list
     const { workspace, namespace, cluster } = this.queryParams
-    const { onClickAppItem } = this.props
+    const { onClickAppItem, defaultApp } = this.props
 
     return (
       <div className={styles.wrapper}>
@@ -168,6 +168,7 @@ export default class Home extends React.Component {
             namespace={namespace}
             cluster={cluster}
             onClickAppItem={onClickAppItem}
+            defaultApp={defaultApp}
             disableLink
           />
         </div>

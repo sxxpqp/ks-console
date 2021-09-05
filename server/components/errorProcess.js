@@ -33,7 +33,7 @@ module.exports = function(app) {
      *   ...
      */
     console.error(err)
-    global.logError.error(err)
+    app.logger.error(err)
   })
 
   // catch uncaught error
@@ -41,6 +41,5 @@ module.exports = function(app) {
     console.error(err)
     /* eslint-disable no-console */
     console.log('NOT exit...')
-    global.logApp(err)
   })
 }

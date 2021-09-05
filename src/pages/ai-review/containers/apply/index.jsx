@@ -21,6 +21,7 @@ export default class ApplyDefault extends React.Component {
 
     this.state = {
       key: [],
+      defaultApp: '',
       value: 1,
       formData: {
         cpu: null,
@@ -166,7 +167,7 @@ export default class ApplyDefault extends React.Component {
     const onClick = async () => {
       // console.log(111)
       const { status, data } = await applyRes({
-        formData,
+        ...formData,
         uid: 1,
         reason,
         type: value,
@@ -188,6 +189,7 @@ export default class ApplyDefault extends React.Component {
           },
           reason: '',
           key: [],
+          defaultApp: '',
         })
       }
     }
@@ -343,12 +345,12 @@ export default class ApplyDefault extends React.Component {
         rowSelection={{
           type: 'radio',
           ...rowSelection,
+          selectedRowKeys: key,
         }}
         columns={columns}
         dataSource={items}
         pagination={{ position: ['none', 'none'] }}
         scroll={{ y: 320 }}
-        defaultSelectedRowKeys={key}
       />
     )
   }
@@ -471,8 +473,12 @@ export default class ApplyDefault extends React.Component {
     }
     const onClickAppItem = app => {
       // eslint-disable-next-line no-console
-      console.log(app)
+      this.setState({
+        defaultApp: app.app_id,
+      })
     }
+
+    const { defaultApp } = this.state
 
     return (
       <div>
@@ -481,7 +487,11 @@ export default class ApplyDefault extends React.Component {
         <Panel title="选择部署方式">{this.renderRadios()}</Panel>
         {/* 应用列表 */}
         <Panel title="选择应用模板">
-          <Apps {...this.props} onClickAppItem={onClickAppItem} />
+          <Apps
+            {...this.props}
+            onClickAppItem={onClickAppItem}
+            defaultApp={defaultApp}
+          />
         </Panel>
         {/* 申请原因 */}
         {this.renderReasonArea()}

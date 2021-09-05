@@ -15,7 +15,7 @@ server:
         /assets: dist/assets
         /dist: dist
   db:
-    host: dev.toimc.com
+    host: test.bontor.cn
     port: 43005
     user: root
     password: 9igAUTJVnBwBQPpn
