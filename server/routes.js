@@ -30,7 +30,7 @@ const {
 } = require('./controllers/view')
 
 // platform
-const { applyRes, getApply } = require('./controllers/platform')
+const { applyRes, getApply, updateApply } = require('./controllers/platform')
 
 // const parseBody = convert(
 //   bodyParser({
@@ -72,6 +72,7 @@ router
   // ai-platform
   .post('/apply', applyRes)
   .get('/apply', getApply) // 获取审批资源
+  .put('/apply', updateApply) // 获取审批资源
 
   // page entry
   .all('*', renderView)

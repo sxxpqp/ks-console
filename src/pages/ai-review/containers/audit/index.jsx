@@ -10,7 +10,12 @@ import ApplyStore from 'stores/apply'
 import { parse } from 'qs'
 import dayjs from 'dayjs'
 
-import { Button } from 'antd'
+import { Button, Tag } from 'antd'
+import { Modal } from 'components/Base'
+import AuditModal from 'components/Modals/Audit'
+import DetailModal from 'components/Modals/AuditDetail'
+import { Notify } from '@kube-design/components'
+import { updateApply } from 'api/apply'
 
 import {
   EyeOutlined,
@@ -29,13 +34,17 @@ export default class ApplyDefault extends React.Component {
   }
 
   getData = params => {
-    this.props.store.fetchList({
+    this.store.fetchList({
       ...this.props.match.params,
+      filters: {
+        page: 1,
+        limit: 10,
+      },
       ...params,
     })
     // const tmp = {
     //   ...omit(this.props.match.params, 'namespace'),
-    //   devops: 'default5tmqc',
+    //   devops: 'ks-consolekkwfw',
     // }
     // this.props.rootStore.getRules(tmp)
   }
@@ -75,6 +84,67 @@ export default class ApplyDefault extends React.Component {
   //     },
   //   ]
   // }
+
+  // 驳回处理
+  handleRefuse(item) {
+    const modal = Modal.open({
+      onOk: async msg => {
+        // store.delete(detail).then(() => {
+        const res = await updateApply({
+          id: item.id,
+          msg,
+          status: 2, // 驳回
+        })
+        if (res.status === 200) {
+          Notify.success({ content: `驳回成功` })
+          this.getData()
+        } else {
+          Notify.error({ content: `驳回失败` })
+        }
+        Modal.close(modal)
+        // success && success()
+        // })
+      },
+      modal: AuditModal,
+      title: '确定驳回吗？',
+      desc: `确定驳回 ${item.uid_user.name} 的资源申请吗？`,
+      resource: `CPU:${item.cpu}vCPU, 内存:${item.mem}GiB, 磁盘:${item.disk}GiB, GPU:${item.gpu}vGPU`,
+      reason: item.reason,
+      // ...props,
+    })
+  }
+
+  // 查看详情
+  handleDetail(record) {
+    const modal = Modal.open({
+      onOk: async () => {
+        // store.delete(detail).then(() => {
+        Modal.close(modal)
+        // success && success()
+        // })
+      },
+      detail: record,
+      modal: DetailModal,
+      // ...props,
+    })
+  }
+
+  // 审批
+  handleApply(record) {
+    const modal = Modal.open({
+      onOk: async () => {
+        // store.delete(detail).then(() => {
+        Notify.success({ content: `审批成功` })
+        this.getData()
+        Modal.close(modal)
+        // success && success()
+        // })
+      },
+      detail: record,
+      modal: DetailModal,
+      // ...props,
+    })
+  }
 
   getColumns = () => [
     {
@@ -130,11 +200,27 @@ export default class ApplyDefault extends React.Component {
       title: '创建时间',
       dataIndex: 'created',
       width: '15%',
-      render: time => dayjs(time).format('YYYY年MM月DD hh:mm:ss'),
+      render: time => dayjs(time).format('YYYY-MM-DD hh:mm:ss'),
     },
     {
       title: '事由',
       dataIndex: 'reason',
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      render: val => {
+        switch (val) {
+          case 0:
+            return <Tag color="processing">未审核</Tag>
+          case 1:
+            return <Tag color="success">已审核</Tag>
+          case 2:
+            return <Tag color="error">已驳回</Tag>
+          default:
+            return <Tag color="processing">未审核</Tag>
+        }
+      },
     },
     {
       title: '操作',
@@ -143,18 +229,38 @@ export default class ApplyDefault extends React.Component {
       render: (_, record) => {
         return (
           <div className={styles.btns}>
-            <Button type="text" size="small" style={{ color: '#096dd9' }}>
-              <EyeOutlined />
-              查看详情
-            </Button>
-            <Button type="text" size="small" style={{ color: '#389e0d' }}>
-              <AuditOutlined />
-              审批
-            </Button>
-            <Button type="text" size="small" danger>
-              <ExportOutlined />
-              驳回
-            </Button>
+            {record.status === 0 ? (
+              <>
+                <Button
+                  type="text"
+                  size="small"
+                  style={{ color: '#389e0d' }}
+                  onClick={() => this.handleApply(record)}
+                >
+                  <AuditOutlined />
+                  审批
+                </Button>
+                <Button
+                  type="text"
+                  size="small"
+                  danger
+                  onClick={() => this.handleRefuse(record)}
+                >
+                  <ExportOutlined />
+                  驳回
+                </Button>
+              </>
+            ) : (
+              <Button
+                type="text"
+                size="small"
+                style={{ color: '#096dd9' }}
+                onClick={() => this.handleDetail(record)}
+              >
+                <EyeOutlined />
+                查看详情
+              </Button>
+            )}
             {/* <Button type="text" danger size="small">
               <DeleteOutlined />
               删除

@@ -64,7 +64,7 @@ class ProjectLayout extends Component {
     }
     // const tmp = {
     //   ...omit(params, 'namespace'),
-    //   devops: 'default5tmqc',
+    //   devops: 'ks-consolekkwfw',
     // }
     // console.log(
     //   '🚀 ~ file: App.jsx ~ line 80 ~ ProjectLayout ~ init ~ tmp',

@@ -39,7 +39,7 @@ export default class PipelinesList extends React.Component {
   componentDidMount() {
     const tmp = {
       ...omit(this.props.match.params, 'namespace'),
-      devops: 'default5tmqc',
+      devops: 'ks-consolekkwfw',
     }
     this.props.rootStore.getRules(tmp)
   }
@@ -190,7 +190,7 @@ export default class PipelinesList extends React.Component {
     })
     // const tmp = {
     //   ...omit(this.props.match.params, 'namespace'),
-    //   devops: 'default5tmqc',
+    //   devops: 'ks-consolekkwfw',
     // }
     // this.props.rootStore.getRules(tmp)
   }
@@ -302,7 +302,7 @@ export default class PipelinesList extends React.Component {
       dataIndex: 'name',
       width: '20%',
       render: (name, record) => {
-        // /harbor/clusters/default/projects/harbor/devops/default5tmqc/pipelines
+        // /harbor/clusters/default/projects/harbor/devops/ks-consolekkwfw/pipelines
         // const url = `/${this.workspace}/clusters/${this.cluster}/projects/${
         //   this.workspace
         // }/devops/${this.devops}/pipelines/${encodeURIComponent(record.name)}${

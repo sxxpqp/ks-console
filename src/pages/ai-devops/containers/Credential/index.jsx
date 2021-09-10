@@ -49,7 +49,7 @@ class Credential extends React.Component {
   // componentDidUpdate() {
   //   const tmp = {
   //     ...omit(this.props.match.params, 'namespace'),
-  //     devops: 'default5tmqc',
+  //     devops: 'ks-consolekkwfw',
   //   }
   //   this.props.rootStore.getRules(tmp)
   // }

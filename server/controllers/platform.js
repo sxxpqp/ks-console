@@ -1,3 +1,4 @@
+// 申请资源
 export const applyRes = async ctx => {
   const { body } = ctx.request
   const { resources } = global.models
@@ -19,6 +20,7 @@ export const applyRes = async ctx => {
   }
 }
 
+// 获取申请资源列表
 export const getApply = async ctx => {
   const params = ctx.query
   const { limit, start } = params
@@ -40,5 +42,40 @@ export const getApply = async ctx => {
     code: 200,
     data: res,
     total_count: resCount.count,
+  }
+}
+
+// 审核
+export const updateApply = async ctx => {
+  const { resources } = global.models
+  const { body } = ctx.request
+  const res = await resources.update(
+    {
+      // 0-未审核，1-已审核，2-驳回
+      status: body.status || 1,
+      msg: body.msg,
+      // todo
+      auditorId: 1,
+    },
+    {
+      where: {
+        id: body.id,
+      },
+    }
+  )
+  ctx.body = {
+    code: 200,
+    data: res,
+  }
+}
+
+// 获取节点列表
+export const getNodes = async ctx => {
+  // 1.获取用户组织
+  // 2.获取nodes列表
+  // 3.获取nodes资源应用占用情况 审核通过
+  // 4.返回列表
+  ctx.body = {
+    code: 200,
   }
 }
