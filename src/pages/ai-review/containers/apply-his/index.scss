@@ -1,0 +1,8 @@
+@import '~scss/variables';
+@import '~scss/mixins';
+
+.btns {
+  :global(.ant-btn) {
+    font-size: 12px;
+  }
+}

@@ -96,13 +96,16 @@ class ProjectLayout extends Component {
 
   render() {
     const { initializing } = this.store
-
     if (initializing) {
       return <Loading className="ks-page-loading" />
     }
 
     return (
-      <Provider projectStore={this.store} devopsStore={this.devopsStore}>
+      <Provider
+        projectStore={this.store}
+        devopsStore={this.devopsStore}
+        clusterStore={this.clusterStore}
+      >
         {renderRoutes(routes)}
       </Provider>
     )

@@ -540,6 +540,7 @@ module.exports = {
   DockerManageMent: '容器服务管理',
   AppTemplate: '模板仓库管理',
   ApplyResource: '容器资源申请',
+  ApplyHis: '资源申请历史',
   AppApproval: '容器资源审批',
   LifeCircle: '生命周期管理',
 }

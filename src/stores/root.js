@@ -20,6 +20,9 @@ export default class RootStore {
   @observable
   oauthServers = []
 
+  @observable
+  myClusters = {}
+
   constructor() {
     this.websocket = new WebSocketStore()
 
@@ -78,6 +81,14 @@ export default class RootStore {
 
   @action
   getRules(params) {
-    return this.user.fetchRules({ ...params, name: globals.user.username })
+    return this.user.fetchRules({
+      ...params,
+      name: globals.user.username,
+    })
+  }
+
+  @action
+  saveClusters(params) {
+    this.myClusters = params
   }
 }

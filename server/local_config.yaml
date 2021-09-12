@@ -119,6 +119,7 @@ client:
           children:
             - { name: template, title: AppTemplate, icon: application }
             - { name: apply, title: ApplyResource, icon: application }
+            - { name: applyhis, title: ApplyHis, icon: application }
             - { name: audit, title: AppApproval, icon: application }
             - { name: applications, title: Applications, icon: application }
             - { name: services, title: DockerService }
@@ -135,7 +136,7 @@ client:
           title: Workloads
           icon: ClusterOutlined
           children:
-            - name: workloads
+            - name: workloadsPods
               title: LifeCircle
               tabs:
                 - { name: deployments, title: Deployments }
@@ -184,10 +185,23 @@ client:
             authKey: grayscale-release,
             clusterModule: servicemesh,
           }
-        - name: monitoring
+        # 监控告警
+        - name: monitoring-alerting
           title: Monitoring & Alerting
           icon: DashboardOutlined
           children:
+            - {
+                name: monitor-cluster,
+                title: Cluster Status,
+                icon: linechart,
+                authKey: monitoring,
+              }
+            - {
+                name: monitor-resource,
+                title: Application Resources,
+                icon: linechart,
+                authKey: monitoring,
+              }
             - {
                 name: alerts,
                 title: Alerting Messages,
@@ -202,11 +216,12 @@ client:
                 clusterModule: alerting,
                 requiredClusterVersion: v3.1.0,
               }
-            - {
-                name: custom-monitoring,
-                title: Custom Monitoring,
-                requiredClusterVersion: v3.1.0,
-              }
+            - { name: nodes, title: Cluster Nodes }
+            # - {
+            #     name: custom-monitoring,
+            #     title: Custom Monitoring,
+            #     requiredClusterVersion: v3.1.0,
+            #   }
         - name: project-settings
           title: Project Settings
           icon: SettingOutlined
@@ -225,45 +240,6 @@ client:
             #     title: Advanced Settings,
             #     authKey: "project-settings",
             #   }
-
-  # federatedProjectNavs:
-  #   - cate: "project"
-  #     items:
-  #       - { name: overview, title: Overview, icon: dashboard, skipAuth: true }
-  #       - name: app-workloads
-  #         title: Application Workloads
-  #         icon: appcenter
-  #         children:
-  #           - { name: applications, title: Applications, icon: application }
-  #           - { name: services, title: Services }
-  #           - name: workloads
-  #             title: Workloads
-  #             tabs:
-  #               - { name: deployments, title: Deployments }
-  #               - { name: statefulsets, title: StatefulSets }
-  #           - { name: ingresses, title: Routes }
-  #       - { name: volumes, title: Volumes, icon: storage }
-  #       - name: config
-  #         title: Configuration Center
-  #         icon: hammer
-  #         children:
-  #           - { name: secrets, title: Secrets }
-  #           - { name: configmaps, title: ConfigMaps }
-  #       - name: settings
-  #         title: Project Settings
-  #         icon: cogwheel
-  #         children:
-  #           - { name: base-info, title: Basic Info, skipAuth: true }
-  #           - {
-  #               name: quota,
-  #               title: Quota Management,
-  #               authKey: "project-settings",
-  #             }
-  #           - {
-  #               name: advanced,
-  #               title: Advanced Settings,
-  #               authKey: "project-settings",
-  #             }
 
   # devops page navigations
   devopsNavs:
@@ -334,53 +310,6 @@ client:
     # - title:
     #   description:
     #   link:
-
-  # docs url for resources
-  resourceDocs:
-    # Project User Guide
-    applications: /project-user-guide/application/app-template/
-    composingapps: /project-user-guide/application/compose-app/
-    deployments: /project-user-guide/application-workloads/deployments/
-    statefulsets: /project-user-guide/application-workloads/statefulsets/
-    daemonsets: /project-user-guide/application-workloads/daemonsets/
-    jobs: /project-user-guide/application-workloads/jobs/
-    cronjobs: /project-user-guide/application-workloads/cronjobs/
-    services: /project-user-guide/application-workloads/services/
-    ingresses: /project-user-guide/application-workloads/routes/
-    s2i_template: /project-user-guide/image-builder/s2i-templates/
-    volumes: /project-user-guide/storage/volumes/
-    secrets: /project-user-guide/configuration/secrets/
-    configmaps: /project-user-guide/configuration/configmaps/
-    serviceaccounts: /project-user-guide/configuration/serviceaccounts/
-    imageregistry: /project-user-guide/configuration/image-registry/
-    grayrelease: /project-user-guide/grayscale-release/overview/
-
-    # Project Administration
-    internet: /project-administration/project-gateway/
-    project_base_info: /workspace-administration/project-quotas/
-    project_roles: /project-administration/role-and-member-management/
-    project_members: /project-administration/role-and-member-management/
-
-    # Cluster Administrator Guide
-    nodes: /cluster-administration/nodes/
-    storageclasses: /cluster-administration/persistent-volume-and-storage-class/
-
-    # DevOps User Guide
-    pipelines: /devops-user-guide/how-to-use/pipeline-settings/
-    cridentials: /devops-user-guide/how-to-use/credential-management/
-
-    # Developer Guide
-    helm_specification: /application-store/app-developer-guide/helm-specification/
-    helm_developer_guide: /application-store/app-developer-guide/helm-developer-guide/
-
-    # Custom Console
-    custom_console: /cluster-administration/platform-settings/customize-basic-information/
-
-    # Kube Config
-    kube_config: /multicluster-management/enable-multicluster/retrieve-kubeconfig/
-  # devops:
-  #  replace sonarqube link to customize url origin, default is useless
-  # sonarqubeURL: http://139.123.123.123:8080
 
   #notification management
   notification:

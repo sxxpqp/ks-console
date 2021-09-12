@@ -2,8 +2,13 @@ import { getIndexRoute } from 'utils/router.config'
 
 import PipelinesList from 'ai-devops/containers/Pipelines/PipelinesList'
 import Credential from 'ai-devops/containers/Credential'
+// 容器资源申请
 import Apply from 'ai-review/containers/apply'
+// 容器资源申请历史
+import ApplyHis from 'ai-review/containers/apply-his'
+// 容器资源审批
 import Audit from 'ai-review/containers/audit'
+import monitorRoutes from 'ai-clusters/routes'
 import ListLayout from '../containers/Base/List'
 
 import Overview from '../containers/Overview'
@@ -46,6 +51,7 @@ export default [
     component: ListLayout,
     routes: [
       ...grayReleaseRoutes,
+      ...monitorRoutes,
       getIndexRoute({
         path: `${PATH}/devops/:devops`,
         to: `${PATH}/devops/:devops/pipelines`,
@@ -56,6 +62,12 @@ export default [
         // 申请
         path: `${PATH}/apply`,
         component: Apply,
+        exact: true,
+      },
+      {
+        // 申请历史
+        path: `${PATH}/applyhis`,
+        component: ApplyHis,
         exact: true,
       },
       {
@@ -170,7 +182,7 @@ export default [
         link: 'http://test.bontor.cn:30000',
       },
       getIndexRoute({
-        path: `${PATH}/workloads`,
+        path: `${PATH}/workloadsPods`,
         to: `${PATH}/deployments`,
         exact: true,
       }),

@@ -8,11 +8,14 @@ import { getDisplayName, getLocalTime } from 'utils'
 import { getNodeRoles, getNodeStatus } from 'utils/node'
 import { trigger } from 'utils/action'
 import NodeStore from 'stores/node'
+// import qs from 'qs'
 
 import DetailPage from 'clusters/containers/Base/Detail'
 import { Status } from 'components/Base'
 
 import routes from './routes'
+
+import './index.scss'
 
 @inject('rootStore')
 @observer
@@ -21,6 +24,10 @@ export default class NodeDetail extends React.Component {
   store = new NodeStore()
 
   componentDidMount() {
+    // this.props.rootStore.saveClusters({
+    //   ...this.props.match.params,
+    //   ...this.queryParams,
+    // })
     this.fetchData()
   }
 
@@ -32,9 +39,19 @@ export default class NodeDetail extends React.Component {
     return 'Node'
   }
 
+  get routing() {
+    return this.props.rootStore.routing
+  }
+
+  // get queryParams() {
+  //   return qs.parse(location.search.slice(1))
+  // }
+
   get listUrl() {
-    const { cluster } = this.props.match.params
-    return `/clusters/${cluster}/nodes`
+    // /test/clusters/default/projects/test/nodes
+    const { cluster, workspace, namespace } = this.props.rootStore.myClusters
+    const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}`
+    return `${PATH}/nodes`
   }
 
   fetchData = () => {

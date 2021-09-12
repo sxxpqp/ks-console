@@ -1,3 +1,5 @@
+const { omit } = require('lodash')
+
 // 申请资源
 export const applyRes = async ctx => {
   const { body } = ctx.request
@@ -71,11 +73,20 @@ export const updateApply = async ctx => {
 
 // 获取节点列表
 export const getNodes = async ctx => {
-  // 1.获取用户组织
+  // todo
+  // eslint-disable-next-line no-unused-vars
+  const { body } = ctx.request
+  // 1.获取用户组织, 节点id
   // 2.获取nodes列表
+  const { nodes } = global.models
+  const res = await nodes.findAll({})
+  const result = res.map(item =>
+    omit(item.dataValues, ['password', 'sshPort', 'remark', 'cert'])
+  )
   // 3.获取nodes资源应用占用情况 审核通过
   // 4.返回列表
   ctx.body = {
     code: 200,
+    data: result,
   }
 }

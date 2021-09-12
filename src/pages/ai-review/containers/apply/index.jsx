@@ -8,6 +8,7 @@ import { Select, InputNumber, Radio, Input, Table } from 'antd'
 // import { Radio, Space } from 'antd'
 
 import { applyRes } from 'api/apply'
+// import { Link } from 'react-router-dom'
 import styles from './index.scss'
 
 const { TextArea } = Input
@@ -164,6 +165,8 @@ export default class ApplyDefault extends React.Component {
   renderFooter() {
     const { okBtnText } = this.props
     const { isSubmitting, formData, reason, value } = this.state
+
+    // 确定申请回调
     const onClick = async () => {
       // console.log(111)
       const { status, data } = await applyRes({
@@ -194,8 +197,21 @@ export default class ApplyDefault extends React.Component {
       }
     }
 
+    // 查看历史
+
+    const showApplyHis = () => {
+      const { history } = this.props
+      const { cluster, workspace, namespace } = this.props.match.params
+
+      const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}/applyhis`
+      history.push(PATH)
+    }
+
     return (
       <div className={styles.footer}>
+        <Button type="default" data-test="modal-create" onClick={showApplyHis}>
+          查看历史
+        </Button>
         <Button
           type="control"
           // onClick={this.handleCreate}

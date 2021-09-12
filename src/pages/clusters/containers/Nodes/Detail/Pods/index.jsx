@@ -1,6 +1,7 @@
 import React from 'react'
 import { observer, inject } from 'mobx-react'
 import PodsCard from 'components/Cards/Pods'
+import styles from './index.scss'
 
 @inject('detailStore')
 @observer
@@ -14,6 +15,7 @@ export default class Pods extends React.Component {
         detail={this.store.detail}
         limit={6}
         prefix={`/clusters/${cluster}`}
+        className={styles.wrapper}
       />
     )
   }

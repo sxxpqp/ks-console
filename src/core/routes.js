@@ -11,9 +11,9 @@ const AiPlatform = lazy(() =>
 const Console = lazy(() =>
   import(/* webpackChunkName: "console" */ 'console/App.jsx')
 )
-// const Clusters = lazy(() =>
-//   import(/* webpackChunkName: "clusters" */ 'clusters/App.jsx')
-// )
+const Clusters = lazy(() =>
+  import(/* webpackChunkName: "clusters" */ 'clusters/App')
+)
 // const AccessControl = lazy(() =>
 //   import(/* webpackChunkName: "access" */ 'access/App.jsx')
 // )
@@ -41,10 +41,10 @@ export default [
   {
     component: BaseLayout,
     routes: [
-      // {
-      //   path: '/clusters',
-      //   component: Clusters,
-      // },
+      {
+        path: '/clusters',
+        component: Clusters,
+      },
       // {
       //   path: '/access',
       //   component: AccessControl,

@@ -52,6 +52,10 @@ class ProjectLayout extends Component {
       workspace,
       project: namespace,
     })
+    // console.log(
+    //   '🚀 ~ file: index.jsx ~ line 55 ~ ProjectLayout ~ render ~ navs',
+    //   navs
+    // )
     // const logo = globals.config.logo || '/assets/logo.svg'
 
     return (

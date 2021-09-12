@@ -30,7 +30,12 @@ const {
 } = require('./controllers/view')
 
 // platform
-const { applyRes, getApply, updateApply } = require('./controllers/platform')
+const {
+  applyRes,
+  getApply,
+  updateApply,
+  getNodes,
+} = require('./controllers/platform')
 
 // const parseBody = convert(
 //   bodyParser({
@@ -73,6 +78,8 @@ router
   .post('/apply', applyRes)
   .get('/apply', getApply) // 获取审批资源
   .put('/apply', updateApply) // 获取审批资源
+
+  .get('/nodes', getNodes) // 获取节点资源
 
   // page entry
   .all('*', renderView)

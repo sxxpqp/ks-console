@@ -1,0 +1,9 @@
+body {
+  background: none;
+}
+
+a {
+  &:hover {
+    color: #55bc8a !important;
+  }
+}
