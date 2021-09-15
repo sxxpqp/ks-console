@@ -10,6 +10,8 @@ import ApplyHis from 'ai-review/containers/apply-his'
 import Audit from 'ai-review/containers/audit'
 import monitorRoutes from 'ai-clusters/routes'
 import appRoutes from 'ai-apps/routes'
+
+import StoreManage from 'ai-apps/containers/StoreManage'
 import grayReleaseRoutes from './grayrelease'
 import ListLayout from '../containers/Base/List'
 
@@ -39,7 +41,6 @@ import AlertingPolicies from '../containers/Alerting/Policies'
 import AlertingMessages from '../containers/Alerting/Messages'
 import CustomMonitoring from '../containers/CustomMonitoring'
 import NetworkPolicies from '../containers/Network/Policies'
-import StoreManage from '../containers/StoreManage'
 
 import getDetailPath from './detail'
 

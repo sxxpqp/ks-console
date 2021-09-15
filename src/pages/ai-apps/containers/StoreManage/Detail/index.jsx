@@ -47,7 +47,10 @@ export default class AppDetail extends React.Component {
   }
 
   get listUrl() {
-    return '/apps-manage/store'
+    const { workspace, cluster, namespace } = this.props.rootStore.myClusters
+    const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}`
+    return `${PATH}/template`
+    // return '/apps-manage/store'
   }
 
   get routing() {

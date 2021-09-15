@@ -10,6 +10,7 @@ import { getLocalTime } from 'utils'
 
 import { getAppCategoryNames, transferAppStatus } from 'utils/app'
 import AppStore from 'stores/openpitrix/store'
+import { toJS } from 'mobx'
 
 @withList({
   store: new AppStore(),
@@ -18,6 +19,15 @@ import AppStore from 'stores/openpitrix/store'
   rowKey: 'app_id',
 })
 export default class Store extends React.Component {
+  constructor(props) {
+    super(props)
+    this.store = this.props.rootStore
+  }
+
+  componentDidMount() {
+    this.store.saveClusters(toJS(this.props.match.params))
+  }
+
   get itemActions() {
     return []
   }

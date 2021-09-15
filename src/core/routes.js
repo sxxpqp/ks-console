@@ -2,6 +2,8 @@ import Login from 'core/containers/Login'
 import LoginConfirm from 'core/containers/LoginConfirm'
 import PasswordConfirm from 'core/containers/PasswordConfirm'
 import BaseLayout from 'core/layouts/Base'
+
+import appStoreRoutes from 'ai-apps/routes/detail'
 import { lazy } from 'react'
 
 const AiPlatform = lazy(() =>
@@ -73,6 +75,8 @@ export default [
         path: '/apps',
         component: App,
       },
+      // 应用模板商店
+      ...appStoreRoutes,
       // {
       //   path: '/apps-manage',
       //   component: App,
