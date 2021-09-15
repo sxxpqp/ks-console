@@ -20,7 +20,7 @@ module.exports = {
   Events: '事件',
   Labels: '标签',
   'Application Workloads': '容器管理',
-  Application: '应用列表',
+  Application: '容器应用列表',
   Container: '容器',
   Containers: '容器',
   Terminal: '终端',

@@ -193,7 +193,7 @@ module.exports = {
   WORKLOAD_NAME_EXIST: '工作负载 {name} 已存在',
 
   APPLICATION_TYPE_DESC:
-    '人工智能平台支持来自于应用商店和应用仓库的应用部署(基于 Helm)，同样也支持自制应用 (Application CRD)。',
+    '人工智能平台支持来自于已有公共应用模板和用户固化的应用模板进行部署(基于 Helm)，同样也支持自制应用 (Application CRD)。',
 
   APPLICATION_SERVICE_DESC:
     '根据应用中服务类型的不同设置不同类型的服务组件，支持无状态服务和有状态服务',
@@ -205,7 +205,7 @@ module.exports = {
 
   'App Types': '应用的类型',
   TIP_APP_TYPE:
-    '人工智能平台支持来自于应用商店和应用仓库的应用部署(基于 Helm)，同样也支持自制应用 (Application CRD)。',
+    '人工智能平台支持来自于已有公共应用模板和用户固化的应用模板进行部署(基于 Helm)，同样也支持自制应用 (Application CRD)。',
   'How to use Application Governance': '如何使用应用治理',
   TIP_APP_GOVERNANCE:
     '使用应用治理需要创建自制应用并对每项服务开启服务治理功能',

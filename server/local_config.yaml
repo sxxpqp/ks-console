@@ -117,7 +117,6 @@ client:
           title: DockerManageMent
           icon: AppstoreAddOutlined
           children:
-            - { name: template, title: AppTemplate, icon: application }
             - { name: apply, title: ApplyResource, icon: application }
             - { name: applyhis, title: ApplyHis, icon: application }
             - { name: audit, title: AppApproval, icon: application }
@@ -226,6 +225,7 @@ client:
           title: PlatformSettings
           icon: SettingOutlined
           children:
+            - { name: template, title: AppTemplate, icon: application }
             - { name: base-info, title: Basic Info, skipAuth: true }
             - {
                 name: networkpolicies,
