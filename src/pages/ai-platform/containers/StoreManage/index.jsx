@@ -57,7 +57,7 @@ export default class Store extends React.Component {
       ),
     },
     {
-      title: t('Workspace'),
+      title: '归属',
       dataIndex: 'isv',
       isHideable: true,
       width: '10%',
@@ -90,8 +90,8 @@ export default class Store extends React.Component {
       <ListPage {...this.props} noWatch>
         <Banner
           {...bannerProps}
-          title={t('App Store')}
-          description={t('APP_STORE_DESC')}
+          title={'平台模板仓库管理'}
+          description={'可以对已上架、已下架的应用模板进行管理'}
         />
         <Table
           {...tableProps}

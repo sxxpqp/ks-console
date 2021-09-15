@@ -1,18 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
-import { Button, Icon, Input } from '@kube-design/components'
+import { observer } from 'mobx-react'
+import {
+  Form,
+  // Select, TextArea
+} from '@kube-design/components'
 import { Modal } from 'components/Base'
-
+import { Tag, Input, Table } from 'antd'
+import { getNodes } from 'api/apply'
 import styles from './index.scss'
 
-export default class DeleteModal extends React.Component {
+const { TextArea } = Input
+
+@observer
+export default class AuditDetailModal extends React.Component {
   static propTypes = {
-    type: PropTypes.string,
-    resource: PropTypes.string,
+    detail: PropTypes.object,
     visible: PropTypes.bool,
-    title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-    desc: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     onOk: PropTypes.func,
     onCancel: PropTypes.func,
     isSubmitting: PropTypes.bool,
@@ -21,85 +25,222 @@ export default class DeleteModal extends React.Component {
   static defaultProps = {
     visible: false,
     isSubmitting: false,
+    detail: {},
     onOk() {},
     onCancel() {},
   }
 
-  state = {
-    confirm: '',
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.visible && this.props.visible !== prevProps.visible) {
-      this.setState({ confirm: '' })
+  constructor(props) {
+    super(props)
+    this.state = {
+      msg: '',
+      nodes: [],
+      key: [],
+      rowData: {},
+      remain: {},
     }
   }
 
-  handleInputChange = e => {
-    this.setState({ confirm: e.target.value })
+  componentDidMount() {
+    // 获取用户的组织
+    // 通过组织获取用户的组织节点
+    getNodes().then(res => {
+      if (res.status === 200) {
+        const { data } = res
+        const { code, data: nodes } = data
+
+        code === 200 &&
+          this.setState({
+            nodes,
+          })
+      }
+    })
   }
 
-  handleOk = () => {
-    const { confirm } = this.state
-    this.props.onOk(confirm)
+  handleOk() {
+    const { onOk } = this.props
+    onOk(this.state)
+  }
+
+  renderForm = items => {
+    const columns = [
+      {
+        title: 'vCPU',
+        dataIndex: 'cpu',
+        render: item => `${item} vCPU`,
+      },
+      {
+        title: '内存',
+        dataIndex: 'mem',
+        render: item => `${item} GiB`,
+      },
+      {
+        title: 'vGPU',
+        dataIndex: 'gpu',
+        render: item => `${item} vGPU`,
+      },
+      {
+        title: '磁盘',
+        dataIndex: 'disk',
+        render: item => `${item} GiB`,
+      },
+      {
+        title: '节点类型',
+        dataIndex: 'type',
+        render: item => {
+          let tag
+          switch (item) {
+            case 1:
+              tag = <Tag color="processing">不限</Tag>
+              break
+            case 2:
+              tag = <Tag color="success">优先自有</Tag>
+              break
+            case 3:
+              tag = <Tag color="error">仅自有</Tag>
+              break
+            default:
+              tag = <Tag color="processing">不限</Tag>
+          }
+          return tag
+        },
+      },
+    ]
+    return (
+      <Table
+        bordered={true}
+        columns={columns}
+        dataSource={items}
+        pagination={{ position: ['none', 'none'] }}
+        scroll={{ y: 320 }}
+      />
+    )
+  }
+
+  // 返回资源节点情况
+  renderNodes() {
+    const { nodes, key } = this.state
+    const { detail } = this.props
+    const rowSelection = {
+      onChange: (selectedRowKeys, selectedRows) => {
+        const data = selectedRows.length > 0 ? selectedRows[0] : {}
+        this.setState({
+          key: selectedRowKeys,
+          rowData: data,
+          remain: {
+            cpu: data.cpu - detail.cpu,
+            mem: data.mem - detail.mem,
+            disk: data.disk - detail.disk,
+            gpu: data.gpu - detail.gpu,
+          },
+        })
+      },
+      getCheckboxProps: record => ({
+        disabled:
+          record.cpu - detail.cpu < 0 ||
+          record.gpu - detail.gpu < 0 ||
+          record.mem - detail.mem < 0 ||
+          record.disk - detail.disk < 0, // Column configuration not to be checked
+      }),
+    }
+    const columns = [
+      {
+        title: '节点',
+        dataIndex: 'node',
+      },
+      {
+        title: 'vCPU剩余',
+        dataIndex: 'cpuRest',
+        render: item => `${item} vCPU`,
+      },
+      {
+        title: 'CPU %',
+        dataIndex: 'cpu',
+        render: (_, record) => `${((record.cpuRest / _) * 100).toFixed(2)}%`,
+      },
+      {
+        title: '内存剩余',
+        dataIndex: 'memRest',
+        render: item => `${item} GiB`,
+      },
+      {
+        title: 'vGPU剩余',
+        dataIndex: 'gpuRest',
+        render: item => `${item}`,
+      },
+      {
+        title: '磁盘剩余',
+        dataIndex: 'diskRest',
+        render: item => `${item} GiB`,
+      },
+    ]
+
+    const { remain } = this.state
+    const msg = `选择后，资源剩余: CPU: ${remain.cpu} vCPU, 内存: ${remain.mem} GiB,
+            磁盘: ${remain.disk} GiB, GPU: ${remain.gpu} vGPU`
+    return (
+      <>
+        <Table
+          bordered={true}
+          rowKey="id"
+          rowSelection={{
+            type: 'radio',
+            ...rowSelection,
+            selectedRowKeys: key,
+          }}
+          columns={columns}
+          dataSource={nodes}
+          pagination={{ position: ['none', 'none'] }}
+          scroll={{ y: 320 }}
+        />
+        {key.length > 0 && <span className={styles.choose}>{msg}</span>}
+      </>
+    )
+  }
+
+  handleInputChange(e) {
+    this.setState({
+      msg: e,
+    })
   }
 
   render() {
     const {
-      type,
-      resource,
+      detail,
       visible,
       onCancel,
-      title,
-      desc,
       isSubmitting,
-      reason,
+      icon = '',
+      title = '查看详情',
     } = this.props
 
+    const { msg } = this.state
+
     return (
-      <Modal
-        width={504}
-        bodyClassName={styles.modalBody}
-        visible={visible}
-        isSubmitting={isSubmitting}
+      <Modal.Form
+        width={691}
+        title={title}
+        icon={icon}
+        data={detail}
+        onOk={this.handleOk.bind(this)}
         onCancel={onCancel}
-        hideHeader
-        hideFooter
+        isSubmitting={isSubmitting}
+        visible={visible}
       >
-        <div className={styles.body}>
-          <div className="h5">
-            <Icon name="close" type="light" className={styles.closeIcon} />
-            {title || t('DELETE_TITLE', { type })}
-          </div>
-          <div className={styles.content}>
-            <p>{desc}</p>
-            <p>申请理由：{reason}</p>
-            {resource && (
-              <Input
-                name="confirm"
-                value={this.state.confirm}
-                onChange={this.handleInputChange}
-                placeholder="请输入驳回的理由"
-                autoFocus={true}
-              />
-            )}
-          </div>
-        </div>
-        <div className={styles.footer}>
-          <Button onClick={onCancel} data-test="modal-cancel">
-            {t('Cancel')}
-          </Button>
-          <Button
-            type="danger"
-            loading={isSubmitting}
-            disabled={isSubmitting || this.state.confirm.trim() === ''}
-            onClick={this.handleOk}
-            data-test="modal-ok"
-          >
-            {t('OK')}
-          </Button>
-        </div>
-      </Modal>
+        <Form.Item label={'申请配置'}>{this.renderForm([detail])}</Form.Item>
+        <Form.Item label={'申请理由'}>
+          <Input name="reason" disabled />
+        </Form.Item>
+        <Form.Item label={'节点资源选择'}>{this.renderNodes()}</Form.Item>
+        <Form.Item label={'审批理由(选填)'}>
+          <TextArea
+            rows={4}
+            placeholder="请输入审批消息..."
+            value={msg}
+            onChange={this.handleInputChange.bind(this)}
+          ></TextArea>
+        </Form.Item>
+      </Modal.Form>
     )
   }
 }

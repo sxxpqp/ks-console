@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button } from '@kube-design/components'
+// import { Button } from '@kube-design/components'
 import Banner from 'components/Cards/Banner'
 import { trigger } from 'utils/action'
 import { inject, observer } from 'mobx-react'
@@ -49,7 +49,7 @@ export default class AppBanner extends Component {
       options: [
         {
           value: 'template',
-          label: t('App Templates'),
+          label: '容器应用列表',
         },
         {
           value: 'composing',
@@ -79,13 +79,14 @@ export default class AppBanner extends Component {
         description: t('APPLICATION_TYPE_DESC'),
       },
       {
-        title: t('HOW_TO_USE_APPLICATION_GOVE_Q'),
-        description: t('HOW_TO_USE_APPLICATION_GOVE_A'),
-        operation: this.canDeployComposingApp ? (
-          <Button onClick={this.showDeploySampleApp}>
-            {t('Deploy Sample App')}
-          </Button>
-        ) : null,
+        title: '自制应用与应用模板',
+        description:
+          '用户可以基于自有的镜像或者代码进行创建应用，或者使用helm配置文件来创建Kubernetes应用',
+        // operation: this.canDeployComposingApp ? (
+        //   <Button onClick={this.showDeploySampleApp}>
+        //     {t('Deploy Sample App')}
+        //   </Button>
+        // ) : null,
         closable: false,
       },
     ]

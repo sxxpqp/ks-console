@@ -173,22 +173,23 @@ class ResourceUsage extends React.Component {
         warnNum: status.daemonsets,
         metric: 'namespace_daemonset_count',
       },
-      {
-        key: 'jobs',
-        icon: ICON_TYPES['jobs'],
-        name: 'Jobs',
-        routeName: 'jobs',
-        num: used['count/jobs.batch'],
-        metric: 'namespace_job_count',
-      },
-      {
-        key: 'cronjobs',
-        icon: ICON_TYPES['cronjobs'],
-        name: 'CronJobs',
-        routeName: 'cronjobs',
-        num: used['count/cronjobs.batch'],
-        metric: 'namespace_cronjob_count',
-      },
+      // 关闭任务相关内容
+      // {
+      //   key: 'jobs',
+      //   icon: ICON_TYPES['jobs'],
+      //   name: 'Jobs',
+      //   routeName: 'jobs',
+      //   num: used['count/jobs.batch'],
+      //   metric: 'namespace_job_count',
+      // },
+      // {
+      //   key: 'cronjobs',
+      //   icon: ICON_TYPES['cronjobs'],
+      //   name: 'CronJobs',
+      //   routeName: 'cronjobs',
+      //   num: used['count/cronjobs.batch'],
+      //   metric: 'namespace_cronjob_count',
+      // },
       {
         key: 'volumes',
         icon: ICON_TYPES['volumes'],
@@ -207,14 +208,14 @@ class ResourceUsage extends React.Component {
         num: used['count/services'],
         metric: 'namespace_service_count',
       },
-      {
-        key: 'routes',
-        icon: ICON_TYPES['ingresses'],
-        name: 'Routes',
-        routeName: 'ingresses',
-        num: used['count/ingresses.extensions'],
-        metric: 'namespace_ingresses_extensions_count',
-      },
+      // {
+      //   key: 'routes',
+      //   icon: ICON_TYPES['ingresses'],
+      //   name: 'Routes',
+      //   routeName: 'ingresses',
+      //   num: used['count/ingresses.extensions'],
+      //   metric: 'namespace_ingresses_extensions_count',
+      // },
     ]
   }
 

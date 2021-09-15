@@ -31,9 +31,6 @@ global.PORT = serverConfig.http.port || 8000
 
 const db = sequelize(serverConfig.db)
 global.models = initModels(db)
-// global.models.resources.findAll().then(res => {
-//   console.log(res)
-// })
 
 app.keys = ['kubesphere->_<']
 

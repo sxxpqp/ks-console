@@ -100,7 +100,7 @@ export default class AuditDetailModal extends React.Component {
           <span>{tips}</span>
         </Form.Item>
         {detail.msg && (
-          <Form.Item label={'驳回理由'}>
+          <Form.Item label={detail.type === 2 ? '驳回理由' : '审核消息'}>
             <span>{detail.msg}</span>
           </Form.Item>
         )}

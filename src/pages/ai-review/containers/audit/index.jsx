@@ -5,16 +5,17 @@ import Banner from 'components/Cards/Banner'
 import Table from 'components/Tables/List'
 import { toJS } from 'mobx'
 // import { cloneDeep, get, isEmpty, omit } from 'lodash'
-import { omit } from 'lodash'
+// import { omit } from 'lodash'
 import ApplyStore from 'stores/apply'
 import { parse } from 'qs'
 import dayjs from 'dayjs'
 
-import { Button, Tag } from 'antd'
+import { Button, Tag, Row, Col, Radio } from 'antd'
 import { Modal } from 'components/Base'
-import AuditModal from 'components/Modals/Audit'
+import RefuseModal from 'components/Modals/Audit/refuse'
+import AuditModal from 'components/Modals/Audit/index'
 import DetailModal from 'components/Modals/AuditDetail'
-import { Notify } from '@kube-design/components'
+import { Notify, Button as AIButton } from '@kube-design/components'
 import { updateApply } from 'api/apply'
 
 import {
@@ -31,16 +32,18 @@ export default class ApplyDefault extends React.Component {
   constructor(props) {
     super(props)
     this.store = new ApplyStore()
+    this.state = {
+      type: '',
+      name: '',
+    }
   }
 
-  getData = params => {
+  getData = param => {
+    const params = parse(location.search.slice(1))
     this.store.fetchList({
       ...this.props.match.params,
-      filters: {
-        page: 1,
-        limit: 10,
-      },
       ...params,
+      ...param,
     })
     // const tmp = {
     //   ...omit(this.props.match.params, 'namespace'),
@@ -59,10 +62,8 @@ export default class ApplyDefault extends React.Component {
       const params = parse(location.search.slice(1))
       this.store.fetchList({
         ...this.props.match.params,
-        filters: {
-          page: 1,
-          limit: 10,
-        },
+        page: 1,
+        limit: 10,
         ...params,
       })
     })
@@ -105,7 +106,7 @@ export default class ApplyDefault extends React.Component {
         // success && success()
         // })
       },
-      modal: AuditModal,
+      modal: RefuseModal,
       title: '确定驳回吗？',
       desc: `确定驳回 ${item.uid_user.name} 的资源申请吗？`,
       resource: `CPU:${item.cpu}vCPU, 内存:${item.mem}GiB, 磁盘:${item.disk}GiB, GPU:${item.gpu}vGPU`,
@@ -130,18 +131,28 @@ export default class ApplyDefault extends React.Component {
   }
 
   // 审批
-  handleApply(record) {
+  handleApply(item) {
     const modal = Modal.open({
-      onOk: async () => {
-        // store.delete(detail).then(() => {
-        Notify.success({ content: `审批成功` })
+      onOk: async data => {
+        const res = await updateApply({
+          id: item.id,
+          msg: data.msg,
+          status: 1, // 通过
+          nid: data.rowData.id,
+        })
+        if (res.status === 200) {
+          Notify.success({ content: `审批成功` })
+          this.getData()
+        } else {
+          Notify.error({ content: `驳回失败` })
+        }
         this.getData()
         Modal.close(modal)
         // success && success()
         // })
       },
-      detail: record,
-      modal: DetailModal,
+      detail: item,
+      modal: AuditModal,
       // ...props,
     })
   }
@@ -284,37 +295,9 @@ export default class ApplyDefault extends React.Component {
   }
 
   renderContent() {
-    const {
-      data,
-      filters,
-      isLoading,
-      total,
-      page,
-      limit,
-      selectedRowKeys,
-    } = toJS(this.store.list)
-
-    const isEmptyList = isLoading === false && total === 0
-    const omitFilters = omit(filters, ['limit', 'page'])
-
-    const showCreate = this.enabledActions.includes('create')
-      ? this.handleCreate
-      : null
-
-    if (isEmptyList && Object.keys(omitFilters).length <= 0) {
-      return (
-        <Empty
-          name="Pipeline"
-          action={
-            showCreate ? (
-              <Button onClick={showCreate} type="control">
-                {t('Create')}
-              </Button>
-            ) : null
-          }
-        />
-      )
-    }
+    const { data, isLoading, total, page, limit, selectedRowKeys } = toJS(
+      this.store.list
+    )
 
     const pagination = { total, page, limit }
 
@@ -322,33 +305,7 @@ export default class ApplyDefault extends React.Component {
       hideCustom: false,
       onSelectRowKeys: this.store.onSelectRowKeys,
       selectedRowKeys,
-      selectActions: [
-        {
-          key: 'run',
-          type: 'primary',
-          text: t('Run'),
-          action: 'delete',
-          onClick: this.handleMultiBatchRun,
-        },
-        {
-          key: 'delete',
-          type: 'danger',
-          text: t('Delete'),
-          action: 'delete',
-          onClick: () =>
-            this.props.trigger('pipeline.batch.delete', {
-              type: t('Pipeline'),
-              rowKey: 'name',
-              devops: this.devops,
-              cluster: this.cluster,
-              success: () => {
-                setTimeout(() => {
-                  this.handleFetch()
-                }, 1000)
-              },
-            }),
-        },
-      ],
+      selectActions: [],
     }
 
     return (
@@ -356,9 +313,9 @@ export default class ApplyDefault extends React.Component {
         rowKey="id"
         data={data}
         columns={this.getColumns()}
-        // filters={omitFilters}
         pagination={pagination}
         isLoading={isLoading}
+        hideSearch
         // isLoading={isLoading}
         onFetch={this.handleFetch}
         // onCreate={showCreate}
@@ -366,7 +323,60 @@ export default class ApplyDefault extends React.Component {
         tableActions={defaultTableProps}
         // itemActions={this.itemActions}
         enabledActions={this.enabledActions}
+        customFilter={this.renderTypeSearch()}
       />
+    )
+  }
+
+  renderTypeSearch() {
+    const { type, name } = this.state
+
+    const onTypeChange = e => {
+      this.setState({ type: e.target.value })
+    }
+
+    const search = () => {
+      this.getData({
+        name,
+        type,
+      })
+    }
+
+    const clear = () => {
+      this.setState({
+        type: '',
+        name: '',
+      })
+      this.getData({
+        type: '',
+      })
+    }
+
+    return (
+      <Row className={styles.flex}>
+        <Col>
+          <span>审核状态：</span>
+          <Radio.Group
+            name="type"
+            defaultValue={''}
+            onChange={onTypeChange}
+            value={type}
+          >
+            <Radio value={''}>全部</Radio>
+            <Radio value={0}>未审核</Radio>
+            <Radio value={1}>已通过</Radio>
+            <Radio value={2}>已驳回</Radio>
+          </Radio.Group>
+        </Col>
+        <Col>
+          <Row>
+            <AIButton type="control" onClick={search}>
+              筛选
+            </AIButton>
+            <AIButton onClick={clear}>清空</AIButton>
+          </Row>
+        </Col>
+      </Row>
     )
   }
 
@@ -382,6 +392,7 @@ export default class ApplyDefault extends React.Component {
     return (
       <div>
         <Banner {...bannerProps} />
+        {/* {this.renderTypeSearch()} */}
         {this.renderContent()}
       </div>
     )

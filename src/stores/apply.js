@@ -1,5 +1,5 @@
-import { omit, set, cloneDeep } from 'lodash'
-import { action, observable, toJS } from 'mobx'
+// import { set, cloneDeep } from 'lodash'
+import { action, observable } from 'mobx'
 // import axios from 'axios'
 import BaseStore from './base.list'
 
@@ -48,11 +48,10 @@ export default class ApplyStore extends BaseStore {
   }
 
   @action
-  async fetchList({ devops, workspace, devopsName, cluster, ...filters } = {}) {
+  async fetchList({ devops, workspace, devopsName, cluster, ...params } = {}) {
     this.list.isLoading = true
 
-    // eslint-disable-next-line no-unused-vars
-    const { page, limit, name } = filters
+    const { page, limit, type } = params
 
     // const searchWord = name ? `*${encodeURIComponent(name)}*` : ''
 
@@ -60,7 +59,8 @@ export default class ApplyStore extends BaseStore {
     const result = await this.request.get(url, {
       start: (page - 1) * TABLE_LIMIT || 0,
       limit: TABLE_LIMIT,
-      page: 0,
+      page,
+      type,
     })
 
     this.list = {
@@ -68,86 +68,30 @@ export default class ApplyStore extends BaseStore {
       total: result.total_count || 0,
       limit: parseInt(limit, 10) || 10,
       page: parseInt(page, 10) || 1,
-      filters: omit(filters, 'devops'),
       selectedRowKeys: [],
       isLoading: false,
     }
   }
 
-  @action
-  async fetchDetail({ cluster, name, isSilent, devops }) {
-    if (!isSilent) {
-      this.isLoading = true
-    }
+  // @action
+  // async fetchDetail({ cluster, name, isSilent, devops }) {
+  //   if (!isSilent) {
+  //     this.isLoading = true
+  //   }
 
-    const result = await this.request.get(
-      `${this.getDevopsUrlV2({
-        cluster,
-      })}${devops || this.devops}/pipelines/${decodeURIComponent(name)}/`
-    )
+  //   const result = await this.request.get(
+  //     `${this.getDevopsUrlV2({
+  //       cluster,
+  //     })}${devops || this.devops}/pipelines/${decodeURIComponent(name)}/`
+  //   )
 
-    const resultKub = await this.request.get(
-      `${this.getDevOpsDetailUrl({ devops, cluster })}/${this.module}/${name}`
-    )
+  //   const resultKub = await this.request.get(
+  //     `${this.getDevOpsDetailUrl({ devops, cluster })}/${this.module}/${name}`
+  //   )
 
-    this.setPipelineConfig(resultKub)
-    this.detail = result
-    this.isLoading = false
-    return result
-  }
-
-  @action
-  setDevops(devops) {
-    this.devops = devops
-  }
-
-  @action
-  async createPipeline({ data, devops, cluster }) {
-    data.kind = 'Pipeline'
-    data.apiVersion = 'devops.kubesphere.io/v1alpha3'
-
-    const url = `${this.getDevOpsDetailUrl({
-      devops,
-      cluster,
-    })}/pipelines`
-
-    return await this.request.post(url, data)
-  }
-
-  @action
-  async updatePipeline({ cluster, data, devops }) {
-    data.kind = 'Pipeline'
-    data.apiVersion = 'devops.kubesphere.io/v1alpha3'
-
-    const url = `${this.getDevOpsDetailUrl({
-      devops,
-      cluster,
-    })}/pipelines/${data.metadata.name}`
-
-    const result = await this.request.put(url, data)
-    this.setPipelineConfig(result)
-    return result
-  }
-
-  @action
-  updateJenkinsFile(jenkinsFile, params) {
-    const data = cloneDeep(toJS(this.pipelineConfig))
-    set(data, 'spec.pipeline.jenkinsfile', jenkinsFile)
-
-    return this.updatePipeline({
-      data,
-      devops: params.devops,
-      cluster: params.cluster,
-    })
-  }
-
-  @action
-  async delete({ name, devops, cluster }) {
-    const url = `${this.getDevOpsDetailUrl({
-      devops,
-      cluster,
-    })}/pipelines/${name}`
-
-    return await this.request.delete(url)
-  }
+  //   this.setPipelineConfig(resultKub)
+  //   this.detail = result
+  //   this.isLoading = false
+  //   return result
+  // }
 }

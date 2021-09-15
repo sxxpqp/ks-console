@@ -31,11 +31,10 @@ export default class ApplyDefault extends React.Component {
     this.store = new ApplyStore()
   }
 
-  getData = params => {
+  getData = () => {
+    const params = parse(location.search.slice(1))
     this.store.fetchList({
       ...this.props.match.params,
-      page: 1,
-      limit: 10,
       ...params,
     })
     // const tmp = {
