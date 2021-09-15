@@ -1,6 +1,7 @@
 const Router = require('koa-router')
 // const convert = require('koa-convert')
 // const bodyParser = require('koa-bodyparser')
+const koaBody = require('koa-body')
 
 const proxy = require('./middlewares/proxy')
 const checkToken = require('./middlewares/checkToken')
@@ -44,27 +45,38 @@ const {
 //     bufferLimit: '4mb',
 //   })
 // )
+const parseBody = koaBody({
+  multipart: true,
+  formidable: {
+    keepExtensions: true,
+    maxFieldsSize: 5 * 1024 * 1024,
+  },
+  onError: err => {
+    // eslint-disable-next-line no-console
+    console.log('koabody TCL: err', err)
+  },
+})
 
 const router = new Router()
 
 router
   .use(proxy('/devops_webhook/(.*)', devopsWebhookProxy))
   .use(proxy('/b2i_download/(.*)', b2iFileProxy))
-  .get('/dockerhub/(.*)', handleDockerhubProxy)
-  // .get('/dockerhub/(.*)', parseBody, handleDockerhubProxy)
+  // .get('/dockerhub/(.*)', handleDockerhubProxy)
+  .get('/dockerhub/(.*)', parseBody, handleDockerhubProxy)
   .get('/blank_md', renderMarkdown)
 
   .all('/(k)?api(s)?/(.*)', checkToken, checkIfExist)
   .use(proxy('/(k)?api(s)?/(.*)', k8sResourceProxy))
 
-  .get('/sample/:app', handleSampleData)
-  // .get('/sample/:app', parseBody, handleSampleData)
+  // .get('/sample/:app', handleSampleData)
+  .get('/sample/:app', parseBody, handleSampleData)
 
   // session
-  .post('/login', handleLogin)
+  .post('/login', parseBody, handleLogin)
   .get('/login', renderLogin)
-  .post('/login/confirm', handleLoginConfirm)
-  // .post('/login/confirm', parseBody, handleLoginConfirm)
+  // .post('/login/confirm', handleLoginConfirm)
+  .post('/login/confirm', parseBody, handleLoginConfirm)
   .get('/login/confirm', renderLoginConfirm)
   .post('/logout', handleLogout)
 
@@ -74,6 +86,8 @@ router
   // terminal
   .get('/terminal*', renderTerminal)
 
+router
+  .use(parseBody)
   // ai-platform
   .post('/apply', applyRes)
   .get('/apply', getApply) // 获取审批资源
@@ -81,7 +95,7 @@ router
 
   .get('/nodes', getNodes) // 获取节点资源
 
-  // page entry
-  .all('*', renderView)
+// page entry
+router.all('*', renderView)
 
 module.exports = router

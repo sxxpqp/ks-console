@@ -6,7 +6,7 @@ export const applyRes = async ctx => {
   const { resources } = global.models
   // const res = await models.resources.findAll()
   // console.log('🚀 ~ file: platform.js ~ line 6 ~ res', res)
-  const { uid, cpu, mem, gpu, disk, reason, type } = body
+  const { uid, cpu, mem, gpu, disk, reason, type, app } = body
   const res = await resources.create({
     uid: parseInt(uid, 10),
     cpu: parseInt(cpu, 10),
@@ -15,6 +15,7 @@ export const applyRes = async ctx => {
     disk: parseInt(disk, 10),
     type,
     reason,
+    app,
   })
   ctx.body = {
     code: 200,

@@ -1,5 +1,5 @@
 import React from 'react'
-import { inject, observer, Provider } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import Banner from 'components/Cards/Banner'
 // import { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
@@ -380,10 +380,10 @@ export default class ApplyDefault extends React.Component {
       module: 'review',
     }
     return (
-      <Provider getData={this.getData} {...this.props}>
+      <div>
         <Banner {...bannerProps} />
         {this.renderContent()}
-      </Provider>
+      </div>
     )
   }
 }

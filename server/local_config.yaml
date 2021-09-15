@@ -223,7 +223,7 @@ client:
             #     requiredClusterVersion: v3.1.0,
             #   }
         - name: project-settings
-          title: Project Settings
+          title: PlatformSettings
           icon: SettingOutlined
           children:
             - { name: base-info, title: Basic Info, skipAuth: true }
@@ -233,8 +233,8 @@ client:
                 clusterModule: network,
                 authKey: "project-settings",
               }
-            - { name: roles, title: Project Roles }
-            - { name: members, title: Project Members }
+            - { name: roles, title: PlatformRole }
+            - { name: members, title: PlatformUsers }
             # - {
             #     name: advanced,
             #     title: Advanced Settings,

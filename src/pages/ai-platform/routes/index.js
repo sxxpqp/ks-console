@@ -9,6 +9,8 @@ import ApplyHis from 'ai-review/containers/apply-his'
 // 容器资源审批
 import Audit from 'ai-review/containers/audit'
 import monitorRoutes from 'ai-clusters/routes'
+import appRoutes from 'ai-apps/routes'
+import grayReleaseRoutes from './grayrelease'
 import ListLayout from '../containers/Base/List'
 
 import Overview from '../containers/Overview'
@@ -38,7 +40,6 @@ import AlertingMessages from '../containers/Alerting/Messages'
 import CustomMonitoring from '../containers/CustomMonitoring'
 import NetworkPolicies from '../containers/Network/Policies'
 import StoreManage from '../containers/StoreManage'
-import grayReleaseRoutes from './grayrelease'
 
 import getDetailPath from './detail'
 
@@ -46,12 +47,14 @@ const PATH = '/:workspace/clusters/:cluster/projects/:namespace'
 
 export default [
   ...getDetailPath(PATH),
+  ...appRoutes,
   {
     path: PATH,
     component: ListLayout,
     routes: [
       ...grayReleaseRoutes,
       ...monitorRoutes,
+      // 部署应用相关
       getIndexRoute({
         path: `${PATH}/devops/:devops`,
         to: `${PATH}/devops/:devops/pipelines`,

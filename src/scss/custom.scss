@@ -221,7 +221,9 @@
   background-color: $yellow-color03;
 }
 
-.src-components-Base-Avatar-index__title {
+.src-components-Base-Avatar-index__title,
+.avatar-title,
+.src-pages-ai-platform-containers-BaseInfo-ProjectInfo-index__item {
   a {
     color: $black !important;
   }

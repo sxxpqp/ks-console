@@ -9,7 +9,7 @@ const AiPlatform = lazy(() =>
 )
 
 const Console = lazy(() =>
-  import(/* webpackChunkName: "console" */ 'console/App.jsx')
+  import(/* webpackChunkName: "console" */ 'console/App')
 )
 const Clusters = lazy(() =>
   import(/* webpackChunkName: "clusters" */ 'clusters/App')
@@ -32,7 +32,7 @@ const Clusters = lazy(() =>
 const DevOps = lazy(() =>
   import(/* webpackChunkName: "devops" */ 'ai-devops/App')
 )
-// const App = lazy(() => import(/* webpackChunkName: "apps" */ 'apps/App.jsx'))
+const App = lazy(() => import(/* webpackChunkName: "apps" */ 'apps/App'))
 
 export default [
   { path: `/login`, component: Login, exact: true },
@@ -69,10 +69,10 @@ export default [
       //   path: '/workspaces/:workspace',
       //   component: Workspaces,
       // },
-      // {
-      //   path: '/apps',
-      //   component: App,
-      // },
+      {
+        path: '/apps',
+        component: App,
+      },
       // {
       //   path: '/apps-manage',
       //   component: App,

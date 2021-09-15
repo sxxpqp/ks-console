@@ -1,6 +1,6 @@
 const Koa = require('koa')
 const path = require('path')
-const koaBody = require('koa-body')
+// const koaBody = require('koa-body')
 
 Koa.prototype.apply = function(module, ...rest) {
   module(this, ...rest)
@@ -43,19 +43,19 @@ app
   .apply(locale)
   .apply(logging)
   .apply(errorProcess)
-  .use(
-    koaBody({
-      multipart: true,
-      formidable: {
-        keepExtensions: true,
-        maxFieldsSize: 5 * 1024 * 1024,
-      },
-      onError: err => {
-        // eslint-disable-next-line no-console
-        console.log('koabody TCL: err', err)
-      },
-    })
-  )
+  // .use(
+  //   koaBody({
+  //     multipart: true,
+  //     formidable: {
+  //       keepExtensions: true,
+  //       maxFieldsSize: 5 * 1024 * 1024,
+  //     },
+  //     onError: err => {
+  //       // eslint-disable-next-line no-console
+  //       console.log('koabody TCL: err', err)
+  //     },
+  //   })
+  // )
   .use(routes.routes())
 
 app.server = app.listen(global.PORT, err => {

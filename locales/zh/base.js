@@ -543,4 +543,8 @@ module.exports = {
   ApplyHis: '资源申请历史',
   AppApproval: '容器资源审批',
   LifeCircle: '生命周期管理',
+  PlatformSettings: '平台设置',
+  PlatformRole: '平台角色',
+  PlatformMenu: '平台菜单',
+  PlatformUsers: '平台用户',
 }

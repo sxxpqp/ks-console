@@ -164,7 +164,7 @@ export default class ApplyDefault extends React.Component {
 
   renderFooter() {
     const { okBtnText } = this.props
-    const { isSubmitting, formData, reason, value } = this.state
+    const { isSubmitting, formData, reason, value, defaultApp } = this.state
 
     // 确定申请回调
     const onClick = async () => {
@@ -174,6 +174,7 @@ export default class ApplyDefault extends React.Component {
         uid: 1,
         reason,
         type: value,
+        app: defaultApp,
       })
       // console.log(
       //   '🚀 ~ file: index.jsx ~ line 172 ~ ApplyDefault ~ onClick ~ res',
@@ -488,7 +489,6 @@ export default class ApplyDefault extends React.Component {
       module: 'review',
     }
     const onClickAppItem = app => {
-      // eslint-disable-next-line no-console
       this.setState({
         defaultApp: app.app_id,
       })

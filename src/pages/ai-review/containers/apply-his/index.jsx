@@ -1,5 +1,5 @@
 import React from 'react'
-import { inject, observer, Provider } from 'mobx-react'
+import { inject, observer } from 'mobx-react'
 import Banner from 'components/Cards/Banner'
 // import { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
@@ -10,13 +10,15 @@ import ApplyStore from 'stores/apply'
 import { parse } from 'qs'
 import dayjs from 'dayjs'
 
-import { Button, Tag } from 'antd'
+import { Button, Tag, Popover } from 'antd'
 import { Modal } from 'components/Base'
 import DetailModal from 'components/Modals/AuditDetail'
 import { Notify } from '@kube-design/components'
+import classNames from 'classnames'
 
 import {
   EyeOutlined,
+  CloudDownloadOutlined,
   // DeleteOutlined,
 } from '@ant-design/icons'
 import styles from './index.scss'
@@ -32,10 +34,8 @@ export default class ApplyDefault extends React.Component {
   getData = params => {
     this.store.fetchList({
       ...this.props.match.params,
-      filters: {
-        page: 1,
-        limit: 10,
-      },
+      page: 1,
+      limit: 10,
       ...params,
     })
     // const tmp = {
@@ -55,10 +55,8 @@ export default class ApplyDefault extends React.Component {
       const params = parse(location.search.slice(1))
       this.store.fetchList({
         ...this.props.match.params,
-        filters: {
-          page: 1,
-          limit: 10,
-        },
+        page: 1,
+        limit: 10,
         ...params,
       })
     })
@@ -98,6 +96,13 @@ export default class ApplyDefault extends React.Component {
       modal: DetailModal,
       // ...props,
     })
+  }
+
+  // 部署应用
+  handleDeploy(record) {
+    const { workspace, cluster, namespace } = this.props.match.params
+    const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}`
+    this.routing.history.push(`${PATH}/apps/${record.app}`)
   }
 
   getColumns = () => [
@@ -192,6 +197,24 @@ export default class ApplyDefault extends React.Component {
               <EyeOutlined />
               查看详情
             </Button>
+            {record.app ? (
+              <Popover content="点击部署" title="">
+                <Button
+                  type="text"
+                  size="small"
+                  className={classNames(
+                    record.status === 1 ? styles.active : styles.disabled
+                  )}
+                  onClick={() => this.handleDeploy(record)}
+                  disabled={record.status !== 1}
+                >
+                  <CloudDownloadOutlined />
+                  部署应用
+                </Button>
+              </Popover>
+            ) : (
+              ''
+            )}
           </div>
         )
       },
@@ -284,10 +307,10 @@ export default class ApplyDefault extends React.Component {
       module: 'review',
     }
     return (
-      <Provider getData={this.getData} {...this.props}>
+      <div>
         <Banner {...bannerProps} />
         {this.renderContent()}
-      </Provider>
+      </div>
     )
   }
 }

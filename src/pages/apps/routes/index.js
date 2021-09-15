@@ -9,12 +9,12 @@ import StoreManage from '../containers/StoreManage'
 import Categories from '../containers/Categories'
 import Reviews from '../containers/Reviews'
 
-import detail from './detail'
+// import detail from './detail'
 
 const PATH = '/apps-manage'
 
 export default [
-  ...detail,
+  // ...detail,
   {
     path: PATH,
     component: Layout,
@@ -40,7 +40,7 @@ export default [
         to: `${PATH}/reviews/unprocessed`,
         exact: true,
       }),
-      getIndexRoute({ path: '*', to: '/404', exact: true }),
+      // getIndexRoute({ path: '*', to: '/404', exact: true }),
     ],
   },
   { path: '/apps', component: Home, exact: true },
