@@ -35,8 +35,12 @@ export default class AppCreate extends Component {
       >
         <div className={classnames(styles.header, 'clearfix')}>
           <img src="/assets/application.svg" alt="" />
-          <div className={styles.title}> {t('Create App Template')}</div>
-          <div className={styles.description}>{t('CREATE_APP_DESC')}</div>
+          <div className={styles.title}> {'创建容器应用模板'}</div>
+          <div className={styles.description}>
+            {
+              '用户容器应用模板，可以快速的发布应用，默认创建为个人可见，需要管理员审核后成为公共模板'
+            }
+          </div>
         </div>
         <ToggleView className={styles.item} title={t('UPLOAD_HELM_TITLE')} show>
           <div className={styles.more}>

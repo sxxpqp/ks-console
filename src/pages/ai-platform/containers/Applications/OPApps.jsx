@@ -11,6 +11,7 @@ import Table from 'components/Tables/List'
 import { getLocalTime } from 'utils'
 
 import OpAppStore from 'stores/openpitrix/application'
+
 import Banner from './Banner'
 
 @withProjectList({
@@ -42,16 +43,16 @@ export default class OPApps extends React.Component {
   get itemActions() {
     const { trigger, name } = this.props
     return [
-      {
-        key: 'edit',
-        icon: 'pen',
-        text: t('Edit'),
-        action: 'edit',
-        onClick: item =>
-          trigger('openpitrix.app.edit', {
-            detail: item,
-          }),
-      },
+      // {
+      //   key: 'edit',
+      //   icon: 'pen',
+      //   text: t('Edit'),
+      //   action: 'edit',
+      //   onClick: item =>
+      //     trigger('openpitrix.app.edit', {
+      //       detail: item,
+      //     }),
+      // },
       {
         key: 'delete',
         icon: 'trash',

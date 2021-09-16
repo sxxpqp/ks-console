@@ -12,6 +12,9 @@ import monitorRoutes from 'ai-clusters/routes'
 import appRoutes from 'ai-apps/routes'
 
 import StoreManage from 'ai-apps/containers/StoreManage'
+// 应用模板
+import Apps from 'ai-workspaces/containers/Apps'
+
 import grayReleaseRoutes from './grayrelease'
 import ListLayout from '../containers/Base/List'
 
@@ -84,6 +87,12 @@ export default [
         // 模板仓库管理
         path: `${PATH}/template`,
         component: StoreManage,
+        exact: true,
+      },
+      {
+        // 创建应用模板
+        path: `${PATH}/appstemp`,
+        component: Apps,
         exact: true,
       },
       {

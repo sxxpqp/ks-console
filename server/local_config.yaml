@@ -10,10 +10,12 @@ server:
         /assets: src/assets
         /build: build
         /dist: dist
+        /doc: server/docs/.vuepress/public
       production:
         /public: server/public
         /assets: dist/assets
         /dist: dist
+        /doc: server/docs/.vuepress/dist
   db:
     host: test.bontor.cn
     port: 43005
@@ -123,6 +125,13 @@ client:
             - { name: applications, title: Applications, icon: application }
             - { name: services, title: DockerService }
             - { name: pods, title: Pods }
+            - {
+                name: appstemp,
+                title: App Templates,
+                icon: appcenter,
+                authKey: app-templates,
+                ksModule: openpitrix.appstore,
+              }
         # - { name: services, title: Services }
         # - name: workloads
         #   title: Workloads
@@ -165,7 +174,7 @@ client:
           icon: HddOutlined
           children:
             - { name: volumes, title: Volumes }
-            - { name: volume-snapshots, title: Snapshots }
+            # - { name: volume-snapshots, title: Snapshots }
         - name: config
           title: Configuration Center
           icon: ToolOutlined

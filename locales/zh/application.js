@@ -210,13 +210,13 @@ module.exports = {
   TIP_APP_GOVERNANCE:
     '使用应用治理需要创建自制应用并对每项服务开启服务治理功能',
   'App store deployment': '应用商店部署',
-  'From App Store': '来自应用商店',
-  'From App Templates': '来自应用模板',
+  'From App Store': '来自容器应用模板仓库',
+  'From App Templates': '来自用户自建的应用模板',
   'From third party Helm': '来自第三方 Helm',
   FROM_APP_STORE_DESC:
-    '来自KubeSphere官方应用商店，提供高质量应用和简易的部署方式',
+    '来自容器应用模板仓库，管理员审核过的模板，提供简单的容器应用部署方式',
   FROM_APP_TEMPLATES_DESC:
-    '来自于企业空间的自制应用模板以及应用仓库中添加的第三方Helm 应用模板',
+    '用户在应用模板处自制应用模板，添加的第三方Helm 应用模板，管理员审核后可以添加到公共模板库',
   COMPOSING_APP_DESC: '通过资源编排的方式发布服务构建应用(支持应用治理功能)',
   APP_TEMPLATES_MODAL_DESC:
     '应用模板来自于企业空间和第三方的 Helm 应用模板，支持一键部署并可通过可视化的方式在 人工智能平台中展示并提供部署及管理的功能',

@@ -90,7 +90,6 @@ export default class Banner extends React.Component {
       routes,
     } = this.props
     // const docUrl = getDocsUrl(module)
-
     return (
       <div className={classnames(styles.wrapper, className)}>
         <div className={styles.titleWrapper}>

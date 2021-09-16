@@ -104,121 +104,127 @@ export default class ApplyDefault extends React.Component {
     this.routing.history.push(`${PATH}/apps/${record.app}`)
   }
 
-  getColumns = () => [
-    {
-      title: '序号',
-      dataIndex: 'id',
-      width: '7%',
-      render: val => {
-        const { data, limit, page } = toJS(this.store.list)
-        // 计算val的index
-        // console.log(
-        //   '🚀 ~ file: index.jsx ~ line 88 ~ ApplyDefault ~ data',
-        //   data
-        // )
-        const index = data.findIndex(i => i.id === val)
-        return index + limit * (page - 1) + 1
+  getColumns = () => {
+    return [
+      {
+        title: '序号',
+        dataIndex: 'id',
+        width: '7%',
+        render: val => {
+          const { data, limit, page } = toJS(this.store.list)
+          // 计算val的index
+          // console.log(
+          //   '🚀 ~ file: index.jsx ~ line 88 ~ ApplyDefault ~ data',
+          //   data
+          // )
+          const index = data.findIndex(i => i.id === val)
+          return index + limit * (page - 1) + 1
+        },
       },
-    },
-    {
-      title: 'CPU',
-      dataIndex: 'cpu',
-      width: '7%',
-      isHideable: true,
-      render: val => `${val}vCPU`,
-    },
-    {
-      title: '内存',
-      dataIndex: 'mem',
-      width: '7%',
-      isHideable: true,
-      render: val => `${val}GiB`,
-    },
-    {
-      title: '磁盘',
-      dataIndex: 'disk',
-      width: '7%',
-      isHideable: true,
-      render: val => `${val}GiB`,
-    },
-    {
-      title: 'GPU',
-      dataIndex: 'gpu',
-      width: '7%',
-      isHideable: true,
-      render: val => `${val}vGPU`,
-    },
-    {
-      title: '申请人',
-      dataIndex: 'uid_user',
-      width: '10%',
-      render: obj => obj.name || '未知',
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'created',
-      width: '15%',
-      render: time => dayjs(time).format('YYYY-MM-DD hh:mm:ss'),
-    },
-    {
-      title: '事由',
-      dataIndex: 'reason',
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      render: val => {
-        switch (val) {
-          case 0:
-            return <Tag color="processing">未审核</Tag>
-          case 1:
-            return <Tag color="success">已审核</Tag>
-          case 2:
-            return <Tag color="error">已驳回</Tag>
-          default:
-            return <Tag color="processing">未审核</Tag>
-        }
+      {
+        title: 'CPU',
+        dataIndex: 'cpu',
+        width: '7%',
+        isHideable: true,
+        render: val => `${val}vCPU`,
       },
-    },
-    {
-      title: '操作',
-      width: '20%',
-      // eslint-disable-next-line no-unused-vars
-      render: (_, record) => {
-        return (
-          <div className={styles.btns}>
-            <Button
-              type="text"
-              size="small"
-              style={{ color: '#096dd9' }}
-              onClick={() => this.handleDetail(record)}
-            >
-              <EyeOutlined />
-              查看详情
-            </Button>
-            {record.app ? (
-              <Popover content="点击部署" title="">
-                <Button
-                  type="text"
-                  size="small"
-                  className={classNames(
-                    record.status === 1 ? styles.active : styles.disabled
-                  )}
-                  onClick={() => this.handleDeploy(record)}
-                  disabled={record.status !== 1}
-                >
-                  <CloudDownloadOutlined />
-                  部署应用
-                </Button>
-              </Popover>
-            ) : (
-              ''
-            )}
-          </div>
-        )
+      {
+        title: '内存',
+        dataIndex: 'mem',
+        width: '7%',
+        isHideable: true,
+        render: val => `${val}GiB`,
       },
-    },
-  ]
+      {
+        title: '磁盘',
+        dataIndex: 'disk',
+        width: '7%',
+        isHideable: true,
+        render: val => `${val}GiB`,
+      },
+      {
+        title: 'GPU',
+        dataIndex: 'gpu',
+        width: '7%',
+        isHideable: true,
+        render: val => `${val}vGPU`,
+      },
+      {
+        title: '申请人',
+        dataIndex: 'uid_user',
+        width: '10%',
+        search: true,
+        render: obj => obj.name || '未知',
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'created',
+        width: '15%',
+        sorter: true,
+        render: time => dayjs(time).format('YYYY-MM-DD hh:mm:ss'),
+      },
+      {
+        title: '事由',
+        dataIndex: 'reason',
+        search: true,
+      },
+      {
+        title: '状态',
+        dataIndex: 'status',
+        search: true,
+        render: val => {
+          switch (val) {
+            case 0:
+              return <Tag color="processing">未审核</Tag>
+            case 1:
+              return <Tag color="success">已审核</Tag>
+            case 2:
+              return <Tag color="error">已驳回</Tag>
+            default:
+              return <Tag color="processing">未审核</Tag>
+          }
+        },
+      },
+      {
+        title: '操作',
+        width: '20%',
+        // eslint-disable-next-line no-unused-vars
+        render: (_, record) => {
+          return (
+            <div className={styles.btns}>
+              <Button
+                type="text"
+                size="small"
+                style={{ color: '#096dd9' }}
+                onClick={() => this.handleDetail(record)}
+              >
+                <EyeOutlined />
+                查看详情
+              </Button>
+              {record.app ? (
+                <Popover content="点击部署" title="">
+                  <Button
+                    type="text"
+                    size="small"
+                    className={classNames(
+                      record.status === 1 ? styles.active : styles.disabled
+                    )}
+                    onClick={() => this.handleDeploy(record)}
+                    disabled={record.status !== 1}
+                  >
+                    <CloudDownloadOutlined />
+                    部署应用
+                  </Button>
+                </Popover>
+              ) : (
+                ''
+              )}
+            </div>
+          )
+        },
+      },
+    ]
+  }
 
   get enabledActions() {
     return [
@@ -286,7 +292,7 @@ export default class ApplyDefault extends React.Component {
         rowKey="id"
         data={data}
         columns={this.getColumns()}
-        // filters={omitFilters}
+        filters={omitFilters}
         pagination={pagination}
         isLoading={isLoading}
         onFetch={this.handleFetch}

@@ -1,17 +1,26 @@
 import React from 'react'
 
-import { Avatar } from 'components/Base'
+import { Avatar, Modal } from 'components/Base'
+import { Notify } from '@kube-design/components'
 import Banner from 'components/Cards/Banner'
 import { withProjectList, ListPage } from 'components/HOCs/withList'
 import WorkloadStatus from 'projects/components/WorkloadStatus'
 import StatusReason from 'projects/components/StatusReason'
 import Table from 'components/Tables/List'
+import DefaultModal from 'components/Modals/Default'
 
 import { getLocalTime, getDisplayName } from 'utils'
 import { getWorkloadStatus } from 'utils/status'
 import { WORKLOAD_STATUS, ICON_TYPES } from 'utils/constants'
 
 import WorkloadStore from 'stores/workload'
+import { Button } from 'antd'
+import {
+  CaretRightOutlined,
+  StopOutlined,
+  RedoOutlined,
+  CloseCircleOutlined,
+} from '@ant-design/icons'
 
 @withProjectList({
   store: new WorkloadStore('deployments'),
@@ -26,6 +35,19 @@ export default class Deployments extends React.Component {
 
   handleTabChange = value => {
     this.props.routing.push(`${this.prefix}/${value}`)
+  }
+
+  get tips() {
+    return [
+      {
+        title: '资源选择',
+        description: t('SERVICE_TYPES_A'),
+      },
+      {
+        title: '应用选择',
+        description: t('SCENARIOS_FOR_SERVICES_A'),
+      },
+    ]
   }
 
   get tabs() {
@@ -50,50 +72,50 @@ export default class Deployments extends React.Component {
   }
 
   get itemActions() {
-    const { module, trigger, name } = this.props
+    // const { module, trigger, name } = this.props
     return [
-      {
-        key: 'edit',
-        icon: 'pen',
-        text: t('Edit'),
-        action: 'edit',
-        onClick: item =>
-          trigger('resource.baseinfo.edit', {
-            detail: item,
-          }),
-      },
-      {
-        key: 'editYaml',
-        icon: 'pen',
-        text: t('Edit YAML'),
-        action: 'edit',
-        onClick: item =>
-          trigger('resource.yaml.edit', {
-            detail: item,
-          }),
-      },
-      {
-        key: 'redeploy',
-        icon: 'restart',
-        text: t('Redeploy'),
-        action: 'edit',
-        onClick: item =>
-          trigger('workload.redeploy', {
-            module,
-            detail: item,
-          }),
-      },
-      {
-        key: 'delete',
-        icon: 'trash',
-        text: t('Delete'),
-        action: 'delete',
-        onClick: item =>
-          trigger('workload.delete', {
-            type: t(name),
-            detail: item,
-          }),
-      },
+      // {
+      //   key: 'edit',
+      //   icon: 'pen',
+      //   text: t('Edit'),
+      //   action: 'edit',
+      //   onClick: item =>
+      //     trigger('resource.baseinfo.edit', {
+      //       detail: item,
+      //     }),
+      // },
+      // {
+      //   key: 'editYaml',
+      //   icon: 'pen',
+      //   text: t('Edit YAML'),
+      //   action: 'edit',
+      //   onClick: item =>
+      //     trigger('resource.yaml.edit', {
+      //       detail: item,
+      //     }),
+      // },
+      // {
+      //   key: 'redeploy',
+      //   icon: 'restart',
+      //   text: t('Redeploy'),
+      //   action: 'edit',
+      //   onClick: item =>
+      //     trigger('workload.redeploy', {
+      //       module,
+      //       detail: item,
+      //     }),
+      // },
+      // {
+      //   key: 'delete',
+      //   icon: 'trash',
+      //   text: t('Delete'),
+      //   action: 'delete',
+      //   onClick: item =>
+      //     trigger('workload.delete', {
+      //       type: t(name),
+      //       detail: item,
+      //     }),
+      // },
     ]
   }
 
@@ -133,6 +155,54 @@ export default class Deployments extends React.Component {
     )
 
     return desc
+  }
+
+  handleStart(record) {
+    const { cluster, namespace, name } = record
+    const { store } = this.props
+    const modal = Modal.open({
+      onOk: () => {
+        store.scale({ cluster, namespace, name }, 1)
+        Modal.close(modal)
+        Notify.success({ content: `启动成功` })
+      },
+      title: `启动容器应用`,
+      desc: `确定启动容器应用${name}吗？`,
+      modal: DefaultModal,
+      ...record,
+    })
+  }
+
+  handleStop(record) {
+    const { cluster, namespace, name } = record
+    const { store } = this.props
+    const modal = Modal.open({
+      onOk: () => {
+        store.scale({ cluster, namespace, name }, 0)
+        Modal.close(modal)
+        Notify.success({ content: `停止成功` })
+      },
+      title: `停止容器应用`,
+      desc: `确定停止容器应用${name}吗？`,
+      modal: DefaultModal,
+      ...record,
+    })
+  }
+
+  handleReload(item) {
+    const { module, trigger } = this.props
+    trigger('workload.redeploy', {
+      module,
+      detail: item,
+    })
+  }
+
+  handleDelete(item) {
+    const { trigger, name } = this.props
+    trigger('workload.batch.delete', {
+      type: t(name),
+      detail: item,
+    })
   }
 
   getColumns = () => {
@@ -183,6 +253,51 @@ export default class Deployments extends React.Component {
         width: 150,
         render: time => getLocalTime(time).format('YYYY-MM-DD HH:mm:ss'),
       },
+      {
+        title: '操作',
+        width: 150,
+        render: (time, record) => {
+          return (
+            <div>
+              {!record.availablePodNums ? (
+                <Button
+                  type="text"
+                  size="small"
+                  style={{ color: '#55bc8a' }}
+                  onClick={() => this.handleStart(record)}
+                >
+                  <CaretRightOutlined />
+                </Button>
+              ) : (
+                <Button
+                  type="text"
+                  size="small"
+                  style={{ color: '#096dd9' }}
+                  onClick={() => this.handleStop(record)}
+                >
+                  <StopOutlined />
+                </Button>
+              )}
+              <Button
+                type="text"
+                size="small"
+                style={{ color: '#fa8c16' }}
+                onClick={() => this.handleReload(record)}
+              >
+                <RedoOutlined />
+              </Button>
+              <Button
+                type="text"
+                size="small"
+                style={{ color: '#f5222d' }}
+                onClick={() => this.handleDelete(record)}
+              >
+                <CloseCircleOutlined />
+              </Button>
+            </div>
+          )
+        },
+      },
     ]
   }
 
@@ -200,7 +315,7 @@ export default class Deployments extends React.Component {
     const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
-        <Banner {...bannerProps} tabs={this.tabs} />
+        <Banner {...bannerProps} tabs={this.tabs} tips={this.tips} />
         <Table
           {...tableProps}
           itemActions={this.itemActions}

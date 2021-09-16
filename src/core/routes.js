@@ -22,9 +22,9 @@ const Clusters = lazy(() =>
 // const Settings = lazy(() =>
 //   import(/* webpackChunkName: "settings" */ 'settings/App.jsx')
 // )
-// const Workspaces = lazy(() =>
-//   import(/* webpackChunkName: "workspaces" */ 'workspaces/App.jsx')
-// )
+const Workspaces = lazy(() =>
+  import(/* webpackChunkName: "workspaces" */ 'ai-workspaces/App')
+)
 // const Projects = lazy(() =>
 //   import(/* webpackChunkName: "projects" */ 'projects/App.jsx')
 // )
@@ -67,10 +67,10 @@ export default [
       //   path: '/:workspace/federatedprojects/:namespace',
       //   component: FederatedProjects,
       // },
-      // {
-      //   path: '/workspaces/:workspace',
-      //   component: Workspaces,
-      // },
+      {
+        path: '/workspaces/:workspace',
+        component: Workspaces,
+      },
       {
         path: '/apps',
         component: App,

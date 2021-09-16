@@ -143,13 +143,22 @@ class Nav extends React.Component {
             <SubMenu key={nav.name} title={t(nav.title)} icon={icons[nav.icon]}>
               {nav.children.map(item => (
                 <Menu.Item key={item.name}>
-                  <Link to={`${prefix}/${item.name}`}>{t(item.title)}</Link>
+                  <Link
+                    to={`${prefix}/${item.name}`}
+                    link={item.link}
+                    name={t(item.title)}
+                    indent={!!item.link}
+                  >
+                    {t(item.title)}
+                  </Link>
                 </Menu.Item>
               ))}
             </SubMenu>
           ) : (
             <Menu.Item key={nav.name} icon={icons[nav.icon]}>
-              <Link to={`${prefix}/${nav.name}`}>{t(nav.title)}</Link>
+              <Link to={nav.link ? nav.link : `${prefix}/${nav.name}`}>
+                {t(nav.title)}
+              </Link>
             </Menu.Item>
           )
         )}

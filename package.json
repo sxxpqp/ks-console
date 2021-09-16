@@ -94,7 +94,9 @@
     "postinstall": "rimraf node_modules/.cache",
     "prebuild": "rimraf dist",
     "release": "standard-version",
-    "models": "sequelize-auto -h dev.toimc.com -p 43005 -d res_platform -u root -x 9igAUTJVnBwBQPpn --dialect mysql -o server/models"
+    "models": "sequelize-auto -h dev.toimc.com -p 43005 -d res_platform -u root -x 9igAUTJVnBwBQPpn --dialect mysql -o server/models",
+    "docs:dev": "vuepress dev server/docs",
+    "docs:build": "vuepress build server/docs"
   },
   "husky": {
     "hooks": {
@@ -180,6 +182,7 @@
     "standard-version": "^8.0.1",
     "style-loader": "^0.23.1",
     "url-loader": "0.5.9",
+    "vuepress": "^1.8.2",
     "webpack": "^4.41.4",
     "webpack-assets-manifest": "^3.1.1",
     "webpack-bundle-analyzer": "^3.0.3",
