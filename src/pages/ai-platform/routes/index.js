@@ -194,6 +194,11 @@ export default [
         path: `${PATH}/gitlab`,
         link: 'http://test.bontor.cn:30000',
       },
+      {
+        name: 'harbor',
+        path: `${PATH}/harbor`,
+        link: 'http://test.bontor.cn:30006',
+      },
       getIndexRoute({
         path: `${PATH}/workloadsPods`,
         to: `${PATH}/deployments`,

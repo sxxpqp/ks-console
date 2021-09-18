@@ -6,7 +6,6 @@ import Table from 'components/Tables/List'
 import withList, { ListPage } from 'components/HOCs/withList'
 
 import { getLocalTime } from 'utils'
-
 import CrdStore from 'stores/crd'
 
 @withList({

@@ -21,6 +21,7 @@ const routes = require('./routes')
 
 const { sequelize } = require('./services/sequelize')
 const { initModels } = require('./models/init-models')
+const { redisInit } = require('./services/redis-helper')
 
 const app = new Koa()
 
@@ -29,8 +30,13 @@ const serverConfig = getServerConfig().server
 global.HOSTNAME = serverConfig.http.hostname || 'localhost'
 global.PORT = serverConfig.http.port || 8000
 
+// 数据库初始化
 const db = sequelize(serverConfig.db)
 global.models = initModels(db)
+
+// redis初始化
+const redis = redisInit(serverConfig.redis)
+global.redis = redis
 
 app.keys = ['kubesphere->_<']
 

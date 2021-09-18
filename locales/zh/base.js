@@ -547,4 +547,5 @@ module.exports = {
   PlatformRole: '平台角色',
   PlatformMenu: '平台菜单',
   PlatformUsers: '平台用户',
+  Harbor: '镜像管理平台',
 }

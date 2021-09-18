@@ -11,3 +11,9 @@
     padding: 6px;
   }
 }
+
+:global(.button-content) {
+  p {
+    margin-bottom: 0 !important;
+  }
+}

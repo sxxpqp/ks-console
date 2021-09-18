@@ -16,12 +16,18 @@ server:
         /assets: dist/assets
         /dist: dist
         /doc: server/docs/.vuepress/dist
+
   db:
     host: test.bontor.cn
     port: 43005
     user: root
     password: 9igAUTJVnBwBQPpn
     db: res_platform
+
+  redis:
+    host: test.bontor.cn
+    port: 43006
+    password: n85Arxyl75Uiwv1jXmiL5opOmgvznJX9
 
   # redis config for multi replicas
   # redis:
@@ -234,6 +240,11 @@ client:
           title: PlatformSettings
           icon: SettingOutlined
           children:
+            - {
+                name: harbor,
+                title: Harbor,
+                link: "http://test.bontor.cn:30002/",
+              }
             - { name: template, title: AppTemplate, icon: application }
             - { name: base-info, title: Basic Info, skipAuth: true }
             - {
