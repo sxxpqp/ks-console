@@ -1,4 +1,5 @@
 const Koa = require('koa')
+
 const path = require('path')
 // const koaBody = require('koa-body')
 
@@ -22,6 +23,8 @@ const routes = require('./routes')
 const { sequelize } = require('./services/sequelize')
 const { initModels } = require('./models/init-models')
 const { redisInit } = require('./services/redis-helper')
+const { ftpsInit } = require('./services/ftps')
+const { sshInit } = require('./services/ssh')
 
 const app = new Koa()
 
@@ -37,6 +40,19 @@ global.models = initModels(db)
 // redis初始化
 const redis = redisInit(serverConfig.redis)
 global.redis = redis
+
+// ftp初始化
+const ftpOptions = serverConfig.ftp
+global.ftpOptions = ftpOptions
+global.ftp = ftpsInit(ftpOptions)
+global.sshInit = sshInit(ftpOptions)
+//  => {
+//   res.execCommand('ls -la', { cwd: '/' }).then(function(result) {
+//     console.log(`STDOUT: ${result.stdout}`)
+//     console.log(`STDERR: ${result.stderr}`)
+//   })
+// })
+// ftps.ls().exec(console.log)
 
 app.keys = ['kubesphere->_<']
 

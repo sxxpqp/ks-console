@@ -61,6 +61,15 @@ const config = {
         test: /\.jsx?$/,
         use: 'happypack/loader?id=jsx',
       },
+      {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: 'javascript/auto',
+      },
+      {
+        test: /\.node$/,
+        use: 'node-loader',
+      },
     ],
   },
   plugins: [

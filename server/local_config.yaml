@@ -29,6 +29,12 @@ server:
     port: 43006
     password: n85Arxyl75Uiwv1jXmiL5opOmgvznJX9
 
+  ftp:
+    host: test.bontor.cn
+    username: root
+    password: "1"
+    port: 33022
+
   # redis config for multi replicas
   # redis:
   #   port: 6379
