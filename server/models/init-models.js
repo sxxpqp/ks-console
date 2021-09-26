@@ -1,6 +1,7 @@
 const DataTypes = require('sequelize').DataTypes
 const _applications = require('./applications')
 const _groups = require('./groups')
+const _menus = require('./menus')
 const _nodes = require('./nodes')
 const _operations_log = require('./operations_log')
 const _resources = require('./resources')
@@ -17,6 +18,7 @@ const _users_role = require('./users_role')
 function initModels(sequelize) {
   const applications = _applications(sequelize, DataTypes)
   const groups = _groups(sequelize, DataTypes)
+  const menus = _menus(sequelize, DataTypes)
   const nodes = _nodes(sequelize, DataTypes)
   const operations_log = _operations_log(sequelize, DataTypes)
   const resources = _resources(sequelize, DataTypes)
@@ -64,6 +66,7 @@ function initModels(sequelize) {
   return {
     applications,
     groups,
+    menus,
     nodes,
     operations_log,
     resources,

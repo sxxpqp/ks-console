@@ -48,6 +48,13 @@ export default class S2IForm extends React.Component {
     this.handleRepoReadableCheck()
   }
 
+  get urlPath() {
+    const { cluster, namespace, projectDetail } = this.props
+    const { workspace } = projectDetail
+    const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}`
+    return PATH
+  }
+
   get namespace() {
     return this.props.namespace
   }
@@ -312,7 +319,7 @@ export default class S2IForm extends React.Component {
             <Form.Item
               label={t('Target Image Repository')}
               desc={t.html('S2I_TARGET_IMAGE_REPONSTRY_DESC', {
-                link: getDocsUrl('secrets'),
+                link: `${this.urlPath}/secrets`,
               })}
               rules={[{ required: true, message: t('This param is required') }]}
             >

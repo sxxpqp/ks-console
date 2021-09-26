@@ -35,6 +35,10 @@ server:
     password: "1"
     port: 33022
 
+  kpiAdmin:
+    username: admin
+    password: P@88w0rd
+
   # redis config for multi replicas
   # redis:
   #   port: 6379
@@ -261,6 +265,7 @@ client:
               }
             - { name: roles, title: PlatformRole }
             - { name: members, title: PlatformUsers }
+            - { name: menu, title: PlatformMenu }
             # - {
             #     name: advanced,
             #     title: Advanced Settings,

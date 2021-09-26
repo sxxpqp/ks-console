@@ -5,16 +5,18 @@ import classnames from 'classnames'
 import moment from 'moment-mini'
 import { Form, Button, Icon, Loading, Tooltip } from '@kube-design/components'
 
-import { getDocsUrl, formatSize } from 'utils'
+import { formatSize } from 'utils'
 
 import { PATTERN_IMAGE, PATTERN_IMAGE_TAG } from 'utils/constants'
 
 import ContainerStore from 'stores/container'
 
+import { inject } from 'mobx-react'
 import DropdownContent from './DropdownContent'
 
 import styles from './index.scss'
 
+@inject('rootStore')
 export default class ImageSearch extends Component {
   constructor(props) {
     super(props)
@@ -47,6 +49,12 @@ export default class ImageSearch extends Component {
     const imageName = get(this.props.formTemplate, 'image', '')
     const result = PATTERN_IMAGE_TAG.exec(imageName)
     return get(result, `[${result.length - 1}]`, ':latest').slice(1)
+  }
+
+  get urlPath() {
+    const { cluster, namespace, workspace } = this.props.rootStore.myClusters
+    const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}`
+    return PATH
   }
 
   componentDidMount() {
@@ -265,11 +273,14 @@ export default class ImageSearch extends Component {
         <Form.Item
           label={t('Image')}
           desc={t.html('IMAGE_DESC', {
-            link: getDocsUrl('imageregistry'),
+            link: `${this.urlPath}/secrets`,
           })}
           rules={[
             { required: true, message: t('IMAGE_PLACEHOLDER') },
-            { pattern: PATTERN_IMAGE, message: t('Invalid image') },
+            {
+              pattern: PATTERN_IMAGE,
+              message: t('Invalid image'),
+            },
           ]}
         >
           <DropdownContent

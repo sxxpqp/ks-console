@@ -1,0 +1,30 @@
+.max-width {
+  width: 100%;
+  max-width: 455px;
+  border-radius: 4px;
+  border: solid 1px #abb4be;
+  &:hover {
+    border-color: #79879c;
+  }
+}
+
+.ant-input-custom {
+  border: none !important;
+  border-right: 1px solid #abb4be;
+}
+
+:global {
+  .input {
+    border-color: #abb4be !important;
+    &:focus {
+      border-color: #abb4be !important;
+      box-shadow: none !important;
+    }
+  }
+
+  .ant-input:focus,
+  .ant-input-focused {
+    border-color: #abb4be !important;
+    box-shadow: none !important;
+  }
+}

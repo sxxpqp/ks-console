@@ -38,6 +38,14 @@ const {
   getNodes,
 } = require('./controllers/platform')
 
+// users
+const {
+  getMenus,
+  addMenu,
+  editMenu,
+  removeMenu,
+} = require('./controllers/users')
+
 // const parseBody = convert(
 //   bodyParser({
 //     formLimit: '200kb',
@@ -94,6 +102,11 @@ router
   .put('/apply', updateApply) // 获取审批资源
 
   .get('/nodes', getNodes) // 获取节点资源
+  // 用户相关
+  .get('/getMenus', getMenus) // 获取平台菜单
+  .post('/addMenu', addMenu) // 获取平台菜单
+  .post('/editMenu', editMenu) // 获取平台菜单
+  .post('/removeMenu', removeMenu) // 获取平台菜单
 
 // page entry
 router.all('*', renderView)

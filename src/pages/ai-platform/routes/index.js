@@ -39,6 +39,7 @@ import ServiceAccounts from '../containers/ServiceAccounts'
 import Secrets from '../containers/Secrets'
 import Roles from '../containers/Roles'
 import Members from '../containers/Members'
+import Menus from '../containers/Menus'
 import AdvancedSettings from '../containers/AdvancedSettings'
 import AlertingPolicies from '../containers/Alerting/Policies'
 import AlertingMessages from '../containers/Alerting/Messages'
@@ -93,6 +94,12 @@ export default [
         // 创建应用模板
         path: `${PATH}/appstemp`,
         component: Apps,
+        exact: true,
+      },
+      {
+        // 菜单管理
+        path: `${PATH}/menu`,
+        component: Menus,
         exact: true,
       },
       {
