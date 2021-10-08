@@ -163,6 +163,8 @@ export default class PodDetail extends React.Component {
         stores={stores}
         {...sideProps}
         routes={getRoutes(this.props.match.path)}
+        // 透传
+        {...this.props}
       />
     )
   }

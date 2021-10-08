@@ -1,7 +1,10 @@
 const { omit } = require('lodash')
+
 const { Op } = require('sequelize')
+const { imageCommit, imagePush } = require('../libs/platform')
 
 const resUsage = require('@/models/views/resources_usage_view')
+const { getServerConfig } = require('@/libs/utils')
 
 // 申请资源
 export const applyRes = async ctx => {
@@ -133,5 +136,52 @@ export const getNodes = async ctx => {
   ctx.body = {
     code: 200,
     data: allNodes,
+  }
+}
+
+// 容器固化
+export const saveDocker = async ctx => {
+  try {
+    const { body } = ctx.request
+    const { hubInfo, imageInfo, nodeIp, containerID } = body
+    const serverConfig = getServerConfig().server
+    const { nodeInfo } = serverConfig
+    const sshOptions = {
+      host: nodeIp,
+      username: nodeInfo.username || 'root',
+      password: nodeInfo.password || 'root',
+      port: nodeInfo.port || 22,
+    }
+    const res = await imageCommit(
+      {
+        imageInfo,
+        containerID: containerID.substr(9, 12),
+      },
+      sshOptions
+    )
+    await imagePush(
+      {
+        hubInfo,
+        imageInfo,
+      },
+      sshOptions
+    )
+    ctx.body = {
+      code: 200,
+      data: res,
+    }
+  } catch (error) {
+    ctx.body = {
+      code: 500,
+      msg: 'docker镜像提交失败',
+    }
+    global.logError.error(`saveDocker error: ${error}`)
+  }
+}
+
+// 复制
+export const copyApp = async ctx => {
+  ctx.body = {
+    code: 200,
   }
 }

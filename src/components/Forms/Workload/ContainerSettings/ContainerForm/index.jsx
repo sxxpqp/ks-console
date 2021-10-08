@@ -151,6 +151,7 @@ export default class ContaineForm extends React.Component {
       imageRegistries,
       namespace,
       withService,
+      rootStore,
     } = this.props
     const { containerType, formData } = this.state
 
@@ -170,6 +171,7 @@ export default class ContaineForm extends React.Component {
             imageRegistries={imageRegistries}
             defaultContainerType={containerType}
             onContainerTypeChange={this.handleContainerTypeChange}
+            rootStore={rootStore}
           />
           <Ports withService={containerType !== 'init' ? withService : false} />
           <ImagePullPolicy />

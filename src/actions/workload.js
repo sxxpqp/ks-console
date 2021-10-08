@@ -11,7 +11,7 @@ import HPAModal from 'projects/components/Modals/HPA'
 import EditConfigTemplateModal from 'projects/components/Modals/ConfigTemplate'
 import EditServiceModal from 'projects/components/Modals/ServiceSetting/StatefulSet'
 import ClusterDiffSettings from 'components/Forms/Workload/ClusterDiffSettings'
-import DeleteModal from 'projects/components/Modals/WorkloadDelete'
+import DeleteModal from 'ai-platform/components/Modals/WorkloadDelete'
 import { MODULE_KIND_MAP } from 'utils/constants'
 import FORM_TEMPLATES from 'utils/form.templates'
 import formPersist from 'utils/form.persist'
@@ -24,6 +24,7 @@ import CRONJOBS_FORM_STEPS from 'configs/steps/cronjobs'
 import HPAStore from 'stores/workload/hpa'
 import ServiceStore from 'stores/service'
 
+// 部署步骤
 const FORM_STEPS = {
   deployments: DEPLOYMENTS_FORM_STEPS,
   statefulsets: STATEFULSETS_FORM_STEPS,

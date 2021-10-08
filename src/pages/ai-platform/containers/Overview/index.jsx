@@ -34,6 +34,11 @@ export default class Overview extends React.Component {
     })
   }
 
+  componentDidMount() {
+    // 保存clusters信息
+    this.props.rootStore.saveClusters(this.props.match.params)
+  }
+
   render() {
     // const { detail } = this.project
     return (

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { Avatar, Modal } from 'components/Base'
-import { Notify } from '@kube-design/components'
+import { Notify, Tooltip } from '@kube-design/components'
 import Banner from 'components/Cards/Banner'
 import { withProjectList, ListPage } from 'components/HOCs/withList'
 import WorkloadStatus from 'projects/components/WorkloadStatus'
@@ -20,6 +20,7 @@ import {
   StopOutlined,
   RedoOutlined,
   CloseCircleOutlined,
+  CopyOutlined,
 } from '@ant-design/icons'
 
 @withProjectList({
@@ -201,7 +202,40 @@ export default class Deployments extends React.Component {
     const { trigger, name } = this.props
     trigger('workload.batch.delete', {
       type: t(name),
-      detail: item,
+      resource: item,
+    })
+  }
+
+  handleCopy(item) {
+    // eslint-disable-next-line no-console
+    console.log(
+      '🚀 ~ file: index.jsx ~ line 210 ~ Deployments ~ handleCopy ~ item',
+      item
+    )
+    const { store } = this.props
+    let yaml = {}
+    store.fetchDetail(item).then(data => {
+      yaml = JSON.stringify(data._originData).replace(
+        new RegExp(item.name, 'g'),
+        `${item.name.split('-')[0]}-${Math.random()
+          .toString(32)
+          .substr(-6)}`
+      )
+      yaml = JSON.parse(yaml)
+    })
+    const { cluster, namespace, name } = item
+    const modal = Modal.open({
+      onOk: () => {
+        // eslint-disable-next-line no-unused-vars
+        store.create(yaml, { cluster, namespace }).then(() => {
+          Modal.close(modal)
+          Notify.success({ content: `复制成功` })
+        })
+      },
+      title: `复制容器应用？`,
+      desc: `确定复制容器应用${name}吗？（服务需要手动设置）`,
+      modal: DefaultModal,
+      ...item,
     })
   }
 
@@ -260,40 +294,58 @@ export default class Deployments extends React.Component {
           return (
             <div>
               {!record.availablePodNums ? (
-                <Button
-                  type="text"
-                  size="small"
-                  style={{ color: '#55bc8a' }}
-                  onClick={() => this.handleStart(record)}
-                >
-                  <CaretRightOutlined />
-                </Button>
+                <Tooltip content="启动">
+                  <Button
+                    type="text"
+                    size="small"
+                    style={{ color: '#55bc8a' }}
+                    onClick={() => this.handleStart(record)}
+                  >
+                    <CaretRightOutlined />
+                  </Button>
+                </Tooltip>
               ) : (
+                <Tooltip content="停止">
+                  <Button
+                    type="text"
+                    size="small"
+                    style={{ color: '#096dd9' }}
+                    onClick={() => this.handleStop(record)}
+                  >
+                    <StopOutlined />
+                  </Button>
+                </Tooltip>
+              )}
+              <Tooltip content="重新部署">
                 <Button
                   type="text"
                   size="small"
-                  style={{ color: '#096dd9' }}
-                  onClick={() => this.handleStop(record)}
+                  style={{ color: '#fa8c16' }}
+                  onClick={() => this.handleReload(record)}
                 >
-                  <StopOutlined />
+                  <RedoOutlined />
                 </Button>
-              )}
-              <Button
-                type="text"
-                size="small"
-                style={{ color: '#fa8c16' }}
-                onClick={() => this.handleReload(record)}
-              >
-                <RedoOutlined />
-              </Button>
-              <Button
-                type="text"
-                size="small"
-                style={{ color: '#f5222d' }}
-                onClick={() => this.handleDelete(record)}
-              >
-                <CloseCircleOutlined />
-              </Button>
+              </Tooltip>
+              <Tooltip content="删除">
+                <Button
+                  type="text"
+                  size="small"
+                  style={{ color: '#f5222d' }}
+                  onClick={() => this.handleDelete(record)}
+                >
+                  <CloseCircleOutlined />
+                </Button>
+              </Tooltip>
+              <Tooltip content="快速复制">
+                <Button
+                  type="text"
+                  size="small"
+                  style={{ color: '#8c8c8c' }}
+                  onClick={() => this.handleCopy(record)}
+                >
+                  <CopyOutlined />
+                </Button>
+              </Tooltip>
             </div>
           )
         },
@@ -308,6 +360,8 @@ export default class Deployments extends React.Component {
       projectDetail: projectStore.detail,
       namespace: match.params.namespace,
       cluster: match.params.cluster,
+      // 把props上的其他属性也传过去
+      ...this.props,
     })
   }
 

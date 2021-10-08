@@ -118,8 +118,13 @@ export default class Members extends React.Component {
         title: '是否启用',
         dataIndex: 'status',
         align: 'center',
-        render: status => {
-          return <Switch defaultChecked={status === 0} />
+        render: (status, record) => {
+          return (
+            <Switch
+              defaultChecked={status === 0}
+              onClick={() => this.setMenuStatus(record)}
+            />
+          )
         },
       },
       {
@@ -151,10 +156,30 @@ export default class Members extends React.Component {
   }
 
   handleEdit(record) {
-    console.log(
-      '🚀 ~ file: index.jsx ~ line 125 ~ Members ~ handleEdit ~ record',
-      record
-    )
+    let { data: treeData } = this.state
+    treeData = this.formatData(treeData)
+    const modal = Modal.open({
+      onOk: async data => {
+        try {
+          const { status, data: resData } = await editMenu(data)
+          if (status === 200) {
+            this.getData()
+            Modal.close(modal)
+            Notify.success({ content: `更新菜单成功` })
+          } else {
+            Notify.error({ content: `更新失败，请重新提交` })
+          }
+        } catch (error) {
+          Modal.close(modal)
+          Notify.error({ content: `服务请求异常')}` })
+        }
+      },
+      title: '编辑菜单',
+      modal: MenuModal,
+      formTemplate: { ...record },
+      module,
+      treeData,
+    })
   }
 
   handleRemove(item) {
@@ -181,6 +206,23 @@ export default class Members extends React.Component {
       // resource: ``,
       // ...props,
     })
+  }
+
+  setMenuStatus(record) {
+    editMenu({
+      id: record.id,
+      status: record.status === 0 ? 1 : 0,
+    })
+      .then(res => {
+        if (res.status === 200) {
+          Notify.success({ content: `更新菜单成功` })
+        } else {
+          Notify.error({ content: `更新失败，请重试` })
+        }
+      })
+      .catch(err => {
+        Notify.error({ content: `服务端错误，接口请求失败` })
+      })
   }
 
   formatData(arr) {

@@ -36,6 +36,8 @@ const {
   getApply,
   updateApply,
   getNodes,
+  saveDocker,
+  copyApp,
 } = require('./controllers/platform')
 
 // users
@@ -44,6 +46,7 @@ const {
   addMenu,
   editMenu,
   removeMenu,
+  upload,
 } = require('./controllers/users')
 
 // const parseBody = convert(
@@ -107,6 +110,9 @@ router
   .post('/addMenu', addMenu) // 获取平台菜单
   .post('/editMenu', editMenu) // 获取平台菜单
   .post('/removeMenu', removeMenu) // 获取平台菜单
+  .post('/upload', upload) // 上传文件
+  .post('/saveDocker', saveDocker) // 容器固化
+  .post('/copyApp', copyApp) // 容器固化
 
 // page entry
 router.all('*', renderView)

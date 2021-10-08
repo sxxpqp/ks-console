@@ -410,6 +410,7 @@ export default class ContainerSetting extends React.Component {
         withService={withService}
         isFederated={isFederated}
         {...params}
+        {...this.props}
       />
     )
   }

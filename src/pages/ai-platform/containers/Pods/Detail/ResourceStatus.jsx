@@ -3,12 +3,16 @@ import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { isEmpty } from 'lodash'
 
-import ContainersCard from 'components/Cards/Containers'
+import ContainersCard from 'components/Cards/AiContainers'
 import VolumesCard from 'components/Cards/Volumes'
 
 @inject('detailStore')
 @observer
 class PodsResourceStatus extends React.Component {
+  // constructor(props) {
+  //   super(props)
+  // }
+
   get module() {
     return this.props.detailStore.module
   }
@@ -25,9 +29,10 @@ class PodsResourceStatus extends React.Component {
   }
 
   renderContainers() {
-    const { name, cluster, containers, initContainers } = toJS(
+    const { name, cluster, containers, initContainers, node, nodeIp } = toJS(
       this.store.detail
     )
+
     return (
       <ContainersCard
         prefix={this.prefix}
@@ -36,6 +41,12 @@ class PodsResourceStatus extends React.Component {
         containers={containers}
         initContainers={initContainers}
         podName={name}
+        // nodes相关信息
+        node={{
+          node,
+          nodeIp,
+        }}
+        match={this.props.match}
       />
     )
   }

@@ -5,7 +5,7 @@ export const getTreeData = (data, pid) => {
   data.forEach(item => {
     if (item.pid === pid) {
       arr.push(item)
-      sortBy(arr, 'sort')
+      sortBy(arr, o => o.sort)
       const children = data.filter(o => o.pid === item.id)
       if (children.length > 0) {
         item.children = children

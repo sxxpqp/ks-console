@@ -39,6 +39,16 @@ server:
     username: admin
     password: P@88w0rd
 
+  harbor:
+    username: sxxpqp
+    password: Xl123456
+    url: 192.168.4.31:30002
+    repo: public
+
+  nodeInfo:
+    username: root
+    password: Xl123456..
+
   # redis config for multi replicas
   # redis:
   #   port: 6379

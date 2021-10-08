@@ -11,12 +11,12 @@ import { PATTERN_IMAGE, PATTERN_IMAGE_TAG } from 'utils/constants'
 
 import ContainerStore from 'stores/container'
 
-import { inject } from 'mobx-react'
+// import { inject } from 'mobx-react'
 import DropdownContent from './DropdownContent'
 
 import styles from './index.scss'
 
-@inject('rootStore')
+// @inject('rootStore')
 export default class ImageSearch extends Component {
   constructor(props) {
     super(props)
@@ -59,6 +59,8 @@ export default class ImageSearch extends Component {
 
   componentDidMount() {
     const { formTemplate } = this.props
+
+    // console.log(this.urlPath)
 
     const image = get(formTemplate, 'image', '')
     if (!this.selectedImage && image) {
@@ -273,7 +275,7 @@ export default class ImageSearch extends Component {
         <Form.Item
           label={t('Image')}
           desc={t.html('IMAGE_DESC', {
-            link: `${this.urlPath}/secrets`,
+            link: `/secrets`,
           })}
           rules={[
             { required: true, message: t('IMAGE_PLACEHOLDER') },

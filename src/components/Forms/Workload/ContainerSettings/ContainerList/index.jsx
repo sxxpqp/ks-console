@@ -114,9 +114,7 @@ export default class ContainerList extends React.Component {
         onClick={this.handleAdd}
         icon="docker"
         title={`${t('Add ')}${t('Container Image')}`}
-        description={t(
-          'KubeSphere supports pulling images from the Image Registries and creating new images through source code (Source to Image).'
-        )}
+        description={'支持从镜像仓库拉取镜像以及通过代码构建新的镜像并部署'}
       />
     )
   }

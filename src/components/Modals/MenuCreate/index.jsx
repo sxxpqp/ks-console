@@ -4,7 +4,7 @@ import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 import { Input, Form, TextArea, Select } from '@kube-design/components'
 import classnames from 'classnames'
-
+import ChooseIconModal from 'components/Modals/ChooseIcons'
 import { Modal } from 'components/Base'
 
 // import { PATTERN_NAME } from 'utils/constants'
@@ -35,42 +35,13 @@ export default class MenuCreate extends React.Component {
 
   state = {
     value: [],
+    type: -1,
+    icon: '',
   }
-
-  // handleCreate = roleTemplates => {
-  //   set(
-  //     this.props.formTemplate,
-  //     'metadata.annotations["iam.kubesphere.io/aggregation-roles"]',
-  //     JSON.stringify(roleTemplates)
-  //   )
-  //   this.props.onOk(this.props.formTemplate)
-  // }
 
   roleNameValidator = (rule, value, callback) => {
     return callback()
   }
-
-  // roleNameValidator = (rule, value, callback) => {
-  //   if (!value) {
-  //     return callback()
-  //   }
-
-  //   const { workspace, cluster, namespace } = this.props
-  //   const name = get(this.props.formTemplate, 'metadata.name')
-
-  //   if (this.props.edit && name === value) {
-  //     return callback()
-  //   }
-
-  //   this.props.store
-  //     .checkName({ name: value, workspace, cluster, namespace })
-  //     .then(resp => {
-  //       if (resp.exist) {
-  //         return callback({ message: t('Role name exists'), field: rule.field })
-  //       }
-  //       callback()
-  //     })
-  // }
 
   getMenuType() {
     return [
@@ -89,9 +60,20 @@ export default class MenuCreate extends React.Component {
     ]
   }
 
-  onChange = value => {
-    console.log(value)
-    // this.setState({ value })
+  renderIcons() {
+    const handleIcons = () => {
+      const modal = Modal.open({
+        onOk: async data => {
+          this.setState({
+            icon: data,
+          })
+          Modal.close(modal)
+        },
+        title: '选择图标',
+        modal: ChooseIconModal,
+      })
+    }
+    return <div onClick={() => handleIcons()}>选择图标</div>
   }
 
   render() {
@@ -103,26 +85,40 @@ export default class MenuCreate extends React.Component {
       formTemplate,
       treeData,
     } = this.props
-    console.log(
-      '🚀 ~ file: index.jsx ~ line 108 ~ MenuCreate ~ render ~ treeData',
-      treeData
-    )
 
-    // if (showEditAuthorization) {
-    //   return (
-    //     <EditAuthorization
-    //       module={module}
-    //       visible={showEditAuthorization}
-    //       formTemplate={formTemplate}
-    //       roleTemplates={roleTemplates}
-    //       onOk={this.handleCreate}
-    //       onCancel={this.hideEditAuthorization}
-    //       isSubmitting={isSubmitting}
-    //     />
-    //   )
-    // }
+    const { type, icon } = this.state
 
-    const defaultValue = formTemplate.type || 0
+    const formRef = React.createRef()
+    const handleOk = data => {
+      // console.log(formRef)
+      onOk({
+        ...data,
+        type: type !== -1 ? type : formTemplate.type,
+        icon: icon || formTemplate.icon,
+      })
+    }
+
+    const types = [
+      {
+        label: '菜单',
+        value: 0,
+      },
+      {
+        label: '目录',
+        value: 1,
+      },
+      {
+        label: '链接',
+        value: 2,
+      },
+    ]
+
+    const selectChange = value => {
+      // 获取最新的select的值
+      this.setState({
+        type: value,
+      })
+    }
 
     return (
       <Modal.Form
@@ -131,19 +127,23 @@ export default class MenuCreate extends React.Component {
         icon="role"
         data={formTemplate}
         onCancel={onCancel}
-        onOk={onOk}
+        onOk={handleOk}
         okText={'确定'}
         visible={visible}
+        ref={formRef}
       >
         <Form.Item label={t('Name')} name="name">
           <Input name="name" maxLength={63} />
         </Form.Item>
         <Form.Item label="菜单类型" name="type">
-          <Select
-            defaultValue={defaultValue}
-            name="type"
-            options={this.getMenuType()}
-          />
+          <div>
+            <Select
+              defaultValue={formTemplate.type}
+              name="type"
+              options={types}
+              onChange={selectChange}
+            />
+          </div>
         </Form.Item>
         <Form.Item label="父级菜单" name="pid">
           <TreeSelect
@@ -168,12 +168,14 @@ export default class MenuCreate extends React.Component {
           <Input name="sort" defaultValue={50} maxLength={255} />
         </Form.Item>
         <Form.Item label="菜单图标" name="icon">
-          <AInput
-            className={classnames(styles['max-width'])}
-            addonAfter={<div>选择图标</div>}
-            defaultValue=""
-            name="icon"
-          />
+          <div>
+            <AInput
+              className={classnames(styles['max-width'])}
+              addonAfter={this.renderIcons()}
+              name="icon"
+              value={icon || formTemplate.icon}
+            />
+          </div>
         </Form.Item>
         <Form.Item label="备注" desc={t('DESCRIPTION_DESC')} name="remark">
           <TextArea name="remark" maxLength={256} />

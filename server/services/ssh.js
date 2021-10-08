@@ -4,9 +4,9 @@ const ssh = new NodeSSH()
 
 const sshInit = async ({
   host,
-  port,
-  username,
-  password,
+  port = 22,
+  username = 'root',
+  password = '123456',
   privateKey,
   ...params
 }) => {

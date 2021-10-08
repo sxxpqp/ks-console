@@ -127,6 +127,7 @@ export default [
         component: OPApps,
         exact: true,
       },
+      // 生命周期的管理 - 工作负载
       {
         path: `${PATH}/deployments`,
         component: Deployments,
