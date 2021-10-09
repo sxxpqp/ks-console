@@ -369,7 +369,13 @@ export default class Deployments extends React.Component {
     const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
-        <Banner {...bannerProps} tabs={this.tabs} tips={this.tips} />
+        <Banner
+          {...bannerProps}
+          title="容器生命周期管理"
+          description="使用可视化界面对Docker容器的整个生命周期（创建、运行、启停、停止、删除、更新、执行等）进行管理。整个管理中可使用权限系统进行控制，可基于标准Docker容器进行个性化配置。"
+          tabs={this.tabs}
+          tips={this.tips}
+        />
         <Table
           {...tableProps}
           itemActions={this.itemActions}

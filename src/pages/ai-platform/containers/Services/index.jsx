@@ -217,7 +217,13 @@ export default class Services extends React.Component {
     const { bannerProps, tableProps, match } = this.props
     return (
       <ListPage {...this.props}>
-        <Banner {...bannerProps} tabs={this.tabs} tips={this.tips} />
+        <Banner
+          {...bannerProps}
+          title="Docker服务发布"
+          description="对于Docker应用，根据需求对外提供的一些接口服务，设置服务端口。"
+          tabs={this.tabs}
+          tips={this.tips}
+        />
         {type === 'topology' ? (
           <Topology match={match} />
         ) : (

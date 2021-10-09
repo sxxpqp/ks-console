@@ -68,7 +68,7 @@ server:
   dockerHubUrl: https://hub.docker.com
 
 client:
-  title: "人工智能容器公共服务平台"
+  title: "人工智能容器管理平台"
   description: ""
   logo: "/assets/base/logo2.png"
 
