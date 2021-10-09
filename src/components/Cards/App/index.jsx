@@ -1,11 +1,12 @@
 import React from 'react'
 
+import classnames from 'classnames'
 import { Image } from 'components/Base'
 
 import styles from './index.scss'
 
-const AppCard = ({ app }) => (
-  <div className={styles.wrapper}>
+const AppCard = ({ app, active }) => (
+  <div className={classnames(styles.wrapper, active ? styles.active : '')}>
     <div className={styles.title}>
       <span className={styles.icon}>
         <Image iconSize={48} src={app.icon} iconLetter={app.name} alt="" />

@@ -85,7 +85,7 @@ export default class Login extends Component {
       <div className={styles.wrapper}>
         <a href="/" className={styles.logo}>
           <img src={logo} alt="" />
-          <div>{t('PLATFORM_TITLE')}</div>
+          <div>{globals.config.title}</div>
         </a>
         <div className={styles.login}>
           <div className={styles.header}>{t('Please Log In')}</div>

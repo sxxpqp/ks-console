@@ -81,7 +81,7 @@ export default class AppList extends React.Component {
                 )}
                 onClick={() => onClick(app)}
               >
-                <AppCard app={app} />
+                <AppCard active={defaultApp === app.app_id} app={app} />
               </div>
             )
           }

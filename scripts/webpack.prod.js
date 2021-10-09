@@ -5,8 +5,8 @@ const CopyPlugin = require('copy-webpack-plugin')
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
-  .BundleAnalyzerPlugin
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+//   .BundleAnalyzerPlugin
 
 const root = path => resolve(__dirname, `../${path}`)
 
@@ -128,7 +128,7 @@ const config = smp.wrap({
       'process.env.BROWSER': true,
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
-    new BundleAnalyzerPlugin({ analyzerMode: 'static' }),
+    // new BundleAnalyzerPlugin({ analyzerMode: 'static' }),
   ],
 })
 

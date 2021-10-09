@@ -63,7 +63,9 @@ class ProjectLayout extends Component {
         <Sider width={220}>
           <Link to={'/'}>
             {/* <img className={styles.logo} src={logo} alt="" /> */}
-            <span className={styles.mytitle}>{t('PLATFORM_TITLE')}</span>
+            <span className={styles.mytitle}>
+              {globals.config.title || t('PLATFORM_TITLE')}
+            </span>
           </Link>
           <Nav
             className="ks-page-nav"
