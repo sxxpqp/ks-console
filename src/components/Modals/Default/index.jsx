@@ -6,7 +6,7 @@ import { Modal } from 'components/Base'
 
 import styles from './index.scss'
 
-export default class RedeployModal extends React.Component {
+export default class DefaultModal extends React.Component {
   static propTypes = {
     detail: PropTypes.object,
     visible: PropTypes.bool,

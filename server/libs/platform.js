@@ -1,4 +1,5 @@
 const { get } = require('lodash')
+
 const yaml = require('js-yaml')
 const compressing = require('compressing')
 const path = require('path')
@@ -153,3 +154,20 @@ export const imageCommit = async (
     global.logError.error(`ssh imageCommit error: ${error}`)
   }
 }
+
+// 搜索docker image的tags
+// export const imageTags = async ({ hubInfo, imageInfo }, options = {}) => {
+//   try {
+//     // 读取默认公共仓库
+//     const { harbor } = global.server
+//     const username = hubInfo.username || harbor.username
+//     const password = hubInfo.password || harbor.password
+//     const url = hubInfo.url || harbor.url
+//     const res = await sshcmd(
+//       `docker login -u${username} -p${password} ${url} && docker search ${imageInfo.name}`
+//     )
+//     return res
+//   } catch (error) {
+//     global.logError.error(`imageTags error: ${error}`)
+//   }
+// }

@@ -8,6 +8,7 @@ import WorkloadStatus from 'projects/components/WorkloadStatus'
 import StatusReason from 'projects/components/StatusReason'
 import Table from 'components/Tables/List'
 import DefaultModal from 'components/Modals/Default'
+import CopyModel from 'components/Modals/CopyModel'
 
 import { getLocalTime, getDisplayName } from 'utils'
 import { getWorkloadStatus } from 'utils/status'
@@ -222,20 +223,21 @@ export default class Deployments extends React.Component {
           .substr(-6)}`
       )
       yaml = JSON.parse(yaml)
-    })
-    const { cluster, namespace, name } = item
-    const modal = Modal.open({
-      onOk: () => {
-        // eslint-disable-next-line no-unused-vars
-        store.create(yaml, { cluster, namespace }).then(() => {
-          Modal.close(modal)
-          Notify.success({ content: `复制成功` })
-        })
-      },
-      title: `复制容器应用？`,
-      desc: `确定复制容器应用${name}吗？（服务需要手动设置）`,
-      modal: DefaultModal,
-      ...item,
+      const { cluster, namespace, name } = item
+      const modal = Modal.open({
+        onOk: template => {
+          // eslint-disable-next-line no-unused-vars
+          store.create(template || yaml, { cluster, namespace }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: `复制成功` })
+          })
+        },
+        title: `复制容器应用？`,
+        desc: `确定复制容器应用${name}吗？（服务需要手动设置）`,
+        modal: CopyModel,
+        formTemplate: yaml,
+        ...item,
+      })
     })
   }
 
