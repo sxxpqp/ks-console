@@ -71,7 +71,6 @@ export default {
           }),
         })
       }
-
       const modal = Modal.open({
         onOk: newObject => {
           let data = newObject

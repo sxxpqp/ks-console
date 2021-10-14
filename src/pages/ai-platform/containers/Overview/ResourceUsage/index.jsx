@@ -9,8 +9,10 @@ import { startAutoRefresh, stopAutoRefresh } from 'utils/monitoring'
 import OverviewStore from 'stores/overview'
 import ProjectMonitorStore from 'stores/monitoring/project'
 
+import { Select } from 'components/@kube-design'
+
 import {
-  Select,
+  // Select,
   Loading,
   RadioGroup,
   RadioButton,
@@ -99,6 +101,13 @@ class ResourceUsage extends React.Component {
       { label: `${t('Last')} ${t('TIME_D', { num: 2 })}`, value: 172800 },
       { label: `${t('Last')} ${t('TIME_D', { num: 3 })}`, value: 259200 },
       { label: `${t('Last')} ${t('TIME_D', { num: 7 })}`, value: 604800 },
+    ]
+  }
+
+  get testOptions() {
+    return [
+      { label: `测试1`, value: 3600 },
+      { label: `测试2`, value: 7200 },
     ]
   }
 
@@ -306,6 +315,7 @@ class ResourceUsage extends React.Component {
           value={this.state.range}
           options={this.timeOptions}
           onChange={this.handleRangeChange}
+          multi={false}
         />
       </div>
     )

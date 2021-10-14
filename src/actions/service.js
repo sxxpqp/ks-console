@@ -21,7 +21,6 @@ export default {
   'service.create': {
     on({ store, cluster, namespace, module, success, ...props }) {
       const kind = MODULE_KIND_MAP[module]
-
       const modal = Modal.open({
         onOk: newObject => {
           let data = newObject

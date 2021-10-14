@@ -188,7 +188,6 @@ export default class ServiceCreateModal extends React.Component {
       projectDetail,
       isSubmitting,
     } = this.props
-
     if (s2iType) {
       const isS2i = s2iType === 's2i'
       const formTemplate = {
@@ -226,6 +225,7 @@ export default class ServiceCreateModal extends React.Component {
           onOk={onOk}
           onCancel={onCancel}
           noCodeEdit
+          projectDetail={projectDetail}
         />
       )
     }
@@ -448,7 +448,6 @@ export default class ServiceCreateModal extends React.Component {
   render() {
     const { visible, onCancel } = this.props
     const { type, s2iType } = this.state
-
     if (type) {
       return this.renderSubModal(type, s2iType)
     }

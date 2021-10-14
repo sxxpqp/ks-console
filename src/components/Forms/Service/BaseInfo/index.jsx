@@ -19,7 +19,6 @@ import FederatedStore from 'stores/federated'
 export default class ServiceBaseInfo extends React.Component {
   constructor(props) {
     super(props)
-
     this.state = {
       showServiceMesh: false,
       selectApp: {},
@@ -177,7 +176,6 @@ export default class ServiceBaseInfo extends React.Component {
 
   render() {
     const { formRef, noWorkload, cluster, namespace } = this.props
-
     return (
       <Form data={this.formTemplate} ref={formRef}>
         <Columns>

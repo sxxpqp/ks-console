@@ -16,6 +16,8 @@ import { WORKLOAD_STATUS, ICON_TYPES } from 'utils/constants'
 
 import WorkloadStore from 'stores/workload'
 import { Button } from 'antd'
+import { omit } from 'lodash'
+
 import {
   CaretRightOutlined,
   StopOutlined,
@@ -209,10 +211,6 @@ export default class Deployments extends React.Component {
 
   handleCopy(item) {
     // eslint-disable-next-line no-console
-    console.log(
-      '🚀 ~ file: index.jsx ~ line 210 ~ Deployments ~ handleCopy ~ item',
-      item
-    )
     const { store } = this.props
     let yaml = {}
     store.fetchDetail(item).then(data => {
@@ -226,8 +224,9 @@ export default class Deployments extends React.Component {
       const { cluster, namespace, name } = item
       const modal = Modal.open({
         onOk: template => {
+          yaml = typeof template.currentTarget === 'object' ? yaml : template
           // eslint-disable-next-line no-unused-vars
-          store.create(template || yaml, { cluster, namespace }).then(() => {
+          store.create(yaml, { cluster, namespace }).then(() => {
             Modal.close(modal)
             Notify.success({ content: `复制成功` })
           })
@@ -363,7 +362,7 @@ export default class Deployments extends React.Component {
       namespace: match.params.namespace,
       cluster: match.params.cluster,
       // 把props上的其他属性也传过去
-      ...this.props,
+      ...omit(this.props, ['prefix']),
     })
   }
 
