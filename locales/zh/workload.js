@@ -1,6 +1,6 @@
 module.exports = {
-  Workload: '容器智能调度',
-  Workloads: '容器智能调度',
+  Workload: '工作负载',
+  Workloads: '工作负载',
   'Service Configuration': '服务配置',
 
   'Available number of nodes scheduled': '可用节点数',
@@ -563,7 +563,7 @@ module.exports = {
   POD_ASSIGNED_DESC:
     '根据容器组中容器设置的请求值 (即 Request) 作为容器调度时资源分配的判断依据。只有节点上可分配总量 ≥ 容器请求值时，才允许将容器调度到该节点。',
 
-  CrashLoopBackOff: '容器退出，kubelet 正在将它重启',
+  CrashLoopBackOff: '容器退出，正在尝试将它重启',
   InvalidImageName: '无法解析镜像名称',
   ImageInspectError: '无法校验镜像',
   ErrImageNeverPull: '当前策略禁止拉取镜像',

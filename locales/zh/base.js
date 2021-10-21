@@ -20,7 +20,7 @@ module.exports = {
   Events: '事件',
   Labels: '标签',
   'Application Workloads': '容器管理',
-  Application: '容器应用列表',
+  Application: '应用',
   Container: '容器',
   Containers: '容器',
   Terminal: '终端',
@@ -50,7 +50,7 @@ module.exports = {
   Infrastructure: '基础设施',
   'Basic Information': '基本信息',
   'Monitoring & Alerting': '监控告警',
-  'Configuration Center': '配置中心',
+  'Configuration Center': '容器配置',
   'Project Settings': '项目设置',
   'Grayscale Release': '灰度发布',
 
@@ -196,6 +196,7 @@ module.exports = {
   'Advanced Settings': '高级设置',
   Settings: '设置',
   Configuration: '配置',
+  'Configuration File': '配置文件',
   'Multi-cluster Deployment': '多集群部署',
   MULTI_CLUSTER_TIP: '该资源部署在多个集群',
 
@@ -250,7 +251,7 @@ module.exports = {
   LONG_NAME_DESC:
     '最长 253 个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母或数字开头及结尾',
   LONG_NAME_TOO_LONG: '最长 253 个字符',
-  ALIAS_DESC: '别名可以由任意字符组成，帮助您更好的区分资源，最长 63 个字符。',
+  ALIAS_DESC: '可以由任意字符组成，帮助您更好的区分资源，最长 63 个字符。',
   LABEL_FORMAT_DESC:
     '标签的 key 和 value 最长 63 个字符，key 如果包含域名, 则最长 253 字符。只能包含大小写字母、数字, 分隔符("-")，下划线(_)及点(.)，且必须以数字或大小写开头和结尾',
   DESCRIPTION_DESC: '描述信息不超过 256 个字符',
@@ -535,9 +536,11 @@ module.exports = {
 
   PLATFORM_TITLE: '人工智能容器管理平台',
 
-  DockerService: 'Docker服务发布',
+  Workloads: '容器负载管理',
+  DockerService: '外部服务',
   Gitlab: 'Gitlab代码管理',
-  DockerManageMent: '容器服务管理',
+  ResourceManageMent: '资源管理',
+  DockerManageMent: '应用管理',
   AppTemplate: '模板仓库管理',
   ApplyResource: '容器资源申请',
   ApplyHis: '资源申请历史',
@@ -548,4 +551,7 @@ module.exports = {
   PlatformMenu: '平台菜单',
   PlatformUsers: '平台用户',
   Harbor: '镜像管理平台',
+  DockerImage: '容器镜像管理',
+  WorkloadsPods: '工作负载',
+  PodManage: '运行容器管理',
 }

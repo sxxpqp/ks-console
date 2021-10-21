@@ -1,6 +1,6 @@
 module.exports = {
-  'DevOps Name': 'DevOps 工程名称',
-  'DevOps Project': 'DevOps 工程',
+  'DevOps Name': '流水线工程名称',
+  'DevOps Project': '流水线',
   'DevOps Role': '成员角色',
   'DevOps Roles': '成员角色',
   'DevOps Member': '工程成员',

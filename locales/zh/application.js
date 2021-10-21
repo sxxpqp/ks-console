@@ -1,6 +1,6 @@
 module.exports = {
   application: '应用',
-  Applications: '容器应用列表',
+  Applications: '应用',
   'Deployed Applications': '已部署应用',
   'Deploy New Application': '部署新应用',
   'Deploy App': '部署应用',
