@@ -5,12 +5,18 @@
 }
 
 .header {
-  padding: 10px;
-  margin-top: -12px;
+  // padding: 10px;
+  // margin-top: -12px;
+  height: 42px;
+  padding: 0 10px;
   border-bottom: 1px solid $border-color;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .timeSelect {
-  float: right;
+  // float: right;
   width: 170px;
 }

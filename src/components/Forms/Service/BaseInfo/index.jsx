@@ -2,7 +2,7 @@ import { get, set } from 'lodash'
 import React from 'react'
 import { observer } from 'mobx-react'
 import { Column, Columns, Form, Input, TextArea } from '@kube-design/components'
-import { updateLabels } from 'utils'
+import { updateLabels, genName } from 'utils'
 import { ProjectSelect } from 'components/Inputs'
 
 import {
@@ -176,12 +176,22 @@ export default class ServiceBaseInfo extends React.Component {
 
   render() {
     const { formRef, noWorkload, cluster, namespace } = this.props
+    const uuid = genName()
     return (
       <Form data={this.formTemplate} ref={formRef}>
         <Columns>
           <Column>
+            <Form.Item label="名称" desc={t('ALIAS_DESC')}>
+              <Input
+                autoFocus={true}
+                name="metadata.annotations['kubesphere.io/alias-name']"
+                maxLength={63}
+              />
+            </Form.Item>
+          </Column>
+          <Column>
             <Form.Item
-              label={t('Name')}
+              label={'唯一标识'}
               desc={t('SERVICE_NAME_DESC')}
               rules={[
                 { required: true, message: t('Please input name') },
@@ -197,16 +207,8 @@ export default class ServiceBaseInfo extends React.Component {
               <Input
                 name="metadata.name"
                 onChange={this.handleNameChange}
-                autoFocus={true}
                 maxLength={63}
-              />
-            </Form.Item>
-          </Column>
-          <Column>
-            <Form.Item label={t('Alias')} desc={t('ALIAS_DESC')}>
-              <Input
-                name="metadata.annotations['kubesphere.io/alias-name']"
-                maxLength={63}
+                defaultValue={uuid}
               />
             </Form.Item>
           </Column>

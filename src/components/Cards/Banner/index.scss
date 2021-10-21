@@ -5,11 +5,11 @@
   border-radius: $border-radius;
   background-color: #ffffff;
   box-shadow: $base-shadow;
-  margin-bottom: 12px;
+  // margin-bottom: 12px;
 
   & > div {
     &:last-of-type {
-      border-radius: 0 0 4px 4px;
+      border-radius: 4px 4px 0 0;
     }
   }
 }
@@ -96,5 +96,6 @@
 
 .tabsWrapper {
   padding: 6px 12px;
-  background-color: $bg-color;
+  background-color: #fff;
+  // background-color: $bg-color;
 }

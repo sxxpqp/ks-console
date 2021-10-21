@@ -29,6 +29,13 @@ export default class ProjectStore extends Base {
 
   module = 'namespaces'
 
+  @observable
+  statics = {
+    app: 0,
+    pods: 0,
+    error: 0,
+  }
+
   getResourceUrl = ({ workspace, ...params }) => {
     if (workspace) {
       return `kapis/tenant.kubesphere.io/v1alpha2/workspaces/${workspace}${this.getPath(
@@ -58,6 +65,11 @@ export default class ProjectStore extends Base {
     }
 
     return `${this.apiVersion}${this.getPath(params)}/namespaces`
+  }
+
+  @action
+  setStatics(data) {
+    this.statics = data
   }
 
   @action

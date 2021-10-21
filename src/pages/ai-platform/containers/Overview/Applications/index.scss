@@ -11,6 +11,15 @@
     background-color: $lightest;
     border-radius: $border-radius;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .info {
+      display: flex;
+      flex-flow: column nowrap;
+      flex: 1;
+    }
 
     .icon {
       float: left;

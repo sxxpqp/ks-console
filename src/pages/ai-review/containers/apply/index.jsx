@@ -1,6 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-import Banner from 'components/Cards/Banner'
+// import Banner from 'components/Cards/Banner'
 import { Button, Notify } from '@kube-design/components'
 import Apps from 'ai-review/components/Apps'
 import { Panel } from 'components/Base'
@@ -131,21 +131,21 @@ export default class ApplyDefault extends React.Component {
     const items = [
       {
         id: 1,
-        name: '不限',
-        label: 'no-limit',
-        desc: '随机在用户公共节点下进行后续的容器应用部署',
+        name: '仅申请资源',
+        label: 'only-res',
+        desc: '只申请硬件资源，不配置默认容器应用',
       },
       {
         id: 2,
-        name: '优先自有',
-        label: 'res-prompt',
-        desc: '优先选择用户组织下的节点进行容器应用部署',
+        name: '应用模板',
+        label: 'app-template',
+        desc: '选择平台的应用模板，并在申请通过后，可以一键部署',
       },
       {
         id: 3,
-        name: '仅自有',
-        label: 'res-limit',
-        desc: '仅在用户归属组织的节点下进行容器应用部署',
+        name: '自定义',
+        label: 'custom',
+        desc: '创建包含工作负载、服务的自定义应用，可以高度自定义（YAML）配置',
       },
     ]
     return (
@@ -482,33 +482,37 @@ export default class ApplyDefault extends React.Component {
 
   render() {
     // const { match } = this.props
-    const bannerProps = {
-      className: 'margin-b12',
-      title: '容器资源申请',
-      description: '需要有足够的资源配额，才能使用容器平台创建应用。',
-      module: 'review',
-    }
+    // const bannerProps = {
+    //   className: 'margin-b12',
+    //   title: '容器资源申请',
+    //   description: '需要有足够的资源配额，才能使用容器平台创建应用。',
+    //   module: 'review',
+    // }
     const onClickAppItem = app => {
       this.setState({
         defaultApp: app.app_id,
       })
     }
 
-    const { defaultApp } = this.state
+    const { defaultApp, value } = this.state
 
     return (
       <div>
-        <Banner {...bannerProps} tips={this.tips} />
+        {/* <Banner {...bannerProps} tips={this.tips} /> */}
         {this.renderApply()}
         <Panel title="选择部署方式">{this.renderRadios()}</Panel>
         {/* 应用列表 */}
-        <Panel title="选择应用模板">
-          <Apps
-            {...this.props}
-            onClickAppItem={onClickAppItem}
-            defaultApp={defaultApp}
-          />
-        </Panel>
+        {value === 2 ? (
+          <Panel title="选择应用模板">
+            <Apps
+              {...this.props}
+              onClickAppItem={onClickAppItem}
+              defaultApp={defaultApp}
+            />
+          </Panel>
+        ) : (
+          <></>
+        )}
         {/* 申请原因 */}
         {this.renderReasonArea()}
         {/* 底部操作按钮 */}

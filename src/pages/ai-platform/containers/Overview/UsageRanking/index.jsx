@@ -114,7 +114,6 @@ class UsageRanking extends React.Component {
             app[this.store.sort_metric],
             UNITS[this.store.sort_metric]
           )
-
           return (
             <div className={styles.app} key={workloadName}>
               <div className={styles.appContent}>

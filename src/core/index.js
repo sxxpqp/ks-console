@@ -10,6 +10,8 @@ import GlobalValue from './global'
 import i18n from './i18n'
 import 'antd/dist/antd.less'
 
+// 导入中文包
+require('dayjs/locale/zh-cn')
 require('@babel/polyfill')
 
 // request error handler

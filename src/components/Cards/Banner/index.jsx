@@ -88,19 +88,21 @@ export default class Banner extends React.Component {
       tabs,
       extra,
       routes,
+      show = false,
     } = this.props
     // const docUrl = getDocsUrl(module)
     return (
       <div className={classnames(styles.wrapper, className)}>
-        <div className={styles.titleWrapper}>
-          <div className={styles.icon}>
-            <Icon name={icon || ICON_TYPES[module] || 'catalog'} size={48} />
-          </div>
-          <div className={styles.title}>
-            <div className="h3">{title}</div>
-            <p className="text-second">
-              {description}
-              {/* {docUrl && (
+        {show && (
+          <div className={styles.titleWrapper}>
+            <div className={styles.icon}>
+              <Icon name={icon || ICON_TYPES[module] || 'catalog'} size={48} />
+            </div>
+            <div className={styles.title}>
+              <div className="h3">{title}</div>
+              <p className="text-second">
+                {description}
+                {/* {docUrl && (
                 <span className={styles.more}>
                   <Icon name="documentation" size={20} />
                   <a href={docUrl} target="_blank" rel="noreferrer noopener">
@@ -108,13 +110,14 @@ export default class Banner extends React.Component {
                   </a>
                 </span>
               )} */}
-            </p>
+              </p>
+            </div>
           </div>
-        </div>
+        )}
         {!isEmpty(routes) && <Navs routes={routes} />}
         {!isEmpty(tabs) && <Tabs tabs={tabs} />}
         {extra}
-        {!isEmpty(tips) && this.renderTips(tips)}
+        {show && !isEmpty(tips) && this.renderTips(tips)}
       </div>
     )
   }

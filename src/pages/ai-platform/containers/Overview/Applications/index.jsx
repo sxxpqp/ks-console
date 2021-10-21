@@ -2,11 +2,11 @@ import React from 'react'
 import { toJS } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { Link } from 'react-router-dom'
-import { get, isEmpty } from 'lodash'
+import { isEmpty } from 'lodash'
 import { Columns, Column } from '@kube-design/components'
-
-import { Panel, Image } from 'components/Base'
+import { Status, Panel } from 'components/Base'
 import ApplicationStore from 'stores/openpitrix/application'
+import classnames from 'classnames'
 
 import styles from './index.scss'
 
@@ -29,7 +29,7 @@ export default class Applications extends React.Component {
   fetchData() {
     this.store.fetchList({
       ...this.props.match.params,
-      limit: 3,
+      // limit: 3,
     })
   }
 
@@ -74,8 +74,8 @@ export default class Applications extends React.Component {
       >
         <Columns className="is-variable is-1">
           {data.map(item => {
-            const icon = get(item, 'app.icon')
-            const appName = get(item, 'app.name')
+            // const icon = get(item, 'app.icon')
+            // const appName = get(item, 'app.name')
 
             return (
               <Column key={item.cluster_id} className="is-4">
@@ -84,17 +84,12 @@ export default class Applications extends React.Component {
                   data-app={item.cluster_id}
                   onClick={this.handleClickApp}
                 >
-                  <label className={styles.icon}>
-                    <Image
-                      iconLetter={appName}
-                      iconSize={40}
-                      src={icon}
-                      onError={this.handleImageOnError}
-                    />
-                  </label>
-                  <div className={styles.title}>
+                  <div className={classnames(styles.title, styles.info)}>
                     <div>{item.name}</div>
                     <p title={item.description}>{item.description || '-'}</p>
+                  </div>
+                  <div>
+                    <Status name={t(item.status)} type={item.status} flicker />
                   </div>
                 </div>
               </Column>

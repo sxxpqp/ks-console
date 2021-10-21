@@ -1,6 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-import Banner from 'components/Cards/Banner'
+// import Banner from 'components/Cards/Banner'
 // import { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 import { toJS } from 'mobx'
@@ -382,16 +382,16 @@ export default class ApplyDefault extends React.Component {
 
   render() {
     // const { match } = this.props
-    const bannerProps = {
-      className: 'margin-b12',
-      title: '容器资源审批',
-      description:
-        '人工智能平台用户申请的资源清单，查看资源详情，对资源申请进行审批。',
-      module: 'review',
-    }
+    // const bannerProps = {
+    //   className: 'margin-b12',
+    //   title: '容器资源审批',
+    //   description:
+    //     '人工智能平台用户申请的资源清单，查看资源详情，对资源申请进行审批。',
+    //   module: 'review',
+    // }
     return (
       <div>
-        <Banner {...bannerProps} />
+        {/* <Banner {...bannerProps} /> */}
         {/* {this.renderTypeSearch()} */}
         {this.renderContent()}
       </div>

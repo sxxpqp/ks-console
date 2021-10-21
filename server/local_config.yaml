@@ -73,6 +73,11 @@ client:
   title: "人工智能容器管理平台"
   description: ""
   logo: "/assets/base/logo2.png"
+  url:
+    base: http://test.bontor.cn
+    help: http://oa.bontor.cn:8080/help2/index.html
+    gitlab: http://test.bontor.cn:30000
+    harbor: http://test.bontor.cn:30002
 
   version:
     kubesphere: 3.1.0
@@ -137,23 +142,26 @@ client:
             icon: HomeOutlined,
             authKey: "services",
           }
-        - name: app-workloads
-          title: DockerManageMent
+        - name: resource
+          title: ResourceManageMent
           icon: AppstoreAddOutlined
           children:
             - { name: apply, title: ApplyResource, icon: application }
             - { name: applyhis, title: ApplyHis, icon: application }
             - { name: audit, title: AppApproval, icon: application }
+        - name: app-workloads
+          title: DockerManageMent
+          icon: AppstoreAddOutlined
+          children:
             - { name: applications, title: Applications, icon: application }
+            - name: workloadsPods
+              title: WorkloadsPods
+              tabs:
+                - { name: deployments, title: Deployments }
+                - { name: statefulsets, title: StatefulSets }
+                - { name: daemonsets, title: DaemonSets }
             - { name: services, title: DockerService }
             - { name: pods, title: Pods }
-            - {
-                name: appstemp,
-                title: App Templates,
-                icon: appcenter,
-                authKey: app-templates,
-                ksModule: openpitrix.appstore,
-              }
         # - { name: services, title: Services }
         # - name: workloads
         #   title: Workloads
@@ -163,15 +171,16 @@ client:
         #     - { name: daemonsets, title: DaemonSets }
         # 容器智能调度
         - name: workloads
-          title: Workloads
+          title: DockerImage
           icon: ClusterOutlined
           children:
-            - name: workloadsPods
-              title: LifeCircle
-              tabs:
-                - { name: deployments, title: Deployments }
-                - { name: statefulsets, title: StatefulSets }
-                - { name: daemonsets, title: DaemonSets }
+            - {
+                name: appstemp,
+                title: App Templates,
+                icon: appcenter,
+                authKey: app-templates,
+                ksModule: openpitrix.appstore,
+              }
             - {
                 # 这里的name对应路由的路径
                 name: devops/ks-consolekkwfw,
@@ -181,40 +190,18 @@ client:
                 skipAuth: true,
               }
             - {
-                name: "gitlab",
-                title: Gitlab,
-                link: "http://test.bontor.cn:30000/",
-              }
-            - {
                 name: s2ibuilders,
                 title: Image Builder,
                 icon: vnas,
                 clusterModule: devops,
               }
-        - name: storage
-          title: Storage Management
-          icon: HddOutlined
-          children:
-            - { name: volumes, title: Volumes }
-            # - { name: volume-snapshots, title: Snapshots }
         - name: config
           title: Configuration Center
           icon: ToolOutlined
           children:
+            - { name: configmaps, title: Configuration File }
+            - { name: volumes, title: Storage Management }
             - { name: secrets, title: Secrets }
-            - { name: configmaps, title: ConfigMaps }
-            # - {
-            #     name: serviceaccounts,
-            #     title: ServiceAccounts,
-            #     requiredClusterVersion: v3.1.0,
-            #   }
-        - {
-            name: grayrelease,
-            title: Grayscale Release,
-            icon: bird,
-            authKey: grayscale-release,
-            clusterModule: servicemesh,
-          }
         # 监控告警
         - name: monitoring-alerting
           title: Monitoring & Alerting
@@ -256,11 +243,6 @@ client:
           title: PlatformSettings
           icon: SettingOutlined
           children:
-            - {
-                name: harbor,
-                title: Harbor,
-                link: "http://test.bontor.cn:30002/",
-              }
             - { name: template, title: AppTemplate, icon: application }
             - { name: base-info, title: Basic Info, skipAuth: true }
             - {

@@ -14,8 +14,8 @@ import { Select } from 'components/@kube-design'
 import {
   // Select,
   Loading,
-  RadioGroup,
-  RadioButton,
+  // RadioGroup,
+  // RadioButton,
 } from '@kube-design/components'
 import { Panel } from 'components/Base'
 
@@ -50,7 +50,8 @@ class ResourceUsage extends React.Component {
     super(props)
 
     this.state = {
-      resourceType: 'application',
+      resourceType: 'resource',
+      // resourceType: 'application',
       range: 43200,
     }
 
@@ -101,13 +102,6 @@ class ResourceUsage extends React.Component {
       { label: `${t('Last')} ${t('TIME_D', { num: 2 })}`, value: 172800 },
       { label: `${t('Last')} ${t('TIME_D', { num: 3 })}`, value: 259200 },
       { label: `${t('Last')} ${t('TIME_D', { num: 7 })}`, value: 604800 },
-    ]
-  }
-
-  get testOptions() {
-    return [
-      { label: `测试1`, value: 3600 },
-      { label: `测试2`, value: 7200 },
     ]
   }
 
@@ -299,7 +293,7 @@ class ResourceUsage extends React.Component {
   renderHeader() {
     return (
       <div className={styles.header}>
-        <RadioGroup
+        {/* <RadioGroup
           mode="button"
           value={this.state.resourceType}
           onChange={this.handleResouceTypeChange}
@@ -309,7 +303,8 @@ class ResourceUsage extends React.Component {
             {t('Application Resources')}
           </RadioButton>
           <RadioButton value="physical">{t('Physical Resources')}</RadioButton>
-        </RadioGroup>
+        </RadioGroup> */}
+        <div>实时CPU/内存使用情况</div>
         <Select
           className={styles.timeSelect}
           value={this.state.range}

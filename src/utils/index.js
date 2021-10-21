@@ -117,6 +117,14 @@ export function flattenObject(obj) {
 export const generateId = length =>
   generate('0123456789abcdefghijklmnopqrstuvwxyz', length || 6)
 
+export const genName = () => {
+  const id = generateId(12)
+  if ('0123456789'.indexOf(id[0]) === -1) {
+    return id
+  }
+  return genName()
+}
+
 /**
  * join selector
  * @param {Object} selector

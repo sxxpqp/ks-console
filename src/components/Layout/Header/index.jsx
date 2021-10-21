@@ -1,13 +1,41 @@
-import { Icon, Menu } from '@kube-design/components'
+import { Icon, Menu, Button } from '@kube-design/components'
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
 import React from 'react'
 // import { Link } from 'react-router-dom'
 import { isAppsPage } from 'utils'
+// import dayjs from 'dayjs'
 import LoginInfo from '../LoginInfo'
 import styles from './index.scss'
 
 class Header extends React.Component {
+  // constructor(props) {
+  //   super(props)
+  //   this.state = {
+  //     time: dayjs()
+  //       .locale('zh-cn')
+  //       .format('YYYY-MM-DD HH:mm:ss dddd'),
+  //     timer: null,
+  //   }
+  // }
+
+  componentDidMount() {
+    // const ctrl = setInterval(() => {
+    //   this.setState({
+    //     time: dayjs()
+    //       .locale('zh-cn')
+    //       .format('YYYY-MM-DD HH:mm:ss dddd'),
+    //   })
+    // }, 1000)
+    // this.setState({
+    //   timer: ctrl,
+    // })
+  }
+
+  componentWillUnmount() {
+    // clearInterval(this.state.timer)
+  }
+
   static propTypes = {
     className: PropTypes.string,
     innerRef: PropTypes.object,
@@ -41,6 +69,7 @@ class Header extends React.Component {
 
   render() {
     const { className, innerRef } = this.props
+    // const { time } = this.state
 
     return (
       <div
@@ -54,41 +83,17 @@ class Header extends React.Component {
         )}
       >
         <div className="header-bottom" />
-        {/* {this.isLoggedIn && (
-          <div className={styles.navs}>
-            {globals.app.enableGlobalNav && (
-              <Button
-                type="flat"
-                icon="cogwheel"
-                onClick={this.props.onToggleNav}
-              >
-                {t('Platform')}
-              </Button>
-            )}
-            {globals.app.enableAppStore && (
-              <Button
-                type="flat"
-                icon="appcenter"
-                onClick={this.handleLinkClick('/apps')}
-                className={classnames({
-                  [styles.active]: location.pathname === '/apps',
-                })}
-              >
-                {t('App Store')}
-              </Button>
-            )}
-            <Button
-              type="flat"
-              icon="dashboard"
-              onClick={this.handleLinkClick('/')}
-              className={classnames({
-                [styles.active]: location.pathname === '/',
-              })}
-            >
-              {t('Workbench')}
-            </Button>
-          </div>
-        )} */}
+        <div>
+          <Button
+            type="flat"
+            icon="appcenter"
+            onClick={e =>
+              this.handleDocumentLinkClick(e, globals.config.url.help)
+            }
+          >
+            帮助文档
+          </Button>
+        </div>
         <div className={styles.right}>
           {/* {this.isLoggedIn && (
             <Dropdown content={this.renderDocumentList()}>

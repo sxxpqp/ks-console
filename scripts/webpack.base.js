@@ -44,7 +44,7 @@ module.exports = {
             lessOptions: {
               // 如果使用less-loader@5，请移除 lessOptions 这一级直接配置选项。
               modifyVars: {
-                // 'primary-color': '#1DA57A',
+                // 'primary-color': '#329dce',
                 'link-color': '#242e42',
               },
               javascriptEnabled: true,

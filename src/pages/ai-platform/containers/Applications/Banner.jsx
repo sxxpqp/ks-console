@@ -92,13 +92,18 @@ export default class AppBanner extends Component {
     ]
   }
 
-  render() {
-    return (
-      <Banner
+  /* <Banner
         {...this.props}
         description={t('APPLICATIONS_DESC')}
         tabs={!globals.app.hasKSModule('openpitrix') ? undefined : this.tabs}
         tips={this.tips}
+      /> */
+
+  render() {
+    return (
+      <Banner
+        {...this.props}
+        tabs={!globals.app.hasKSModule('openpitrix') ? undefined : this.tabs}
       />
     )
   }
