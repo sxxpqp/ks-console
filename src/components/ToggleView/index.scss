@@ -15,3 +15,15 @@
   overflow: hidden;
   visibility: hidden;
 }
+
+.switch {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  // float: right;
+}
+
+.inline {
+  display: inline-block;
+}
