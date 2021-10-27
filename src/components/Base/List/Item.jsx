@@ -1,7 +1,6 @@
 import React from 'react'
 import classNames from 'classnames'
 import { Icon, Button } from '@kube-design/components'
-
 import { Indicator } from 'components/Base'
 
 import styles from './index.scss'
@@ -33,6 +32,7 @@ export default class Item extends React.Component {
       onClick,
       className,
       titleClass,
+      showBtns,
       ...rest
     } = this.props
 
@@ -67,7 +67,7 @@ export default class Item extends React.Component {
         </div>
         {extras}
         {operations || (
-          <div className="buttons">
+          <div className={classNames('buttons', showBtns && styles.showBtns)}>
             {onDelete && <Button type="flat" icon="trash" onClick={onDelete} />}
             {onEdit && <Button type="flat" icon="pen" onClick={onEdit} />}
           </div>
