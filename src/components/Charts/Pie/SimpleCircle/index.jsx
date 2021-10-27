@@ -139,11 +139,12 @@ export default class SimpleCircle extends React.Component {
     const content = showRate ? (
       `${this.getRate(0)}%`
     ) : showRatio ? (
-      <p>
-        <strong>{value}</strong>
+      <span>
+        {value}
+        {/* <strong>{value}</strong> */}
         <span>/</span>
         {total}
-      </p>
+      </span>
     ) : null
 
     return (
