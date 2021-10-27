@@ -94,7 +94,8 @@ module.exports = {
   'Adjust Successfully': '调整成功',
 
   APP_TEMPLATES_DESC:
-    'KubeSphere 提供全生命周期的应用管理，可以上传或者创建新的应用模板，并且快速部署它们，也可以通过应用商店进行发布应用。',
+    '容器平台提供全生命周期的应用管理，可以上传或者创建新的应用模板，并且快速部署它们。',
+  APP_HELM_DESCRIPTION: '为专业用户定制的自制应用功能，',
   UPLOAD_HELM_TITLE: '上传 Helm 配置文件',
   UPLOAD_HELM_DESC: '上传已有的 Helm  Chart ',
   EDIT_APP_DESC: '对应用的基本信息进行设置',

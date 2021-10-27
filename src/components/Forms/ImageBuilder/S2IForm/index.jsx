@@ -290,6 +290,7 @@ export default class S2IForm extends React.Component {
             </Loading>
           </div>
         </div>
+        {/* 镜像名称 */}
         <div
           className={classnames(styles.columns, {
             [styles.columsEdit]: mode === 'edit',

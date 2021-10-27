@@ -1,9 +1,11 @@
 import { get, set } from 'lodash'
 import React from 'react'
 import { observer } from 'mobx-react'
-import { Column, Columns, Form, Input, TextArea } from '@kube-design/components'
-import { updateLabels, genName } from 'utils'
+import { Column, Columns, Form, TextArea, Input } from '@kube-design/components'
+// import { Input } from 'components/@kube-design'
+import { updateLabels, genName, turnName } from 'utils'
 import { ProjectSelect } from 'components/Inputs'
+// import { pinyin } from 'pinyin-pro'
 
 import {
   PATTERN_SERVICE_NAME,
@@ -22,6 +24,7 @@ export default class ServiceBaseInfo extends React.Component {
     this.state = {
       showServiceMesh: false,
       selectApp: {},
+      metaName: '',
     }
 
     this.store = new ServiceStore()
@@ -30,9 +33,14 @@ export default class ServiceBaseInfo extends React.Component {
       this.store = new FederatedStore(this.store)
       this.workloadStore = new FederatedStore(this.workloadStore)
     }
+    // formTemplate = this.props.formTemplate.Service
   }
 
   formTemplate = this.props.formTemplate.Service
+
+  componentDidMount() {
+    // set(this.formTemplate, 'metadata.name', genName())
+  }
 
   get workloadKind() {
     const { module, noWorkload } = this.props
@@ -59,7 +67,6 @@ export default class ServiceBaseInfo extends React.Component {
 
     const labels = get(this.formTemplate, 'metadata.labels', {})
     labels.app = value.slice(0, 63)
-
     updateLabels(
       isFederated ? get(this.formTemplate, 'spec.template') : this.formTemplate,
       'services',
@@ -136,7 +143,6 @@ export default class ServiceBaseInfo extends React.Component {
     if (!value) {
       return callback()
     }
-
     const serviceName = get(this.formTemplate, 'metadata.name')
     const name = `${serviceName}-${value}`
     this.workloadStore
@@ -174,23 +180,40 @@ export default class ServiceBaseInfo extends React.Component {
     }
   }
 
+  handleAliasChange(value) {
+    // 自动唯一标识
+    const tempName = `${turnName(value)}-${genName(6)}`
+    set(this.formTemplate, 'metadata.name', tempName)
+    this.setState({
+      metaName: tempName,
+    })
+    this.handleNameChange(tempName)
+  }
+
   render() {
     const { formRef, noWorkload, cluster, namespace } = this.props
-    const uuid = genName()
+    const { metaName } = this.state
     return (
       <Form data={this.formTemplate} ref={formRef}>
         <Columns>
           <Column>
-            <Form.Item label="名称" desc={t('ALIAS_DESC')}>
+            <Form.Item
+              label="名称"
+              desc="支持中英文名称，最长63个字符，汉字&字母打头"
+              rules={[{ required: true, message: '请输入名称' }]}
+            >
               <Input
                 autoFocus={true}
                 name="metadata.annotations['kubesphere.io/alias-name']"
                 maxLength={63}
+                onChange={this.handleAliasChange.bind(this)}
+                rules={[{ required: true, message: '请输入应用名称' }]}
               />
             </Form.Item>
           </Column>
           <Column>
             <Form.Item
+              // className="hidden"
               label={'唯一标识'}
               desc={t('SERVICE_NAME_DESC')}
               rules={[
@@ -201,14 +224,16 @@ export default class ServiceBaseInfo extends React.Component {
                     message: t('SERVICE_NAME_DESC'),
                   }),
                 },
-                { validator: this.nameValidator },
+                { validator: this.nameValidator.bind(this) },
               ]}
             >
               <Input
                 name="metadata.name"
-                onChange={this.handleNameChange}
+                onChange={this.handleNameChange.bind(this)}
                 maxLength={63}
-                defaultValue={uuid}
+                value={metaName}
+                // value={uuid}
+                // disabled
               />
             </Form.Item>
           </Column>
@@ -242,7 +267,7 @@ export default class ServiceBaseInfo extends React.Component {
                     pattern: PATTERN_SERVICE_VERSION,
                     message: t('COMPONENT_VERSION_DESC'),
                   },
-                  { validator: this.versionValidator },
+                  { validator: this.versionValidator.bind(this) },
                 ]}
               >
                 <Input
@@ -254,6 +279,8 @@ export default class ServiceBaseInfo extends React.Component {
               </Form.Item>
             </Column>
           )}
+        </Columns>
+        <Columns>
           <Column>
             <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
               <TextArea

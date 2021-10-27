@@ -68,9 +68,7 @@ export default class DeployAppModal extends React.Component {
           </div>
           <div className={styles.text}>
             <h2>{t('Deploy New Application')}</h2>
-            <p>
-              用户可以基于自有的镜像或者代码进行创建应用，或者使用helm配置文件来创建Kubernetes应用
-            </p>
+            <p>{t('TemplateApp')}</p>
           </div>
         </div>
 

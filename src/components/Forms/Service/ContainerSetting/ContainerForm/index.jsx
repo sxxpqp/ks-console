@@ -8,8 +8,8 @@ import Environments from 'components/Forms/Workload/ContainerSettings/ContainerF
 import ImagePullPolicy from 'components/Forms/Workload/ContainerSettings/ContainerForm/ImagePullPolicy'
 import HealthChecker from 'components/Forms/Workload/ContainerSettings/ContainerForm/HealthChecker'
 
+import { get } from 'lodash'
 import ContainerSetting from '../ContainerSetting'
-
 import styles from './index.scss'
 
 export default class ContaineForm extends React.Component {
@@ -46,7 +46,12 @@ export default class ContaineForm extends React.Component {
     super(props)
 
     this.formRef = React.createRef()
+    this.state = {
+      replicas: 1,
+    }
   }
+
+  getReplicas = () => get(this.props.data, `spec.replicas`) || 1
 
   get supportProbe() {
     return ['deployments', 'daemonsets', 'statefulsets'].includes(
@@ -63,21 +68,25 @@ export default class ContaineForm extends React.Component {
       cluster,
       namespace,
       withService,
+      advanceMode,
     } = this.props
 
     const prefix = 'spec.template.spec.containers[0]'
 
     return (
       <div className={classNames(styles.wrapper, className)}>
-        <ContainerSetting
-          prefix={prefix}
-          cluster={cluster}
-          namespace={namespace}
-          data={data}
-        />
+        {advanceMode && (
+          <ContainerSetting
+            prefix={prefix}
+            cluster={cluster}
+            namespace={namespace}
+            data={data}
+            advanceMode={advanceMode}
+          />
+        )}
         <Ports prefix={prefix} withService={withService} />
-        <ImagePullPolicy prefix={prefix} />
-        {this.supportProbe && <HealthChecker prefix={prefix} />}
+        {advanceMode && <ImagePullPolicy prefix={prefix} />}
+        {advanceMode && this.supportProbe && <HealthChecker prefix={prefix} />}
         <Commands prefix={prefix} />
         <Environments
           prefix={prefix}

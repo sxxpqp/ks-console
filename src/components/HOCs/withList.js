@@ -151,7 +151,7 @@ export default function withList(options) {
 
       getBannerProps() {
         return {
-          // className: 'margin-b12',
+          className: 'margin-b12',
           title: t(this.title),
           description: t(
             `${this.name.replace(/\s+/g, '_').toUpperCase()}_DESC`

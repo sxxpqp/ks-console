@@ -4,7 +4,7 @@ import { Notify } from '@kube-design/components'
 import { Modal } from 'components/Base'
 
 import CreateModal from 'components/Modals/Create'
-import CreateServiceModal from 'projects/components/Modals/ServiceCreate'
+import CreateServiceModal from 'ai-platform/components/Modals/ServiceCreate'
 import EditServiceModal from 'projects/components/Modals/ServiceSetting'
 import EditGatewayModal from 'projects/components/Modals/ServiceGatewaySetting'
 import ServiceMonitorModal from 'projects/components/Modals/ServiceMonitor'

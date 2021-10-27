@@ -178,7 +178,6 @@ export default class FormMode extends React.Component {
     )
 
     const showNext = currentStep < steps.length - 1
-
     return (
       <div className={styles.footer}>
         <Button onClick={onCancel}>{t('Cancel')}</Button>

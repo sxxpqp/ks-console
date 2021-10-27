@@ -122,7 +122,7 @@ export default class ContainerSetting extends React.Component {
     const defaultResourceLimit = this.defaultResourceLimit
 
     return (
-      <ToggleView defaultShow={isEmpty(defaultResourceLimit)}>
+      <ToggleView defaultShow={!isEmpty(defaultResourceLimit)}>
         <>
           <Alert
             className="margin-b12"
@@ -166,7 +166,7 @@ export default class ContainerSetting extends React.Component {
             maxLength={63}
           />
         </Form.Item>
-        {this.renderAdvancedSettings()}
+        {/* {this.renderAdvancedSettings()} */}
       </Form.Group>
     )
   }

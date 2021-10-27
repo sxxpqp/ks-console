@@ -19,6 +19,7 @@ module.exports = {
   'Application Version(Optional)': '应用版本(可选)',
   'Application Governance': '应用治理',
   'Application Components': '应用组件',
+  'Application Components1': '应用容器列表',
   'Application Component': '应用组件',
   'Application Route': '应用路由',
   'Traffic Management': '流量治理',
@@ -197,6 +198,8 @@ module.exports = {
 
   APPLICATION_SERVICE_DESC:
     '根据应用中服务类型的不同设置不同类型的服务组件，支持无状态服务和有状态服务',
+  APPLICATION_SERVICE_DESC1:
+    '为当前应用添加一个或者多个不同的容器服务，支持服务映射与制品上传的容器',
   APPLICATION_BASEINFO_DESC: '对应用的名称描述信息等基本的信息定义',
 
   HOW_TO_USE_APPLICATION_GOVE_Q: '如何使用应用治理?',
@@ -219,7 +222,7 @@ module.exports = {
     '用户在应用模板处自制应用模板，添加的第三方Helm 应用模板，管理员审核后可以添加到公共模板库',
   COMPOSING_APP_DESC: '通过资源编排的方式发布服务构建应用(支持应用治理功能)',
   APP_TEMPLATES_MODAL_DESC:
-    '应用模板来自于企业空间和第三方的 Helm 应用模板，支持一键部署并可通过可视化的方式在 人工智能平台中展示并提供部署及管理的功能',
+    '应用模板来自于企业空间和第三方的 应用模板，支持一键部署并可通过可视化的方式在 人工智能平台中展示并提供部署及管理的功能',
   APP_REPOS_DESC:
     '应用仓库来自于第三方的 Helm Chart Repo，通过可视化的方式在 人工智能平台中展示并提供部署及管理功能，用户可以基于应用仓库中的模板快速地一键部署应用。',
   SEARCH_TIPS: '您可以根据相关条件进行过滤',

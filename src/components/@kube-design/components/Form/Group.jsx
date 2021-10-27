@@ -71,9 +71,11 @@ export default class Group extends React.Component {
   }
 
   handleTitleClick = () => {
+    const { onChange } = this.props
     this.setState(({ isCheck }) => ({
       isCheck: !isCheck,
     }))
+    onChange && onChange(this.state.isCheck)
   }
 
   renderTitle() {

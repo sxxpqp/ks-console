@@ -30,13 +30,19 @@ export default class InternetAccess extends React.Component {
         desc: t('ACCESS_NODEPORT_TIP'),
         value: 'NodePort',
       },
-      {
-        label: 'LoadBalancer',
-        desc: t('ACCESS_LOADBALANCER_TIP'),
-        value: 'LoadBalancer',
-      },
+      // {
+      //   label: 'LoadBalancer',
+      //   desc: t('ACCESS_LOADBALANCER_TIP'),
+      //   value: 'LoadBalancer',
+      // },
     ]
   }
+
+  // componentDidMount() {
+  //   debugger
+  //   // 默认设置NodePort
+  //   this.handleAccessModeChange('NodePort')
+  // }
 
   handleAccessModeChange = mode => {
     if (mode === 'LoadBalancer') {
@@ -83,6 +89,8 @@ export default class InternetAccess extends React.Component {
           <Select
             name={`Service.${this.fedPreifx}spec.type`}
             options={this.accessModes}
+            // value={['NodePort']}
+            // defaultValue={['NodePort']}
             onChange={this.handleAccessModeChange}
             optionRenderer={this.optionRenderer}
           />

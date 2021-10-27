@@ -14,12 +14,15 @@ import ProjectStore from 'stores/project'
 
 import { Form } from '@kube-design/components'
 import AffinityForm from 'components/Forms/Workload/ContainerSettings/Affinity'
+// import classnames from 'classnames'
+import ToggleSimple from 'components/ToggleView/simple'
 import ReplicasControl from './ReplicasControl'
 import ClusterReplicasControl from './ClusterReplicasControl'
 import UpdateStrategy from './UpdateStrategy'
 import ContainerList from './ContainerList'
 import ContainerForm from './ContainerForm'
 import PodSecurityContext from './PodSecurityContext'
+// import styles from './index.scss'
 
 export default class ContainerSetting extends React.Component {
   constructor(props) {
@@ -34,6 +37,7 @@ export default class ContainerSetting extends React.Component {
       imageRegistries: [],
       replicas: this.getReplicas(),
       leftQuota: {},
+      advanceMode: false,
     }
 
     this.module = props.module
@@ -387,7 +391,9 @@ export default class ContainerSetting extends React.Component {
 
   containersValidator = (rule, value, callback) => {
     if (isEmpty(value)) {
-      return callback({ message: t('Please add at least one container.') })
+      return callback({
+        message: t('Please add at least one container.'),
+      })
     }
 
     callback()
@@ -397,7 +403,12 @@ export default class ContainerSetting extends React.Component {
     const { withService, isFederated } = this.props
     const { configMaps, secrets, limitRange, imageRegistries } = this.state
     const type = !data.image ? 'Add' : 'Edit'
-    const params = { configMaps, secrets, limitRange, imageRegistries }
+    const params = {
+      configMaps,
+      secrets,
+      limitRange,
+      imageRegistries,
+    }
 
     return (
       <ContainerForm
@@ -514,9 +525,16 @@ export default class ContainerSetting extends React.Component {
     )
   }
 
+  handleModeChange = () => {
+    const { advanceMode } = this.state
+    this.setState({
+      advanceMode: !advanceMode,
+    })
+  }
+
   render() {
     const { formRef } = this.props
-    const { showContainer, selectContainer } = this.state
+    const { showContainer, selectContainer, advanceMode } = this.state
 
     if (showContainer) {
       return this.renderContainerForm(selectContainer)
@@ -524,11 +542,15 @@ export default class ContainerSetting extends React.Component {
 
     return (
       <Form data={this.fedFormTemplate} ref={formRef}>
-        {this.renderReplicasControl()}
+        <ToggleSimple
+          title="容器镜像设置"
+          onChange={this.handleModeChange}
+        ></ToggleSimple>
+        {advanceMode && this.renderReplicasControl()}
         {this.renderContainerList()}
         {this.renderUpdateStrategy()}
-        {this.renderPodSecurityContext()}
-        {this.renderPodAffinity()}
+        {advanceMode && this.renderPodSecurityContext()}
+        {advanceMode && this.renderPodAffinity()}
       </Form>
     )
   }

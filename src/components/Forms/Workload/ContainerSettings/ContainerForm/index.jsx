@@ -6,6 +6,7 @@ import classNames from 'classnames'
 import { ReactComponent as BackIcon } from 'assets/back.svg'
 import { Form } from '@kube-design/components'
 
+import ToggleSimple from 'components/ToggleView/simple'
 import Ports from './Ports'
 import Commands from './Commands'
 import Environments from './Environments'
@@ -69,6 +70,7 @@ export default class ContaineForm extends React.Component {
     this.state = {
       containerType: props.data.type || 'worker',
       formData: cloneDeep(props.data),
+      advanceMode: false,
     }
   }
 
@@ -142,6 +144,13 @@ export default class ContaineForm extends React.Component {
     this.setState({ containerType })
   }
 
+  handleToggleMode = () => {
+    const { advanceMode } = this.state
+    this.setState({
+      advanceMode: !advanceMode,
+    })
+  }
+
   render() {
     const {
       className,
@@ -153,7 +162,7 @@ export default class ContaineForm extends React.Component {
       withService,
       rootStore,
     } = this.props
-    const { containerType, formData } = this.state
+    const { containerType, formData, advanceMode } = this.state
 
     return (
       <div className={classNames(styles.wrapper, className)}>
@@ -162,6 +171,9 @@ export default class ContaineForm extends React.Component {
             <BackIcon />
           </a>
           {this.title}
+          <div className={styles.right}>
+            <ToggleSimple onChange={this.handleToggleMode}></ToggleSimple>
+          </div>
         </div>
         <Form ref={this.formRef} data={formData}>
           <ContainerSetting
@@ -172,14 +184,19 @@ export default class ContaineForm extends React.Component {
             defaultContainerType={containerType}
             onContainerTypeChange={this.handleContainerTypeChange}
             rootStore={rootStore}
+            advanceMode={advanceMode}
           />
           <Ports withService={containerType !== 'init' ? withService : false} />
-          <ImagePullPolicy />
-          {containerType !== 'init' && <HealthChecker />}
+          {advanceMode && <ImagePullPolicy />}
+          {advanceMode && containerType !== 'init' && <HealthChecker />}
           <Commands />
           <Environments configMaps={configMaps} secrets={secrets} />
-          <SecurityContext />
-          <SyncTimeZone data={formData} />
+          {advanceMode && (
+            <>
+              <SecurityContext />
+              <SyncTimeZone data={formData} />
+            </>
+          )}
         </Form>
       </div>
     )

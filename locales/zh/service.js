@@ -18,7 +18,7 @@ module.exports = {
   'Edit Internet Access': '编辑外网访问',
   'Please select Service': '请选择 Service',
   'Path is Required': '请填写 Path',
-  'Virtual IP': '虚拟 IP',
+  'Virtual IP': '虚拟网络名称',
 
   'Service Type': '服务类型',
   'Service Access': '服务访问',
@@ -72,7 +72,7 @@ module.exports = {
   SERVICE_DESC:
     '服务 (Service) 是定义了一类容器组的逻辑集合和一个用于访问它们的策略。',
   SERVICE_CREATE_DESC:
-    '服务是定义了一类 Pod 的逻辑集合和一个用于访问它们的策略。您可选择服务的类型或者创建服务的方式。<br/>KubeSphere 支持无状态服务和有状态服务，并支持通过代码或者制品构建服务。',
+    '应用是定义了一类 容器 的逻辑集合，您可选择通过镜像、代码或者添加制品的方式来创建。<br/>容器管理平台 支持无状态服务和有状态服务，并支持通过代码或者制品构建服务。',
 
   SERVICES_BASEINFO_DESC:
     '创建服务需要提供服务的名称和描述，服务名称不能和同一项目下已有的服务名称相同。',

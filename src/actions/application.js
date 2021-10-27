@@ -9,12 +9,14 @@ import ROUTER_FORM_STEPS from 'configs/steps/ingresses'
 
 import CreateModal from 'components/Modals/Create'
 import DeployAppModal from 'projects/components/Modals/DeployApp'
-import CreateAppModal from 'projects/components/Modals/CreateApp'
+import CreateAppModal from 'ai-platform/components/Modals/CreateApp'
 import CreateAppServiceModal from 'projects/components/Modals/CreateAppService'
 import ServiceMonitorModal from 'projects/components/Modals/ServiceMonitor'
 
 import RouterStore from 'stores/router'
 import ServiceMonitorStore from 'stores/monitoring/service.monitor'
+import formPersist from 'utils/form.persist'
+import CreateServiceModal from 'ai-platform/components/Modals/ServiceCreateFull'
 
 export default {
   'app.deploy': {
@@ -24,6 +26,38 @@ export default {
           Modal.close(modal)
         },
         modal: DeployAppModal,
+        store,
+        ...props,
+      })
+    },
+  },
+  'service.createfull': {
+    on({ store, cluster, namespace, module, success, ...props }) {
+      const kind = MODULE_KIND_MAP[module]
+      const modal = Modal.open({
+        onOk: newObject => {
+          let data = newObject
+
+          if (!data) {
+            return
+          }
+
+          if (kind) {
+            if (Object.keys(newObject).length === 1 && newObject[kind]) {
+              data = newObject[kind]
+            }
+          }
+
+          store.create(data, { cluster, namespace }).then(() => {
+            Modal.close(modal)
+            Notify.success({ content: `${t('Created Successfully')}` })
+            success && success()
+            formPersist.delete(`${module}_create_form`)
+          })
+        },
+        cluster,
+        namespace,
+        modal: CreateServiceModal,
         store,
         ...props,
       })

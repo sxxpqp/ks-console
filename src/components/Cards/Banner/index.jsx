@@ -88,7 +88,7 @@ export default class Banner extends React.Component {
       tabs,
       extra,
       routes,
-      show = false,
+      show = true,
     } = this.props
     // const docUrl = getDocsUrl(module)
     return (

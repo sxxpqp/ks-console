@@ -5,11 +5,14 @@ import { MODULE_KIND_MAP } from 'utils/constants'
 import ConfigMapStore from 'stores/configmap'
 import SecretStore from 'stores/secret'
 
-import { Form } from '@kube-design/components'
+import { Form, Toggle } from '@kube-design/components'
 import ReplicasControl from 'components/Forms/Workload/ContainerSettings/ReplicasControl'
 import UpdateStrategy from 'components/Forms/Workload/ContainerSettings/UpdateStrategy'
+// import { Switch } from 'components/Base'
 
+import classnames from 'classnames'
 import ContainerForm from './ContainerForm'
+import styles from './index.scss'
 
 export default class ContainerSetting extends React.Component {
   constructor(props) {
@@ -21,6 +24,7 @@ export default class ContainerSetting extends React.Component {
       configMaps: [],
       secrets: [],
       replicas: this.getReplicas(),
+      advanceMode: false,
     }
 
     this.configMapStore = new ConfigMapStore()
@@ -160,7 +164,7 @@ export default class ContainerSetting extends React.Component {
 
   renderContainerForm() {
     const { withService, cluster, module } = this.props
-    const { configMaps, secrets } = this.state
+    const { configMaps, secrets, advanceMode } = this.state
 
     return (
       <ContainerForm
@@ -171,6 +175,7 @@ export default class ContainerSetting extends React.Component {
         configMaps={configMaps}
         secrets={secrets}
         withService={withService}
+        advanceMode={advanceMode}
       />
     )
   }
@@ -201,14 +206,58 @@ export default class ContainerSetting extends React.Component {
     )
   }
 
+  handleModeChange = () => {
+    const { advanceMode } = this.state
+    this.setState({
+      advanceMode: !advanceMode,
+    })
+  }
+
+  renderToggle() {
+    const { advanceMode } = this.state
+
+    return (
+      <span>
+        <Toggle onChange={this.handleModeChange} checked={advanceMode} />
+      </span>
+    )
+  }
+
+  renderTitle() {
+    return (
+      <div
+        // className={styles.switch}
+        className={classnames(styles.switch, 'font-bold margin-b12')}
+      >
+        <span>{'容器设置'}</span>
+        <span className="text-secondary align-middle">
+          {this.renderToggle()}
+          {` 全部配置 `}
+        </span>
+      </div>
+    )
+  }
+
   render() {
     const { formRef } = this.props
+    const { advanceMode } = this.state
 
     return (
       <Form data={this.formTemplate} ref={formRef}>
-        {this.renderReplicasControl()}
+        {this.renderTitle()}
+        {/* <div className={styles.switch}>
+          <div>
+            <strong>容器设置</strong>
+          </div>
+          <Switch
+            text="高级模式"
+            onChange={this.handleModeChange}
+            checked={advanceMode}
+          />
+        </div> */}
         {this.renderContainerForm()}
-        {this.renderUpdateStrategy()}
+        {advanceMode && this.renderUpdateStrategy()}
+        {advanceMode && this.renderReplicasControl()}
       </Form>
     )
   }

@@ -13,6 +13,7 @@ import {
 } from 'lodash'
 import generate from 'nanoid/generate'
 import moment from 'moment-mini'
+import { pinyin } from 'pinyin-pro'
 
 import { PATTERN_LABEL, MODULE_KIND_MAP } from './constants'
 
@@ -117,12 +118,19 @@ export function flattenObject(obj) {
 export const generateId = length =>
   generate('0123456789abcdefghijklmnopqrstuvwxyz', length || 6)
 
-export const genName = () => {
-  const id = generateId(12)
-  if ('0123456789'.indexOf(id[0]) === -1) {
+export const genName = (len = 12) => {
+  const id = generateId(len)
+  if (
+    '0123456789'.indexOf(id[0]) === -1 &&
+    '-'.indexOf(id[id.length - 1] === -1)
+  ) {
     return id
   }
   return genName()
+}
+
+export const turnName = value => {
+  return pinyin(value, { toneType: 'none', type: 'array' }).join('')
 }
 
 /**
@@ -388,7 +396,8 @@ export const getDisplayName = item => {
     return item.display_name
   }
 
-  return `${item.name}${item.aliasName ? `(${item.aliasName})` : ''}`
+  return item.aliasName ? item.aliasName : `${item.name}`
+  // return `${item.name}${item.aliasName ? `(${item.aliasName})` : ''}`
 }
 
 export const getWebSocketProtocol = protocol => {

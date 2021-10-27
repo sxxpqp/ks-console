@@ -179,7 +179,7 @@ export default class ContainerSetting extends React.Component {
         noWrapper
       >
         {this.renderImageForm()}
-        {this.renderAdvancedSettings()}
+        {/* {this.renderAdvancedSettings()} */}
       </Form.Group>
     )
   }

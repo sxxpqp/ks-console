@@ -457,6 +457,8 @@ export const GRAY_RELEASE_CATEGORIES = [
   },
 ]
 
+// 添加应用名称校验
+export const PATTERN_APP_NAME = /^[\u4e00-\u9fa5_a-zA-Z][\S\s]+$/
 export const PATTERN_NAME = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/
 export const PATTERN_USER_NAME = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/
 export const PATTERN_SERVICE_NAME = /^[a-z]([-a-z0-9]*[a-z0-9])?$/

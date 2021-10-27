@@ -120,11 +120,13 @@ export default class ContainerList extends React.Component {
   }
 
   render() {
-    const { className, projectDetail } = this.props
+    const { className } = this.props
+    // const { className, projectDetail } = this.props
 
     return (
       <div className={classNames(styles.wrapper, className)}>
-        {projectDetail && this.renderQuotaCheck()}
+        {/* 项目配额说明 */}
+        {/* {projectDetail && this.renderQuotaCheck()} */}
         {this.renderInitContainers()}
         {this.renderContainers()}
         {this.renderAdd()}
