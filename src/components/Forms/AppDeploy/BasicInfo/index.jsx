@@ -1,7 +1,7 @@
 import React from 'react'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react'
-import { get, pick } from 'lodash'
+import { get, pick, set } from 'lodash'
 import {
   Column,
   Columns,
@@ -9,10 +9,11 @@ import {
   Input,
   Select,
   Tag,
-  TextArea,
+  // TextArea,
 } from '@kube-design/components'
 import { compareVersion } from 'utils/app'
 import { PATTERN_SERVICE_NAME } from 'utils/constants'
+import { genName, turnName } from 'utils'
 import { Text } from 'components/Base'
 
 import Placement from './Placement'
@@ -21,6 +22,13 @@ import styles from './index.scss'
 
 @observer
 export default class BasicInfo extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      metaName: '',
+    }
+  }
+
   @computed
   get sortedVersions() {
     return this.props.versionStore.list.data
@@ -71,8 +79,27 @@ export default class BasicInfo extends React.Component {
     )
   }
 
+  handleAliasChange(value) {
+    const { formData } = this.props
+    // console.log(
+    //   '🚀 ~ file: index.jsx ~ line 84 ~ BasicInfo ~ handleAliasChange ~ formData',
+    //   formData
+    // )
+    // 自动唯一标识
+    const tempName = `${turnName(value)}-${genName(6)}`
+    set(formData, 'name', tempName)
+    set(formData, 'description', value)
+    this.setState({
+      metaName: tempName,
+    })
+    // this.handleNameChange(tempName)
+  }
+
   render() {
     const { formData, formRef, namespace, versionStore } = this.props
+
+    const { metaName } = this.state
+
     return (
       <div className={styles.wrapper}>
         <Form data={formData} ref={formRef}>
@@ -80,7 +107,22 @@ export default class BasicInfo extends React.Component {
           <Columns>
             <Column>
               <Form.Item
-                label={t('Application Name')}
+                label="名称"
+                desc="支持中英文名称，最长63个字符，汉字&字母打头"
+                rules={[{ required: true, message: '请输入名称' }]}
+              >
+                <Input
+                  autoFocus={true}
+                  name="metadata.annotations['kubesphere.io/alias-name']"
+                  maxLength={63}
+                  onChange={this.handleAliasChange.bind(this)}
+                  rules={[{ required: true, message: '请输入应用名称' }]}
+                />
+              </Form.Item>
+            </Column>
+            <Column className="hidden">
+              <Form.Item
+                label={'唯一标识'}
                 desc={t('CLUSTER_NAME_DESC')}
                 rules={[
                   { required: true, message: t('Please input name') },
@@ -92,7 +134,7 @@ export default class BasicInfo extends React.Component {
                   },
                 ]}
               >
-                <Input name="name" maxLength={14} />
+                <Input name="name" maxLength={14} value={metaName} />
               </Form.Item>
             </Column>
             <Column>
@@ -120,14 +162,14 @@ export default class BasicInfo extends React.Component {
               </Form.Item>
             </Column>
           </Columns>
-          <Columns>
+          {/* <Columns>
             <Column>
               <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
                 <TextArea name="description" maxLength={256} />
               </Form.Item>
             </Column>
             <Column />
-          </Columns>
+          </Columns> */}
           <br />
           <div className={styles.title}>{t('Deployment Location')}</div>
           <div className={styles.placement}>

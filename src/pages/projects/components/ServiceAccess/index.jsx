@@ -5,7 +5,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { Text } from 'components/Base'
 // import { Button } from 'antd'
 
-export default function ServiceAccess({ data }) {
+export default function ServiceAccess({ data, showCopy = false }) {
   if (data.specType === 'ClusterIP') {
     return <Text description={data.specType} title={data.clusterIP} />
   }
@@ -30,11 +30,13 @@ export default function ServiceAccess({ data }) {
               </a>
               /{port.protocol}
             </span>
-            <CopyToClipboard text={link} onCopy={handleCopy}>
-              <a href="#" style={{ color: '#55bc8a', paddingLeft: '15px' }}>
-                {t('Copy')}
-              </a>
-            </CopyToClipboard>
+            {showCopy && (
+              <CopyToClipboard text={link} onCopy={handleCopy}>
+                <a href="#" style={{ color: '#55bc8a', paddingLeft: '15px' }}>
+                  {t('Copy')}
+                </a>
+              </CopyToClipboard>
+            )}
           </div>
         )
       })
@@ -46,7 +48,7 @@ export default function ServiceAccess({ data }) {
 
     return (
       <>
-        <Text description="端口映射（容器端口:对外端口）" title={ports} />
+        <Text description="端口映射" title={ports} />
       </>
     )
   }

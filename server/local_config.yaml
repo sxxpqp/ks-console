@@ -154,13 +154,13 @@ client:
           icon: AppstoreAddOutlined
           children:
             - { name: applications, title: Applications, icon: application }
+            - { name: services, title: DockerService }
             - name: workloadsPods
               title: WorkloadsPods
               tabs:
                 - { name: deployments, title: Deployments }
                 - { name: statefulsets, title: StatefulSets }
                 - { name: daemonsets, title: DaemonSets }
-            - { name: services, title: DockerService }
             - { name: pods, title: Pods }
         # - { name: services, title: Services }
         # - name: workloads

@@ -16,7 +16,7 @@ import CRDAppDetail from '../containers/Applications/CRDAppDetail'
 import OPAppDetail from '../containers/Applications/OPAppDetail'
 import RoleDetail from '../containers/Roles/Detail'
 import ImageBuilderDetail from '../containers/ImageBuilder/Detail'
-import AlertPoliciesDetail from '../containers/Alerting/Policies/Detail'
+// import AlertPoliciesDetail from '../containers/Alerting/Policies/Detail'
 
 export default PATH => [
   {
@@ -91,9 +91,5 @@ export default PATH => [
   {
     path: `${PATH}/s2ibuilders/:name`,
     component: ImageBuilderDetail,
-  },
-  {
-    path: [`${PATH}/alert-rules/builtin/:name`, `${PATH}/alert-rules/:name`],
-    component: AlertPoliciesDetail,
   },
 ]

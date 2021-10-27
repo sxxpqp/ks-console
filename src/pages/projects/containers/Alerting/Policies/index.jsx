@@ -68,18 +68,18 @@ export default class AlertingPolicy extends React.Component {
     store.list.silent = false
   }
 
-  get tips() {
-    return [
-      {
-        title: t('REQUESTS_FOR_PUSH_AN_ALARM_Q'),
-        description: t('REQUESTS_FOR_PUSH_AN_ALARM_A'),
-      },
-      {
-        title: t('HOW_TO_SUPRESS_AN_ALARM_Q'),
-        description: t('HOW_TO_SUPRESS_AN_ALARM_A'),
-      },
-    ]
-  }
+  // get tips() {
+  //   return [
+  //     {
+  //       title: t('REQUESTS_FOR_PUSH_AN_ALARM_Q'),
+  //       description: t('REQUESTS_FOR_PUSH_AN_ALARM_A'),
+  //     },
+  //     {
+  //       title: t('HOW_TO_SUPRESS_AN_ALARM_Q'),
+  //       description: t('HOW_TO_SUPRESS_AN_ALARM_A'),
+  //     },
+  //   ]
+  // }
 
   get itemActions() {
     const { trigger, routing, match, getData, module, name } = this.props
@@ -223,7 +223,7 @@ export default class AlertingPolicy extends React.Component {
       <ListPage {...this.props} getData={this.getData} noWatch>
         <Banner
           {...bannerProps}
-          tips={this.tips}
+          // tips={this.tips}
           tabs={namespace ? {} : this.tabs}
           title={t('Alerting Policies')}
           description={t('ALERT_POLICY_DESC')}

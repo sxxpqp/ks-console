@@ -49,18 +49,18 @@ export default class Services extends React.Component {
     }
   }
 
-  get tips() {
-    return [
-      {
-        title: t('SERVICE_TYPES_Q'),
-        description: t('SERVICE_TYPES_A'),
-      },
-      {
-        title: t('SCENARIOS_FOR_SERVICES_Q'),
-        description: t('SCENARIOS_FOR_SERVICES_A'),
-      },
-    ]
-  }
+  // get tips() {
+  //   return [
+  //     {
+  //       title: t('SERVICE_TYPES_Q'),
+  //       description: t('SERVICE_TYPES_A'),
+  //     },
+  //     {
+  //       title: t('SCENARIOS_FOR_SERVICES_Q'),
+  //       description: t('SCENARIOS_FOR_SERVICES_A'),
+  //     },
+  //   ]
+  // }
 
   get itemActions() {
     const { trigger, name } = this.props
@@ -173,6 +173,7 @@ export default class Services extends React.Component {
         dataIndex: 'annotations["kubesphere.io/serviceType"]',
         isHideable: true,
         width: '16%',
+        // eslint-disable-next-line no-unused-vars
         render: (serviceType, record) => (
           <Text
             title={
@@ -180,17 +181,17 @@ export default class Services extends React.Component {
                 ? t(`SERVICE_TYPE_${serviceType.toUpperCase()}`)
                 : t('Custom Creation')
             }
-            description={record.type || '-'}
+            // description={record.type || '-'}
           />
         ),
       },
-      {
-        title: t('Application'),
-        dataIndex: 'app',
-        isHideable: true,
-        search: true,
-        width: '22%',
-      },
+      // {
+      //   title: t('Application'),
+      //   dataIndex: 'app',
+      //   isHideable: true,
+      //   search: true,
+      //   width: '22%',
+      // },
       {
         title: t('Internet Access'),
         dataIndex: 'specType',
@@ -230,7 +231,7 @@ export default class Services extends React.Component {
           title="外部服务"
           description="对于Docker应用，根据需求对外提供的一些接口服务，设置服务端口。"
           tabs={this.tabs}
-          tips={this.tips}
+          // tips={this.tips}
         />
         {type === 'topology' ? (
           <Topology match={match} />

@@ -80,8 +80,8 @@ export default class OPApps extends React.Component {
             avatar={get(record, 'app.icon')}
             iconLetter={name}
             iconSize={40}
-            title={name}
-            desc={record.description}
+            title={record.description || name}
+            // desc={record.description}
           />
         ),
       },

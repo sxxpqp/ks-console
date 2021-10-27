@@ -1,6 +1,7 @@
 import { get, set, unset } from 'lodash'
 import React from 'react'
 import { Form, Select } from '@kube-design/components'
+// import { Form, Select, Columns, Column, Input } from '@kube-design/components'
 import { PropertiesInput } from 'components/Inputs'
 import { updateFederatedAnnotations } from 'utils'
 
@@ -67,6 +68,15 @@ export default class InternetAccess extends React.Component {
     this.setState({ mode })
   }
 
+  handleInputChange = port => {
+    debugger
+    if (port) {
+      set(this.formTemplate, `spec.ports.nodePort`, port)
+    } else {
+      unset(this.formTemplate, `spec.ports.nodePort`)
+    }
+  }
+
   handleAnnotationsChange = () => {
     if (this.props.isFederated) {
       updateFederatedAnnotations(this.formTemplate)
@@ -95,6 +105,7 @@ export default class InternetAccess extends React.Component {
             optionRenderer={this.optionRenderer}
           />
         </Form.Item>
+
         {mode === 'LoadBalancer' && (
           <Form.Item label={t('Annotations')}>
             <PropertiesInput

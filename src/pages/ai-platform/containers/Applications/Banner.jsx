@@ -49,7 +49,7 @@ export default class AppBanner extends Component {
       options: [
         {
           value: 'template',
-          label: '已创建模板应用',
+          label: '已建模板应用',
         },
         {
           value: 'composing',

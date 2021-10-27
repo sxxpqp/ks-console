@@ -322,6 +322,7 @@ export default class ContainerSetting extends React.Component {
   }
 
   handleContainer(data = {}) {
+    debugger
     if (has(data, 'resources.limits')) {
       data.resources.limits = omitBy(data.resources.limits, isEmpty)
     }

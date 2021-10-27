@@ -60,18 +60,18 @@ export default class Nodes extends React.Component {
     return this.props.match.params.namespace
   }
 
-  get tips() {
-    return [
-      {
-        title: t('NODE_TYPES_Q'),
-        description: t('NODE_TYPES_A'),
-      },
-      {
-        title: t('WHAT_IS_NODE_TAINTS_Q'),
-        description: t('WHAT_IS_NODE_TAINTS_A'),
-      },
-    ]
-  }
+  // get tips() {
+  //   return [
+  //     {
+  //       title: t('NODE_TYPES_Q'),
+  //       description: t('NODE_TYPES_A'),
+  //     },
+  //     {
+  //       title: t('WHAT_IS_NODE_TAINTS_Q'),
+  //       description: t('WHAT_IS_NODE_TAINTS_A'),
+  //     },
+  //   ]
+  // }
 
   get itemActions() {
     const { store, clusterStore, routing, trigger, name } = this.props
@@ -461,7 +461,7 @@ export default class Nodes extends React.Component {
 
     return (
       <ListPage {...this.props} getData={this.getData} noWatch>
-        <Banner {...bannerProps} tips={this.tips} />
+        <Banner {...bannerProps} />
         {this.renderOverview()}
         <Table
           className={styles.tableWrapper}

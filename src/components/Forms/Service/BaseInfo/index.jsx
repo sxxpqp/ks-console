@@ -213,7 +213,7 @@ export default class ServiceBaseInfo extends React.Component {
           </Column>
           <Column>
             <Form.Item
-              // className="hidden"
+              className="hidden"
               label={'唯一标识'}
               desc={t('SERVICE_NAME_DESC')}
               rules={[

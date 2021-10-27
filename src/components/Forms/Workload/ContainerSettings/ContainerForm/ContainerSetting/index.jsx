@@ -1,5 +1,8 @@
 import React from 'react'
-import { get, isEmpty } from 'lodash'
+import {
+  get,
+  // isEmpty
+} from 'lodash'
 import { generateId, parseDockerImage } from 'utils'
 
 import { PATTERN_NAME } from 'utils/constants'
@@ -7,13 +10,13 @@ import { PATTERN_NAME } from 'utils/constants'
 import {
   Form,
   Tag,
-  Alert,
+  // Alert,
   Input,
   Select,
   Columns,
   Column,
 } from '@kube-design/components'
-import { ResourceLimit } from 'components/Inputs'
+// import { ResourceLimit } from 'components/Inputs'
 import ToggleView from 'components/ToggleView'
 
 import ImageInput from './ImageInput'
@@ -114,9 +117,10 @@ export default class ContainerSetting extends React.Component {
 
   renderAdvancedSettings() {
     const { defaultContainerType, onContainerTypeChange } = this.props
-    const defaultResourceLimit = this.defaultResourceLimit
+    // const defaultResourceLimit = this.defaultResourceLimit
     return (
-      <ToggleView defaultShow={isEmpty(defaultResourceLimit)}>
+      <ToggleView defaultShow={false}>
+        {/* <ToggleView defaultShow={isEmpty(defaultResourceLimit)}> */}
         <>
           <Columns className={styles.columns}>
             <Column>
@@ -150,7 +154,7 @@ export default class ContainerSetting extends React.Component {
               </Form.Item>
             </Column>
           </Columns>
-          <Alert
+          {/* <Alert
             className="margin-b12"
             type="warning"
             message={t('CONTAINER_RESOURCE_LIMIT_TIP')}
@@ -163,7 +167,7 @@ export default class ContainerSetting extends React.Component {
               defaultValue={defaultResourceLimit}
               onError={this.handleError}
             />
-          </Form.Item>
+          </Form.Item> */}
         </>
       </ToggleView>
     )
@@ -179,7 +183,7 @@ export default class ContainerSetting extends React.Component {
         noWrapper
       >
         {this.renderImageForm()}
-        {/* {this.renderAdvancedSettings()} */}
+        {this.renderAdvancedSettings()}
       </Form.Group>
     )
   }

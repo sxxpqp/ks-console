@@ -1,6 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-// import Banner from 'components/Cards/Banner'
+import Banner from 'components/Cards/Banner'
 // import { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 import { toJS } from 'mobx'
@@ -15,7 +15,7 @@ import { Modal } from 'components/Base'
 import RefuseModal from 'components/Modals/Audit/refuse'
 import AuditModal from 'components/Modals/Audit/index'
 import DetailModal from 'components/Modals/AuditDetail'
-import { Notify, Button as AIButton } from '@kube-design/components'
+import { Notify } from '@kube-design/components'
 import { updateApply } from 'api/apply'
 
 import {
@@ -33,7 +33,7 @@ export default class ApplyDefault extends React.Component {
     super(props)
     this.store = new ApplyStore()
     this.state = {
-      type: '',
+      type: 0,
       name: '',
     }
   }
@@ -44,6 +44,7 @@ export default class ApplyDefault extends React.Component {
       ...this.props.match.params,
       ...params,
       ...param,
+      ...this.state,
     })
     // const tmp = {
     //   ...omit(this.props.match.params, 'namespace'),
@@ -58,14 +59,8 @@ export default class ApplyDefault extends React.Component {
 
   // 请求列表
   componentDidMount() {
-    this.unsubscribe = this.routing.history.subscribe(location => {
-      const params = parse(location.search.slice(1))
-      this.store.fetchList({
-        ...this.props.match.params,
-        page: 1,
-        limit: 10,
-        ...params,
-      })
+    this.unsubscribe = this.routing.history.subscribe(() => {
+      this.getData()
     })
   }
 
@@ -329,28 +324,33 @@ export default class ApplyDefault extends React.Component {
   }
 
   renderTypeSearch() {
+    // eslint-disable-next-line no-unused-vars
     const { type, name } = this.state
 
     const onTypeChange = e => {
+      // console.log(location.search)
       this.setState({ type: e.target.value })
+      setTimeout(() => {
+        this.getData()
+      }, 0)
     }
 
-    const search = () => {
-      this.getData({
-        name,
-        type,
-      })
-    }
+    // const search = () => {
+    //   this.getData({
+    //     name,
+    //     type,
+    //   })
+    // }
 
-    const clear = () => {
-      this.setState({
-        type: '',
-        name: '',
-      })
-      this.getData({
-        type: '',
-      })
-    }
+    // const clear = () => {
+    //   this.setState({
+    //     type: '',
+    //     name: '',
+    //   })
+    //   this.getData({
+    //     type: '',
+    //   })
+    // }
 
     return (
       <Row className={styles.flex}>
@@ -368,30 +368,30 @@ export default class ApplyDefault extends React.Component {
             <Radio value={2}>已驳回</Radio>
           </Radio.Group>
         </Col>
-        <Col>
+        {/* <Col>
           <Row>
             <AIButton type="control" onClick={search}>
               筛选
             </AIButton>
             <AIButton onClick={clear}>清空</AIButton>
           </Row>
-        </Col>
+        </Col> */}
       </Row>
     )
   }
 
   render() {
     // const { match } = this.props
-    // const bannerProps = {
-    //   className: 'margin-b12',
-    //   title: '容器资源审批',
-    //   description:
-    //     '人工智能平台用户申请的资源清单，查看资源详情，对资源申请进行审批。',
-    //   module: 'review',
-    // }
+    const bannerProps = {
+      className: 'margin-b12',
+      title: '容器资源审批',
+      description:
+        '人工智能平台用户申请的资源清单，查看资源详情，对资源申请进行审批。',
+      module: 'review',
+    }
     return (
       <div>
-        {/* <Banner {...bannerProps} /> */}
+        <Banner {...bannerProps} />
         {/* {this.renderTypeSearch()} */}
         {this.renderContent()}
       </div>

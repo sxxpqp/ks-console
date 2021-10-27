@@ -1,6 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-// import Banner from 'components/Cards/Banner'
+import Banner from 'components/Cards/Banner'
 import { Button, Notify } from '@kube-design/components'
 import Apps from 'ai-review/components/Apps'
 import { Panel } from 'components/Base'
@@ -82,6 +82,10 @@ export default class ApplyDefault extends React.Component {
     this.formRef = React.createRef()
   }
 
+  get routing() {
+    return this.props.rootStore.routing
+  }
+
   get tips() {
     return [
       {
@@ -141,12 +145,12 @@ export default class ApplyDefault extends React.Component {
         label: 'app-template',
         desc: '选择平台的应用模板，并在申请通过后，可以一键部署',
       },
-      {
-        id: 3,
-        name: '自定义',
-        label: 'custom',
-        desc: '创建包含工作负载、服务的自定义应用，可以高度自定义（YAML）配置',
-      },
+      // {
+      //   id: 3,
+      //   name: '自定义',
+      //   label: 'custom',
+      //   desc: '创建包含工作负载、服务的自定义应用，可以高度自定义（YAML）配置',
+      // },
     ]
     return (
       <div>
@@ -159,6 +163,13 @@ export default class ApplyDefault extends React.Component {
         </Radio.Group>
         <div className={styles.desc}>说明：{items[value - 1].desc}</div>
       </div>
+    )
+  }
+
+  gotoHis() {
+    const { workspace, namespace, cluster } = this.props.match.params
+    this.routing.push(
+      `/${workspace}/clusters/${cluster}/projects/${namespace}/applyhis`
     )
   }
 
@@ -195,6 +206,7 @@ export default class ApplyDefault extends React.Component {
           key: [],
           defaultApp: '',
         })
+        this.gotoHis()
       }
     }
 
@@ -380,6 +392,7 @@ export default class ApplyDefault extends React.Component {
           ...formData,
           [type]: e,
         },
+        key: [], // 清空推荐选项
       })
     }
     return (
@@ -482,12 +495,12 @@ export default class ApplyDefault extends React.Component {
 
   render() {
     // const { match } = this.props
-    // const bannerProps = {
-    //   className: 'margin-b12',
-    //   title: '容器资源申请',
-    //   description: '需要有足够的资源配额，才能使用容器平台创建应用。',
-    //   module: 'review',
-    // }
+    const bannerProps = {
+      className: 'margin-b12',
+      title: '容器资源申请',
+      description: '需要有足够的资源配额，才能使用容器平台创建应用。',
+      module: 'review',
+    }
     const onClickAppItem = app => {
       this.setState({
         defaultApp: app.app_id,
@@ -498,6 +511,7 @@ export default class ApplyDefault extends React.Component {
 
     return (
       <div>
+        <Banner {...bannerProps} />
         {/* <Banner {...bannerProps} tips={this.tips} /> */}
         {this.renderApply()}
         <Panel title="选择部署方式">{this.renderRadios()}</Panel>

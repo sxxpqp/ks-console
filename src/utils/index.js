@@ -122,7 +122,8 @@ export const genName = (len = 12) => {
   const id = generateId(len)
   if (
     '0123456789'.indexOf(id[0]) === -1 &&
-    '-'.indexOf(id[id.length - 1] === -1)
+    '-'.indexOf(id[id.length - 1] === -1) &&
+    id.length === len
   ) {
     return id
   }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { capitalize } from 'lodash'
 
-import { Button } from '@kube-design/components'
+// import { Button } from '@kube-design/components'
 
 import { Status } from 'components/Base'
 import Avatar from 'apps/components/Avatar'
@@ -21,27 +21,27 @@ import AppStore from 'stores/openpitrix/app'
   rowKey: 'app_id',
 })
 export default class Apps extends React.Component {
-  get tips() {
-    const { enabledActions } = this.props
-    return [
-      {
-        title: '创建容器应用模板',
-        description:
-          '您可以上传容器应用配置 Helm Chart 或者使用 KubeSphere 提供的资源编排工具进行应用模板的开发',
-        operation: enabledActions.includes('create') ? (
-          <Button type="flat" onClick={this.showUpload}>
-            {t('Upload Template')}
-          </Button>
-        ) : null,
-        closable: false,
-      },
-      {
-        title: '发布容器应用模板至公共空间',
-        description:
-          '用户上传的模板默认只能自己使用，如果需要提供给他人使用，需要有管理权限的人进行审核才能进行公共使用',
-      },
-    ]
-  }
+  // get tips() {
+  //   const { enabledActions } = this.props
+  //   return [
+  //     {
+  //       title: '创建容器应用模板',
+  //       description:
+  //         '您可以上传容器应用配置 Helm Chart 或者使用 KubeSphere 提供的资源编排工具进行应用模板的开发',
+  //       operation: enabledActions.includes('create') ? (
+  //         <Button type="flat" onClick={this.showUpload}>
+  //           {t('Upload Template')}
+  //         </Button>
+  //       ) : null,
+  //       closable: false,
+  //     },
+  //     {
+  //       title: '发布容器应用模板至公共空间',
+  //       description:
+  //         '用户上传的模板默认只能自己使用，如果需要提供给他人使用，需要有管理权限的人进行审核才能进行公共使用',
+  //     },
+  //   ]
+  // }
 
   get workspace() {
     return this.props.match.params.workspace
@@ -139,7 +139,7 @@ export default class Apps extends React.Component {
       <ListPage {...this.props} getData={this.getData} noWatch>
         <Banner
           {...bannerProps}
-          tips={this.tips}
+          // tips={this.tips}
           title={'容器应用模板仓库'}
           description={
             '用户可以上传或者创建新的容器应用模板，并且快速部署它们，也可以使用已有的应用模板进行应用部署。'

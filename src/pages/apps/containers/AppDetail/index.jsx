@@ -102,7 +102,7 @@ export default class App extends React.Component {
   }
 
   handleBack = () => {
-    this.routing.push('/apps')
+    this.routing.goBack()
   }
 
   handleChangeAppVersion = version => {

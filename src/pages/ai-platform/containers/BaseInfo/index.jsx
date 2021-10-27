@@ -56,18 +56,18 @@ class BaseInfo extends React.Component {
     return this.params.workspace
   }
 
-  get tips() {
-    return [
-      {
-        title: t('HOW_TO_USE_QUOTA_Q'),
-        description: t('HOW_TO_USE_QUOTA_A'),
-      },
-      {
-        title: t('WHAT_IS_LIMIT_RANGE_Q'),
-        description: t('WHAT_IS_LIMIT_RANGE_A'),
-      },
-    ]
-  }
+  // get tips() {
+  //   return [
+  //     {
+  //       title: t('HOW_TO_USE_QUOTA_Q'),
+  //       description: t('HOW_TO_USE_QUOTA_A'),
+  //     },
+  //     {
+  //       title: t('WHAT_IS_LIMIT_RANGE_Q'),
+  //       description: t('WHAT_IS_LIMIT_RANGE_A'),
+  //     },
+  //   ]
+  // }
 
   get enabledActions() {
     return globals.app.getActions({
@@ -195,7 +195,7 @@ class BaseInfo extends React.Component {
           title={t('Basic Info')}
           description={t('PROJECT_BASIC_INFO_DESC')}
           module="project_base_info"
-          tips={this.tips}
+          // tips={this.tips}
         />
         <ProjectInfo
           detail={detail}

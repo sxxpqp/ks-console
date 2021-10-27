@@ -24,18 +24,18 @@ $banner-height: 152px + $header-height;
     }
     @media (min-width: $apps-content-width) {
       width: $apps-content-width;
-      .leftShape_1,
-      .leftShape_2 {
-        left: -50px;
-      }
+      // .leftShape_1,
+      // .leftShape_2 {
+      //   left: -50px;
+      // }
     }
 
-    @media (min-width: $apps-content-width + 140px) {
-      .leftShape_1,
-      .leftShape_2 {
-        left: -50px;
-      }
-    }
+    // @media (min-width: $apps-content-width + 140px) {
+    //   .leftShape_1,
+    //   .leftShape_2 {
+    //     left: -50px;
+    //   }
+    // }
   }
 
   .innerContent {
@@ -80,8 +80,9 @@ $banner-height: 152px + $header-height;
     background: url('/assets/banner/pop-cloud.svg') no-repeat;
     width: 232px;
     height: 192px;
-    transform: translateY(-30px);
-    left: 0;
+    // transform: translateY(-30px);
+    left: 50%;
+    transform: translate(-50%, -30px);
   }
 
   .leftShape_2 {
@@ -89,7 +90,8 @@ $banner-height: 152px + $header-height;
     background: url('/assets/banner/support.svg') no-repeat;
     width: 269px;
     height: 244px;
-    left: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
   }
 
   .appOutline {
@@ -126,7 +128,7 @@ $banner-height: 152px + $header-height;
           height: 20px;
           margin-right: 8px;
           color: #fff;
-          fill: #B6C2CD;
+          fill: #b6c2cd;
         }
       }
     }

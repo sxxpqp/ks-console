@@ -64,6 +64,10 @@ export default class ContaineForm extends React.Component {
 
   constructor(props) {
     super(props)
+    // console.log(
+    //   '🚀 ~ file: index.jsx ~ line 67 ~ ContaineForm ~ constructor ~ props',
+    //   props
+    // )
 
     this.formRef = React.createRef()
 

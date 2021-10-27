@@ -1,6 +1,6 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
-// import Banner from 'components/Cards/Banner'
+import Banner from 'components/Cards/Banner'
 // import { ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
 import { toJS } from 'mobx'
@@ -187,6 +187,7 @@ export default class ApplyDefault extends React.Component {
       },
       {
         title: '操作',
+        dataIndex: 'ctrls',
         width: '20%',
         // eslint-disable-next-line no-unused-vars
         render: (_, record) => {
@@ -305,15 +306,15 @@ export default class ApplyDefault extends React.Component {
 
   render() {
     // const { match } = this.props
-    // const bannerProps = {
-    //   className: 'margin-b12',
-    //   title: '容器资源申请历史',
-    //   description: '人工智能平台用户申请的资源申请历史，查看资源审批进展。',
-    //   module: 'review',
-    // }
+    const bannerProps = {
+      className: 'margin-b12',
+      title: '容器资源申请历史',
+      description: '人工智能平台用户申请的资源申请历史，查看资源审批进展。',
+      module: 'review',
+    }
     return (
       <div>
-        {/* <Banner {...bannerProps} /> */}
+        <Banner {...bannerProps} />
         {this.renderContent()}
       </div>
     )

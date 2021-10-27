@@ -42,6 +42,10 @@ export default class Home extends React.Component {
     return qs.parse(location.search.slice(1))
   }
 
+  get routing() {
+    return this.props.rootStore.routing
+  }
+
   async componentDidMount() {
     const { fetchList, list } = this.categoryStore
 
@@ -205,6 +209,10 @@ export default class Home extends React.Component {
     )
   }
 
+  handleBack = () => {
+    this.routing.goBack()
+  }
+
   render() {
     const { list, allApps } = this.appStore
     const { isLoading, total } = list
@@ -212,7 +220,7 @@ export default class Home extends React.Component {
 
     return (
       <div className={styles.wrapper}>
-        <Banner className={styles.banner}>
+        <Banner className={styles.banner} onBack={this.handleBack}>
           <h2 className={styles.title}>{t('App Store')}</h2>
           <p className={styles.desc}>{t('HOME_APP_STORE_DESC')}</p>
         </Banner>

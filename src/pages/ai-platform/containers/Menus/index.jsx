@@ -56,19 +56,19 @@ export default class Members extends React.Component {
     this.getData()
   }
 
-  get tips() {
-    return [
-      {
-        title: '创建菜单',
-        description:
-          '新建菜单，可以编辑菜单的名称、路径、路由，类型默认为菜单（还可以设置成目录，即有子菜单层级）、链接（外部链接跳转）。',
-      },
-      {
-        title: '菜单编辑',
-        description: '可以通过编辑功能来调整菜单的属性，设置菜单的隐藏与显示',
-      },
-    ]
-  }
+  // get tips() {
+  //   return [
+  //     {
+  //       title: '创建菜单',
+  //       description:
+  //         '新建菜单，可以编辑菜单的名称、路径、路由，类型默认为菜单（还可以设置成目录，即有子菜单层级）、链接（外部链接跳转）。',
+  //     },
+  //     {
+  //       title: '菜单编辑',
+  //       description: '可以通过编辑功能来调整菜单的属性，设置菜单的隐藏与显示',
+  //     },
+  //   ]
+  // }
 
   get tableColumns() {
     return [
@@ -346,7 +346,7 @@ export default class Members extends React.Component {
       <ListPage {...this.props} className={styles.wrapper}>
         <Banner
           // {...bannerProps}
-          tips={this.tips}
+          // tips={this.tips}
           title="平台菜单"
           description="用于管理平台的菜单与层级结构"
         />

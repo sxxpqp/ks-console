@@ -22,10 +22,12 @@ export default [
     path: `${PATH}/monitor-resource`,
     component: ResourceMonitor,
   },
+  // 告警消息
   {
     path: `${PATH}/alerts`,
     component: AlertMessages,
   },
+  // 告警策略
   {
     path: `${PATH}/alert-rules`,
     component: AlertPolicies,

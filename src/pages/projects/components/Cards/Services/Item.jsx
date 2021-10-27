@@ -60,7 +60,7 @@ export default class ServiceItem extends React.Component {
           }
           description={t('Application Governance')}
         /> */}
-        <ServiceAccess data={detail} />
+        <ServiceAccess data={detail} showCopy />
       </div>
     )
   }

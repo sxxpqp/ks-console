@@ -59,14 +59,14 @@ export default class AlertingPolicy extends React.Component {
     })
   }
 
-  get tips() {
-    return [
-      {
-        title: t('REQUESTS_FOR_TRIGGER_AN_ALARM_Q'),
-        description: t('REQUESTS_FOR_TRIGGER_AN_ALARM_A'),
-      },
-    ]
-  }
+  // get tips() {
+  //   return [
+  //     {
+  //       title: t('REQUESTS_FOR_TRIGGER_AN_ALARM_Q'),
+  //       description: t('REQUESTS_FOR_TRIGGER_AN_ALARM_A'),
+  //     },
+  //   ]
+  // }
 
   getData = params => {
     this.props.store.fetchList({
@@ -220,7 +220,7 @@ export default class AlertingPolicy extends React.Component {
       <ListPage {...this.props} getData={this.getData} noWatch>
         <Banner
           {...bannerProps}
-          tips={this.tips}
+          // tips={this.tips}
           tabs={namespace ? {} : this.tabs}
           icon="loudspeaker"
           title={t('Alerting Messages')}
