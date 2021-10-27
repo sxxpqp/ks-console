@@ -49,7 +49,7 @@ export default class AppBanner extends Component {
       options: [
         {
           value: 'template',
-          label: '容器应用列表',
+          label: '已创建模板应用',
         },
         {
           value: 'composing',
@@ -80,8 +80,7 @@ export default class AppBanner extends Component {
       },
       {
         title: '自制应用与应用模板',
-        description:
-          '用户可以基于自有的镜像或者代码进行创建应用，或者使用helm配置文件来创建Kubernetes应用',
+        description: t('TemplateApp'),
         // operation: this.canDeployComposingApp ? (
         //   <Button onClick={this.showDeploySampleApp}>
         //     {t('Deploy Sample App')}

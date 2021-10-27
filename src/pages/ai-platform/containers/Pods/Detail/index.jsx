@@ -160,6 +160,7 @@ export default class PodDetail extends React.Component {
 
     return (
       <DetailPage
+        noBread
         stores={stores}
         {...sideProps}
         routes={getRoutes(this.props.match.path)}

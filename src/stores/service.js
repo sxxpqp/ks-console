@@ -6,7 +6,7 @@ import Base from './base'
 import S2iBuilderStore from './s2i/builder'
 import WorkloadStore from './workload'
 
-const updateS2iServiceParams = data => {
+export const updateS2iServiceParams = data => {
   const s2iType = get(
     data.S2i,
     'metadata.labels.["s2i-type.kubesphere.io"]',

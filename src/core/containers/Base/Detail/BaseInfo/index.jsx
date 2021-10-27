@@ -27,14 +27,22 @@ class BaseInfo extends React.Component {
   }
 
   renderNav() {
-    const { breadcrumbs } = this.props
+    const { rootStore, breadcrumbs, noBread } = this.props
+    const goBack = () => {
+      rootStore.routing.goBack()
+    }
 
     if (isEmpty(breadcrumbs)) {
       return null
     }
 
     const br = breadcrumbs[0]
-    return (
+    return noBread ? (
+      <div onClick={goBack} className={styles.breadcrumbs}>
+        <Icon name="chevron-left" size={20} />
+        <span>返回</span>
+      </div>
+    ) : (
       <Link to={br.url} className={styles.breadcrumbs}>
         <Icon name="chevron-left" size={20} />
         {br.label}

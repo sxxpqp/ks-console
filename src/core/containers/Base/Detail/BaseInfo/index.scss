@@ -79,6 +79,7 @@
   margin-bottom: 12px;
   border-radius: 12px;
   background-color: #ffffff;
+  cursor: pointer;
   @include TypographySymbolText;
 
   span {
@@ -90,7 +91,7 @@
     position: absolute;
     @include vertical-center;
     left: 8px;
-    
+
     & > svg {
       color: $blue-color03;
     }

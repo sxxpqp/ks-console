@@ -4,8 +4,9 @@ import { observable, action } from 'mobx'
 import { generateId, withDryRun } from 'utils'
 import { TIME_MICROSECOND_MAP, MODULE_KIND_MAP } from 'utils/constants'
 import { transformTraces } from 'utils/tracing'
-
 import Base from 'stores/base'
+import { updateS2iServiceParams } from '../service'
+import S2iBuilderStore from '../s2i/builder'
 
 const healthProcess = health => {
   if (has(health, 'requests.errorRatio')) {
@@ -31,6 +32,7 @@ const healthProcess = health => {
 export default class ApplicationStore extends Base {
   constructor(module = 'applications') {
     super(module)
+    this.S2iBuilderStore = new S2iBuilderStore()
   }
 
   @observable
@@ -253,7 +255,7 @@ export default class ApplicationStore extends Base {
   @action
   create(data, params) {
     const { application, ingress, ...components } = data
-
+    debugger
     const isServiceMeshEnable =
       get(
         application,
@@ -294,21 +296,26 @@ export default class ApplicationStore extends Base {
     }
 
     Object.values(components).forEach(component => {
-      if (component.workload && component.service) {
+      if (component.S2i) {
+        updateS2iServiceParams(component)
+        this.S2iBuilderStore.create(component.S2i, params)
+      }
+
+      if (component.workload) {
         const module =
           findKey(MODULE_KIND_MAP, o => o === component.workload.kind) ||
           'deployments'
 
-        requests.push(
-          {
-            url: `apis/apps/v1${this.getPath(params)}/${module}`,
-            data: component.workload,
-          },
-          {
-            url: `api/v1${this.getPath(params)}/services`,
-            data: component.service,
-          }
-        )
+        requests.push({
+          url: `apis/apps/v1${this.getPath(params)}/${module}`,
+          data: component.workload,
+        })
+      }
+      if (component.service) {
+        requests.push({
+          url: `api/v1${this.getPath(params)}/services`,
+          data: component.service,
+        })
       }
     })
 

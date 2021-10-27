@@ -103,7 +103,7 @@ export default class ServiceDeployAppModal extends React.Component {
         isForm: true,
       },
       {
-        title: 'Service Components',
+        title: 'Service Components1',
         component: Services,
         required: true,
       },

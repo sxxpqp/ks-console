@@ -4,7 +4,7 @@ import React from 'react'
 import { mergeLabels, updateFederatedAnnotations } from 'utils'
 import ServiceStore from 'stores/service'
 
-import CreateAppServiceModal from 'projects/components/Modals/CreateAppService'
+import CreateAppServiceModal from 'ai-platform/components/Modals/CreateAppService'
 import ServiceList from './ServiceList'
 
 import styles from './index.scss'
@@ -170,10 +170,10 @@ export default class Services extends React.Component {
     return (
       <div className={styles.wrapper}>
         <div className={styles.step}>
-          <div>{t('Service Components')}</div>
-          <p>{t('APPLICATION_SERVICE_DESC')}</p>
+          <div>{t('Service Components1')}</div>
+          <p>{t('APPLICATION_SERVICE_DESC1')}</p>
         </div>
-        <div className={styles.title}>{t('Application Components')}</div>
+        <div className={styles.title}>{t('Application Components1')}</div>
         <div className={styles.components}>
           <ServiceList
             data={components}

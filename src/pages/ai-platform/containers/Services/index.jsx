@@ -124,6 +124,14 @@ export default class Services extends React.Component {
     const { tableProps, name, rowKey, trigger } = this.props
     return {
       ...tableProps.tableActions,
+      actions: [
+        {
+          key: 'create',
+          type: 'control',
+          text: '创建外部服务',
+          onClick: this.showCreate,
+        },
+      ],
       selectActions: [
         {
           key: 'delete',
@@ -219,7 +227,7 @@ export default class Services extends React.Component {
       <ListPage {...this.props}>
         <Banner
           {...bannerProps}
-          title="Docker服务发布"
+          title="外部服务"
           description="对于Docker应用，根据需求对外提供的一些接口服务，设置服务端口。"
           tabs={this.tabs}
           tips={this.tips}
@@ -232,7 +240,7 @@ export default class Services extends React.Component {
             itemActions={this.itemActions}
             tableActions={this.tableActions}
             columns={this.getColumns()}
-            onCreate={this.showCreate}
+            // onCreate={this.showCreate}
           />
         )}
       </ListPage>

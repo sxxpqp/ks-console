@@ -89,7 +89,7 @@ export default class Application extends Base {
     ...filters
   } = {}) => {
     this.list.isLoading = true
-
+    // debugger
     const params = {
       conditions: getFilterString({ status: status || this.defaultStatus }),
     }

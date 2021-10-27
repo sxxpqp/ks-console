@@ -200,7 +200,11 @@ export default class StatefulSets extends React.Component {
     const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
-        <Banner {...bannerProps} tabs={this.tabs} />
+        <Banner
+          {...bannerProps}
+          tabs={this.tabs}
+          description="工有状态副本集 (StatefulSet)，是为了解决有状态服务的问题，在运行过程中会保存数据或状态，例如 Mysql，它需要存储产生的新数据。"
+        />
         <Table
           {...tableProps}
           itemActions={this.itemActions}

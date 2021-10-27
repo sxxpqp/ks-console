@@ -20,6 +20,7 @@ import ListLayout from '../containers/Base/List'
 
 import Overview from '../containers/Overview'
 import CRDApps from '../containers/Applications/CRDApps'
+// 应用列表
 import OPApps from '../containers/Applications/OPApps'
 import Deployments from '../containers/Deployments'
 import StatefulSets from '../containers/StatefulSets'

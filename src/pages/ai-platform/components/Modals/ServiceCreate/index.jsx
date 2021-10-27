@@ -14,7 +14,7 @@ import FORM_STEPS from 'configs/steps/services'
 import { withProps } from 'utils'
 import FORM_TEMPLATES from 'utils/form.templates'
 import { getLanguageIcon } from 'utils/devops'
-import { S2I_SUPPORTED_TYPES, B2I_SUPPORTED_TYPES } from 'utils/constants'
+// import { S2I_SUPPORTED_TYPES, B2I_SUPPORTED_TYPES } from 'utils/constants'
 
 import styles from './index.scss'
 
@@ -33,62 +33,17 @@ export default class ServiceCreateModal extends React.Component {
       workloadModule: 'deployments',
       groups: [
         {
-          name: 'Service Type',
-          description: 'SERVICE_TYPE',
+          name: 'Custom Creation',
+          description: 'SERVICE_CUSTOM_CREATE',
           options: [
             {
-              icon: 'backup',
-              name: 'Stateless Service',
-              value: 'statelessservice',
+              icon: 'clock',
+              name: 'Specify Workloads',
+              value: 'simpleservice',
             },
-            {
-              icon: 'stateful-set',
-              name: 'Stateful Service',
-              value: 'statefulservice',
-            },
-            ...(this.props.isFederated
-              ? []
-              : [
-                  {
-                    icon: 'ip',
-                    name: 'External Service',
-                    value: 'externalservice',
-                  },
-                ]),
+            { icon: 'coding', name: 'Edit by YAML', value: 'yaml' },
           ],
         },
-        ...(this.showDevOps
-          ? [
-              {
-                name: 'SERVICE_FROM_CODE',
-                type: 's2i',
-                description: 'SERVICE_FROM_CODE_DESC',
-                options: S2I_SUPPORTED_TYPES,
-              },
-              {
-                name: 'SERVICE_FROM_ARTIFACTS',
-                type: 'b2i',
-                description: 'SERVICE_FROM_ARTIFACTS_DESC',
-                options: B2I_SUPPORTED_TYPES,
-              },
-            ]
-          : []),
-        ...(this.props.isFederated
-          ? []
-          : [
-              {
-                name: 'Custom Creation',
-                description: 'SERVICE_CUSTOM_CREATE',
-                options: [
-                  {
-                    icon: 'clock',
-                    name: 'Specify Workloads',
-                    value: 'simpleservice',
-                  },
-                  { icon: 'coding', name: 'Edit by YAML', value: 'yaml' },
-                ],
-              },
-            ]),
       ],
     }
   }

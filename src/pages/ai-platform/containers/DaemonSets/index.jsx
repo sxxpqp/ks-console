@@ -192,7 +192,11 @@ export default class DaemonSets extends React.Component {
     const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
-        <Banner {...bannerProps} tabs={this.tabs} />
+        <Banner
+          {...bannerProps}
+          tabs={this.tabs}
+          description="守护进程集 (DaemonSet)，保证在每个 Node 上都运行一个容器副本，常用来部署一些集群的日志、监控或者其他系统管理应用。"
+        />
         <Table
           {...tableProps}
           itemActions={this.itemActions}

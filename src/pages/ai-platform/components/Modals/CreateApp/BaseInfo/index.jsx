@@ -1,13 +1,29 @@
 import { get, set, debounce } from 'lodash'
 import React from 'react'
 import { PropTypes } from 'prop-types'
-import { Form, Input, Select, TextArea } from '@kube-design/components'
-import { PATTERN_NAME, PATTERN_SERVICE_VERSION } from 'utils/constants'
-import { updateFederatedAnnotations, generateId } from 'utils'
-
+import { Form, Input, TextArea } from '@kube-design/components'
+// import { Form, Input, Select, TextArea } from '@kube-design/components'
+import {
+  PATTERN_NAME,
+  PATTERN_SERVICE_VERSION,
+  PATTERN_APP_NAME,
+} from 'utils/constants'
+import {
+  updateFederatedAnnotations,
+  generateId,
+  genName,
+  turnName,
+} from 'utils'
 import styles from './index.scss'
 
 export default class BaseInfo extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      metaName: '',
+    }
+  }
+
   static propTypes = {
     onLabelsChange: PropTypes.func,
   }
@@ -46,12 +62,16 @@ export default class BaseInfo extends React.Component {
       })
       .then(resp => {
         if (resp.exist) {
-          return callback({ message: t('Name exists'), field: rule.field })
+          return callback({
+            message: t('Name exists'),
+            field: rule.field,
+          })
         }
         callback()
       })
   }
 
+  // 名称变化
   handleNameChange = debounce(value => {
     set(this.formTemplate, 'metadata.labels["app.kubernetes.io/name"]', value)
     set(
@@ -97,9 +117,20 @@ export default class BaseInfo extends React.Component {
     }
   }
 
-  render() {
-    const { formRef, serviceMeshEnable } = this.props
+  handleAliasChange(value) {
+    // 自动唯一标识
+    const tempName = `${turnName(value)}-${genName(6)}`
+    set(this.formTemplate, 'metadata.name', tempName)
+    this.setState({
+      metaName: tempName,
+    })
+    this.handleNameChange(tempName)
+  }
 
+  render() {
+    // const { formRef, serviceMeshEnable } = this.props
+    const { formRef } = this.props
+    const { metaName } = this.state
     return (
       <div className={styles.wrapper}>
         <div className={styles.step}>
@@ -109,23 +140,21 @@ export default class BaseInfo extends React.Component {
         <Form data={this.formTemplate} ref={formRef}>
           <Form.Item
             label={t('Application Name')}
-            desc={t('NAME_DESC')}
+            desc={'请输入应用的名称，支持中文&字母打头'}
             rules={[
+              { required: true, message: '请输入应用名称' },
               {
-                required: true,
-                message: t('Please input an application name'),
+                pattern: PATTERN_APP_NAME,
+                message: t('Invalid name', {
+                  message: '应用名称只支持中文或者英文字母打头',
+                }),
               },
-              {
-                pattern: PATTERN_NAME,
-                message: t('Invalid name', { message: t('NAME_DESC') }),
-              },
-              { validator: this.nameValidator },
             ]}
           >
             <Input
-              name="metadata.name"
-              onChange={this.handleNameChange}
-              maxLength={63}
+              name="metadata.annotations['kubesphere.io/alias-name']"
+              maxLength={12}
+              onChange={this.handleAliasChange.bind(this)}
             />
           </Form.Item>
           <Form.Item
@@ -144,7 +173,7 @@ export default class BaseInfo extends React.Component {
               maxLength={16}
             />
           </Form.Item>
-          <Form.Item
+          {/* <Form.Item
             label={t('Application Governance')}
             desc={t.html('APP_GOVERNANCE_DESC')}
           >
@@ -154,11 +183,35 @@ export default class BaseInfo extends React.Component {
               onChange={this.handleGovernanceChange}
               disabled={!serviceMeshEnable}
             />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
             <TextArea
               name="metadata.annotations['kubesphere.io/description']"
               maxLength={256}
+            />
+          </Form.Item>
+          <Form.Item
+            className="hidden"
+            label="应用标识"
+            rules={[
+              {
+                required: true,
+                message: t('Please input an application name'),
+              },
+              {
+                pattern: PATTERN_NAME,
+                message: t('Invalid name', {
+                  message: t('NAME_DESC'),
+                }),
+              },
+              { validator: this.nameValidator },
+            ]}
+          >
+            <Input
+              name="metadata.name"
+              onChange={this.handleNameChange}
+              maxLength={63}
+              value={metaName}
             />
           </Form.Item>
         </Form>

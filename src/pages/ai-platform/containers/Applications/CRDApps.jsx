@@ -125,7 +125,13 @@ export default class CRDApps extends React.Component {
     const { bannerProps, tableProps, match } = this.props
     return (
       <ListPage {...this.props}>
-        <Banner {...bannerProps} match={match} type={this.type} />
+        <Banner
+          {...bannerProps}
+          match={match}
+          title="自制应用"
+          description={t('APP_TEMPLATES_DESC')}
+          type={this.type}
+        />
         <Table
           {...tableProps}
           {...this.getTableProps()}

@@ -302,6 +302,7 @@ export default class ServiceDetail extends React.Component {
 
     return (
       <DetailPage
+        noBread
         stores={stores}
         {...sideProps}
         routes={getRoutes(this.props.match.path)}

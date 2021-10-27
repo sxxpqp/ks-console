@@ -146,16 +146,36 @@ export default class OPApps extends React.Component {
     })
   }
 
+  showDeploySelf = () => {
+    // console.log('创建自制应用')
+    // const { match, module, projectStore } = this.props
+    // return this.props.trigger('service.createsimple', {
+    //   module,
+    //   namespace: match.params.namespace,
+    //   cluster: match.params.cluster,
+    //   // workspace: get(projectStore, 'detail.workspace'),
+    //   projectDetail: get(projectStore, 'detail'),
+    //   // routing: this.props.rootStore.routing,
+    //   // trigger,
+    // })
+  }
+
   getTableProps() {
     const { tableProps } = this.props
     const actions = this.canCreate
       ? [
           {
-            key: 'deploy',
+            key: 'deploy-template',
             type: 'control',
-            text: t('Deploy New Application'),
+            text: '从模板创建',
             onClick: this.showDeploy,
           },
+          // {
+          //   key: 'deploy-advance',
+          //   type: 'control',
+          //   text: '自定义创建',
+          //   onClick: this.showDeploySelf,
+          // },
         ]
       : []
 
@@ -193,7 +213,12 @@ export default class OPApps extends React.Component {
     const { bannerProps, tableProps, match } = this.props
     return (
       <ListPage {...this.props} onMessage={this.handleWatch}>
-        <Banner {...bannerProps} match={match} type={this.type} />
+        <Banner
+          {...bannerProps}
+          description={t('APP_TEMPLATES_DESC')}
+          match={match}
+          type={this.type}
+        />
         <Table
           {...tableProps}
           {...this.getTableProps()}

@@ -1,25 +1,32 @@
 import React from 'react'
 import { Icon } from '@kube-design/components'
-import { set, pick, isEmpty } from 'lodash'
+import { set } from 'lodash'
 
 import { Modal } from 'components/Base'
 import CreateModal from 'components/Modals/Create'
 import ClusterDiffSettings from 'components/Forms/Workload/ClusterDiffSettings'
 
+import S2iBuilderStore from 'stores/s2i/builder'
 import WorkloadStore from 'stores/workload'
+import FederatedStore from 'stores/federated'
 
 import FORM_STEPS from 'configs/steps/services'
 import { withProps } from 'utils'
 import FORM_TEMPLATES from 'utils/form.templates'
-import { S2I_SUPPORTED_TYPES, B2I_SUPPORTED_TYPES } from 'utils/constants'
 import { getLanguageIcon } from 'utils/devops'
+import { S2I_SUPPORTED_TYPES, B2I_SUPPORTED_TYPES } from 'utils/constants'
 
 import styles from './index.scss'
 
-export default class ServiceCreateModal extends React.Component {
+export default class ServiceCreateFullModal extends React.Component {
   constructor(props) {
     super(props)
+    this.s2iStore = new S2iBuilderStore()
     this.workloadStore = new WorkloadStore()
+
+    this.showDevOps =
+      globals.app.hasClusterModule(props.cluster, 'devops') &&
+      !this.props.isFederated
     this.state = {
       type: '',
       workloadModule: 'deployments',
@@ -40,44 +47,68 @@ export default class ServiceCreateModal extends React.Component {
             },
           ],
         },
-        {
-          name: 'SERVICE_FROM_CODE',
-          type: 's2i',
-          description: 'SERVICE_FROM_CODE_DESC',
-          options: S2I_SUPPORTED_TYPES,
-        },
-        {
-          name: 'SERVICE_FROM_ARTIFACTS',
-          type: 'b2i',
-          description: 'SERVICE_FROM_ARTIFACTS_DESC',
-          options: B2I_SUPPORTED_TYPES,
-        },
+        ...(this.showDevOps
+          ? [
+              {
+                name: 'SERVICE_FROM_CODE',
+                type: 's2i',
+                description: 'SERVICE_FROM_CODE_DESC',
+                options: S2I_SUPPORTED_TYPES,
+              },
+              {
+                name: 'SERVICE_FROM_ARTIFACTS',
+                type: 'b2i',
+                description: 'SERVICE_FROM_ARTIFACTS_DESC',
+                options: B2I_SUPPORTED_TYPES,
+              },
+            ]
+          : []),
+        ...(this.props.isFederated
+          ? []
+          : [
+              // {
+              //   name: 'Custom Creation',
+              //   description: 'SERVICE_CUSTOM_CREATE',
+              //   options: [
+              //     {
+              //       icon: 'clock',
+              //       name: 'Specify Workloads',
+              //       value: 'simpleservice',
+              //     },
+              //     { icon: 'coding', name: 'Edit by YAML', value: 'yaml' },
+              //   ],
+              // },
+            ]),
       ],
-      s2iType: '',
     }
+  }
+
+  componentDidMount() {
+    this.showDevOps && this.fetchData()
   }
 
   componentDidUpdate(prevProps) {
     const { visible } = this.props
-    if (visible !== prevProps.visible) {
-      if (!this.props.visible) {
-        this.setState({
-          type: '',
-          workloadModule: 'deployments',
-        })
-      } else {
-        const detail = this.props.detail || {}
-        let type = ''
-        let workloadModule = 'deployments'
-        if (detail.StatefulSet) {
-          type = 'statefulservice'
-          workloadModule = 'statefulsets'
-        } else if (detail.Deployment) {
-          type = 'statelessservice'
-        }
-        this.setState({ type, workloadModule })
-      }
+    if (!this.props.visible && visible !== prevProps.visible) {
+      this.setState({ type: '', workloadModule: 'deployments' })
     }
+  }
+
+  fetchData = async () => {
+    const { cluster } = this.props
+    const supportS2iLanguage = await this.s2iStore.getS2iSupportLanguage({
+      cluster,
+    })
+    const groups = this.state.groups.map(group => {
+      if (group.type === 'b2i') {
+        group.options = supportS2iLanguage.b2i
+      }
+      if (group.type === 's2i') {
+        group.options = supportS2iLanguage.s2i
+      }
+      return group
+    })
+    this.setState({ groups })
   }
 
   handleTypeSelect = e => {
@@ -137,12 +168,12 @@ export default class ServiceCreateModal extends React.Component {
 
   renderSubModal(type, s2iType) {
     const {
+      // store,
       visible,
       onOk,
       onCancel,
       cluster,
       namespace,
-      detail,
       isFederated,
       projectDetail,
       isSubmitting,
@@ -150,34 +181,16 @@ export default class ServiceCreateModal extends React.Component {
 
     if (s2iType) {
       const isS2i = s2iType === 's2i'
-      // const formTemplate = {
-      //   S2i: FORM_TEMPLATES.s2ibuilders({
-      //     namespace,
-      //     isS2i,
-      //     languageType: type,
-      //   }),
-      //   Deployment: FORM_TEMPLATES.deployments({ namespace }),
-      // }
-      const formTemplate = !isEmpty(detail)
-        ? pick(detail, ['StatefulSet', 'Service'])
-        : {
-            S2i: FORM_TEMPLATES.s2ibuilders({
-              namespace,
-              isS2i,
-              languageType: type,
-            }),
-            Deployment: FORM_TEMPLATES.deployments({ namespace }),
-            Service: FORM_TEMPLATES.services({ namespace }),
-          }
-
+      const formTemplate = {
+        S2i: FORM_TEMPLATES.s2ibuilders({
+          namespace,
+          isS2i,
+          languageType: type,
+        }),
+        Deployment: FORM_TEMPLATES.deployments({ namespace }),
+        Service: FORM_TEMPLATES.services({ namespace }),
+      }
       const steps = isS2i ? FORM_STEPS.s2iservice : FORM_STEPS.b2iservice
-
-      // steps[0] = {
-      //   ...steps[0],
-      //   component: withProps(steps[0].component, {
-      //     noApp: true,
-      //   }),
-      // }
       const description = `${
         isS2i ? t('Language Type') : t('Artifacts Type')
       } : ${t(type)}`
@@ -197,14 +210,11 @@ export default class ServiceCreateModal extends React.Component {
           steps={steps}
           cluster={cluster}
           namespace={namespace}
-          isFederated={isFederated}
           formTemplate={formTemplate}
           isSubmitting={isSubmitting}
-          projectDetail={projectDetail}
           updateModule={this.handleWorkloadModuleChange}
           onOk={onOk}
           onCancel={onCancel}
-          maskClosable={false}
           noCodeEdit
         />
       )
@@ -215,25 +225,12 @@ export default class ServiceCreateModal extends React.Component {
     switch (type) {
       case 'statelessservice': {
         const module = 'deployments'
-        const formTemplate = !isEmpty(detail)
-          ? pick(detail, ['Deployment', 'Service'])
-          : {
-              Deployment: FORM_TEMPLATES.deployments({
-                namespace,
-              }),
-              Service: FORM_TEMPLATES.services({ namespace }),
-            }
-
-        const steps = [...FORM_STEPS[type]]
-
-        steps[0] = {
-          ...steps[0],
-          component: withProps(steps[0].component, {
-            noApp: true,
-          }),
+        const formTemplate = {
+          Deployment: FORM_TEMPLATES.deployments({ namespace }),
+          Service: FORM_TEMPLATES.services({ namespace }),
         }
 
-        if (isEmpty(detail) && isFederated) {
+        if (isFederated) {
           Object.keys(formTemplate).forEach(key => {
             formTemplate[key] = FORM_TEMPLATES.federated({
               data: formTemplate[key],
@@ -251,21 +248,23 @@ export default class ServiceCreateModal extends React.Component {
 
         this.workloadStore.setModule(module)
 
+        let workloadStore = this.workloadStore
+
+        const steps = [...FORM_STEPS[type]]
         if (isFederated) {
           steps.push({
             title: 'Diff Settings',
             icon: 'blue-green-deployment',
-            component: withProps(ClusterDiffSettings, {
-              withService: true,
-            }),
+            component: withProps(ClusterDiffSettings, { withService: true }),
           })
+          workloadStore = new FederatedStore(this.workloadStore)
         }
 
         content = (
           <CreateModal
             width={960}
             module={module}
-            store={this.workloadStore}
+            store={workloadStore}
             name={t('Stateless Service')}
             description={t('STATELESS_SERVICE_DESC')}
             visible={visible}
@@ -278,29 +277,15 @@ export default class ServiceCreateModal extends React.Component {
             isSubmitting={isSubmitting}
             onOk={onOk}
             onCancel={onCancel}
-            maskClosable={false}
-            okBtnText={!isEmpty(detail) ? t('Update') : t('Add')}
           />
         )
         break
       }
       case 'statefulservice': {
         const module = 'statefulsets'
-        const formTemplate = !isEmpty(detail)
-          ? pick(detail, ['StatefulSet', 'Service'])
-          : {
-              StatefulSet: FORM_TEMPLATES.statefulsets({
-                namespace,
-              }),
-              Service: FORM_TEMPLATES.services({ namespace }),
-            }
-        const steps = [...FORM_STEPS[type]]
-
-        steps[0] = {
-          ...steps[0],
-          component: withProps(steps[0].component, {
-            noApp: true,
-          }),
+        const formTemplate = {
+          StatefulSet: FORM_TEMPLATES.statefulsets({ namespace }),
+          Service: FORM_TEMPLATES.services({ namespace }),
         }
 
         if (isFederated) {
@@ -321,21 +306,23 @@ export default class ServiceCreateModal extends React.Component {
 
         this.workloadStore.setModule(module)
 
+        let workloadStore = this.workloadStore
+
+        const steps = [...FORM_STEPS[type]]
         if (isFederated) {
           steps.push({
             title: 'Diff Settings',
             icon: 'blue-green-deployment',
-            component: withProps(ClusterDiffSettings, {
-              withService: true,
-            }),
+            component: withProps(ClusterDiffSettings, { withService: true }),
           })
+          workloadStore = new FederatedStore(this.workloadStore)
         }
 
         content = (
           <CreateModal
             width={960}
             module={module}
-            store={this.workloadStore}
+            store={workloadStore}
             name={t('Stateful Service')}
             description={t('STATEFUL_SERVICE_DESC')}
             visible={visible}
@@ -348,11 +335,100 @@ export default class ServiceCreateModal extends React.Component {
             isSubmitting={isSubmitting}
             onOk={onOk}
             onCancel={onCancel}
-            okBtnText={!isEmpty(detail) ? t('Update') : t('Add')}
           />
         )
         break
       }
+      // case 'simpleservice':
+      // case 'externalservice': {
+      //   const module = 'services'
+      //   const formTemplate = { Service: FORM_TEMPLATES.services({ namespace }) }
+
+      //   if (isFederated) {
+      //     Object.keys(formTemplate).forEach(key => {
+      //       formTemplate[key] = FORM_TEMPLATES.federated({
+      //         data: formTemplate[key],
+      //         clusters: projectDetail.clusters.map(item => item.name),
+      //         kind: key,
+      //       })
+      //     })
+      //   }
+
+      //   const title =
+      //     type === 'externalservice'
+      //       ? `${t('Create ')}${t('External Service')}`
+      //       : t('Create service by specifying workloads')
+
+      //   const description =
+      //     type === 'externalservice'
+      //       ? t('SERVICE_EXTERNAL_NAME_DESC')
+      //       : t('SERVISE_SIMPLE_DESC')
+
+      //   if (type === 'externalservice') {
+      //     set(
+      //       formTemplate,
+      //       'Service.metadata.annotations["kubesphere.io/serviceType"]',
+      //       type
+      //     )
+      //   }
+
+      //   content = (
+      //     <CreateModal
+      //       width={960}
+      //       module={module}
+      //       store={store}
+      //       title={title}
+      //       description={description}
+      //       visible={visible}
+      //       cluster={cluster}
+      //       namespace={namespace}
+      //       isFederated={isFederated}
+      //       projectDetail={projectDetail}
+      //       steps={FORM_STEPS[type]}
+      //       formTemplate={formTemplate}
+      //       isSubmitting={isSubmitting}
+      //       onOk={onOk}
+      //       onCancel={onCancel}
+      //     />
+      //   )
+      //   break
+      // }
+      // case 'yaml': {
+      //   const module = 'services'
+      //   const formTemplate = { Service: FORM_TEMPLATES.services({ namespace }) }
+
+      //   if (isFederated) {
+      //     Object.keys(formTemplate).forEach(key => {
+      //       formTemplate[key] = FORM_TEMPLATES.federated({
+      //         data: formTemplate[key],
+      //         clusters: projectDetail.clusters.map(item => item.name),
+      //         kind: key,
+      //       })
+      //     })
+      //   }
+
+      //   const title = t('Create service by yaml')
+
+      //   content = (
+      //     <CreateModal
+      //       width={960}
+      //       module={module}
+      //       store={store}
+      //       title={title}
+      //       visible={visible}
+      //       cluster={cluster}
+      //       namespace={namespace}
+      //       isFederated={isFederated}
+      //       projectDetail={projectDetail}
+      //       formTemplate={formTemplate}
+      //       isSubmitting={isSubmitting}
+      //       onOk={onOk}
+      //       onCancel={onCancel}
+      //       onlyCode
+      //     />
+      //   )
+      //   break
+      // }
       default:
     }
 
@@ -374,7 +450,6 @@ export default class ServiceCreateModal extends React.Component {
         visible={visible}
         onCancel={onCancel}
         hideHeader
-        hideFooter
       >
         {this.renderHeader()}
         {this.renderGroups()}

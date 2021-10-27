@@ -39,8 +39,10 @@ export default class ServiceComponents extends React.Component {
         ))}
         <div className={styles.add} onClick={this.handleAdd}>
           <Text
-            title={t('Add Service')}
-            description={t('Add stateful or stateless services')}
+            title={'添加一个新应用'}
+            description={
+              '可以选择有状态或无状态服务、也可以添加制品，配置对外服务'
+            }
           />
         </div>
       </div>
