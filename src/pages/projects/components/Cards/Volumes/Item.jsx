@@ -28,7 +28,14 @@ const Card = ({ volume, prefix }) => {
       <Text
         icon="storage"
         title={
-          <Link to={`${prefix}/volumes/${volume.name}`}>{volume.name}</Link>
+          <Link
+            to={{
+              pathname: `${prefix}/volumes/${volume.name}`,
+              state: { prevPath: location.pathname },
+            }}
+          >
+            {volume.name}
+          </Link>
         }
         description={description}
       />

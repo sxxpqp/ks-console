@@ -47,6 +47,7 @@ export default class ServiceDeployAppModal extends React.Component {
       }),
       isCodeMode: false,
       isGovernance: false,
+      showEdit: true,
     }
 
     this.formRef = React.createRef()
@@ -221,6 +222,7 @@ export default class ServiceDeployAppModal extends React.Component {
   }
 
   handleModeChange = () => {
+    debugger
     this.setState(({ isCodeMode, formData }) => {
       let newFormData = formData
 
@@ -276,16 +278,32 @@ export default class ServiceDeployAppModal extends React.Component {
     })
   }
 
+  // 是否显示 editCode按钮
+  // showEdit() {
+  //   let flag = true
+  //   const { formData } = this.state
+  //   const keys = Object.keys(formData)
+  //   keys.forEach(key => {
+  //     const arr = Object.keys(formData[key])
+  //     if (arr.includes('S2i')) {
+  //       flag = false
+  //       return flag
+  //     }
+  //   })
+  //   return flag
+  // }
+
   renderHeader() {
     const { onCancel } = this.props
-    const { currentStep, isCodeMode } = this.state
+    const { currentStep, isCodeMode, showEdit } = this.state
+
     return (
       <div className={styles.header}>
         <div className={styles.title}>
           <Icon name="close" size={20} clickable onClick={onCancel} />
           <span />
           <Icon name="appcenter" size={20} />
-          <span>{t('Create Application by Service')}</span>
+          <span>{'构建自制应用'}</span>
         </div>
         {!isCodeMode && (
           <div className={styles.steps}>
@@ -293,15 +311,29 @@ export default class ServiceDeployAppModal extends React.Component {
             <Steps steps={this.steps} current={currentStep} />
           </div>
         )}
-        <Switch
-          className={styles.switch}
-          text={t('Edit Mode')}
-          onChange={this.handleModeChange}
-          checked={isCodeMode}
-        />
+        {showEdit && (
+          <Switch
+            className={styles.switch}
+            text={t('Edit Mode')}
+            onChange={this.handleModeChange}
+            checked={isCodeMode}
+          />
+        )}
         <div className={styles.headerBottom} />
       </div>
     )
+  }
+
+  handleAdd(data) {
+    if (Object.keys(data).includes('S2i')) {
+      this.setState({
+        showEdit: false,
+      })
+    } else {
+      this.setState({
+        showEdit: true,
+      })
+    }
   }
 
   renderForm() {
@@ -323,6 +355,7 @@ export default class ServiceDeployAppModal extends React.Component {
       serviceMeshEnable: this.serviceMeshEnable,
       onLabelsChange: this.handleAppLabelsChange,
       onGovernanceChange: this.handleGovernanceChange,
+      handleAdd: this.handleAdd.bind(this),
     }
 
     if (step.isForm) {

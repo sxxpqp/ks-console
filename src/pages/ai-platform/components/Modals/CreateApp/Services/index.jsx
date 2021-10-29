@@ -47,10 +47,13 @@ export default class Services extends React.Component {
   }
 
   getEditData = (component = {}) => {
+    debugger
     const data = {}
     Object.values(component).forEach(item => {
-      const kind = item.kind.replace('Federated', '')
-      data[kind] = item
+      if (item.kind) {
+        const kind = item.kind.replace('Federated', '')
+        data[kind] = item
+      }
     })
     return data
   }
@@ -124,6 +127,9 @@ export default class Services extends React.Component {
   }
 
   handleAdd = data => {
+    this.props.handleAdd && this.props.handleAdd(data)
+    debugger
+    // 这里只处理两种类型，没有处理s2i与b2i的情况
     data.workload = data.Deployment || data.StatefulSet
     data.service = data.Service
 

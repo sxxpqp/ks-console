@@ -5,14 +5,14 @@ import { MODULE_KIND_MAP } from 'utils/constants'
 import ConfigMapStore from 'stores/configmap'
 import SecretStore from 'stores/secret'
 
-import { Form, Toggle } from '@kube-design/components'
+import { Form } from '@kube-design/components'
 import ReplicasControl from 'components/Forms/Workload/ContainerSettings/ReplicasControl'
 import UpdateStrategy from 'components/Forms/Workload/ContainerSettings/UpdateStrategy'
 // import { Switch } from 'components/Base'
 
-import classnames from 'classnames'
+import ToggleSimple from 'components/ToggleView/simple'
 import ContainerForm from './ContainerForm'
-import styles from './index.scss'
+// import styles from './index.scss'
 
 export default class ContainerSetting extends React.Component {
   constructor(props) {
@@ -213,38 +213,18 @@ export default class ContainerSetting extends React.Component {
     })
   }
 
-  renderToggle() {
-    const { advanceMode } = this.state
-
-    return (
-      <span>
-        <Toggle onChange={this.handleModeChange} checked={advanceMode} />
-      </span>
-    )
-  }
-
-  renderTitle() {
-    return (
-      <div
-        // className={styles.switch}
-        className={classnames(styles.switch, 'font-bold margin-b12')}
-      >
-        <span>{'容器设置'}</span>
-        <span className="text-secondary align-middle">
-          {this.renderToggle()}
-          {` 全部配置 `}
-        </span>
-      </div>
-    )
-  }
-
   render() {
     const { formRef } = this.props
     const { advanceMode } = this.state
 
     return (
       <Form data={this.formTemplate} ref={formRef}>
-        {this.renderTitle()}
+        <div>
+          <ToggleSimple
+            title="容器配置"
+            onChange={this.handleModeChange}
+          ></ToggleSimple>
+        </div>
         {/* <div className={styles.switch}>
           <div>
             <strong>容器设置</strong>

@@ -61,15 +61,15 @@ export default class Deployments extends React.Component {
       options: [
         {
           value: 'deployments',
-          label: t('Deployments'),
+          label: '无状态负载',
         },
         {
           value: 'statefulsets',
-          label: t('StatefulSets'),
+          label: '有状态负载',
         },
         {
           value: 'daemonsets',
-          label: t('DaemonSets'),
+          label: '守护进程',
         },
       ],
     }

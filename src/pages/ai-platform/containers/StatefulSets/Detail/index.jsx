@@ -193,6 +193,7 @@ export default class StatefulSetDetail extends React.Component {
         {...sideProps}
         routes={getRoutes(this.props.match.path)}
         watch
+        noBread
       />
     )
   }

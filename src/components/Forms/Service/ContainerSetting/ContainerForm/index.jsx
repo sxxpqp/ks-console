@@ -8,7 +8,8 @@ import Environments from 'components/Forms/Workload/ContainerSettings/ContainerF
 import ImagePullPolicy from 'components/Forms/Workload/ContainerSettings/ContainerForm/ImagePullPolicy'
 import HealthChecker from 'components/Forms/Workload/ContainerSettings/ContainerForm/HealthChecker'
 
-import { get } from 'lodash'
+import { get, set } from 'lodash'
+import { generateId } from 'utils/index'
 import ContainerSetting from '../ContainerSetting'
 import styles from './index.scss'
 
@@ -49,6 +50,9 @@ export default class ContaineForm extends React.Component {
     this.state = {
       replicas: 1,
     }
+
+    const prefix = 'spec.template.spec.containers[0]'
+    set(props.data, `${prefix}.name`, `container-${generateId()}`)
   }
 
   getReplicas = () => get(this.props.data, `spec.replicas`) || 1

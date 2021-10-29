@@ -228,3 +228,17 @@
 //     color: $black !important;
 //   }
 // }
+
+// :global {
+
+// }
+.avatar-title {
+  strong {
+    color: $text-color;
+    font-family: $font-family-id;
+  }
+}
+
+p {
+  margin-bottom: unset !important;
+}

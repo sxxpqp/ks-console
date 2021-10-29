@@ -1,12 +1,19 @@
 import { get, set } from 'lodash'
 import React from 'react'
 import { observer } from 'mobx-react'
-import { Column, Columns, Form, TextArea, Input } from '@kube-design/components'
+import {
+  Column,
+  Columns,
+  Form,
+  TextArea,
+  Input,
+  Icon,
+  Tooltip,
+} from '@kube-design/components'
 // import { Input } from 'components/@kube-design'
 import { updateLabels, genName, turnName } from 'utils'
 import { ProjectSelect } from 'components/Inputs'
 // import { pinyin } from 'pinyin-pro'
-
 import {
   PATTERN_SERVICE_NAME,
   PATTERN_SERVICE_VERSION,
@@ -213,8 +220,19 @@ export default class ServiceBaseInfo extends React.Component {
           </Column>
           <Column>
             <Form.Item
-              className="hidden"
-              label={'唯一标识'}
+              // className="hidden"
+              label={
+                <>
+                  唯一标识
+                  <Tooltip
+                    content={
+                      '唯一标识，也是网络访问标识，可用于标定集群节点之间的关系。'
+                    }
+                  >
+                    <Icon name="question" />
+                  </Tooltip>
+                </>
+              }
               desc={t('SERVICE_NAME_DESC')}
               rules={[
                 { required: true, message: t('Please input name') },

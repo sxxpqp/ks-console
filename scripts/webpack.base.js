@@ -75,6 +75,7 @@ module.exports = {
           },
         },
       ],
+      threads: 5,
     }),
     new WebpackAssetsManifest({
       entrypoints: true,

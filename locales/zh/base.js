@@ -47,7 +47,7 @@ module.exports = {
   'Access Control': '访问控制',
   'App Templates': '应用模板',
   'Service Components': '服务组件',
-  'Service Components1': '添加应用',
+  'Service Components1': '添加容器',
   Infrastructure: '基础设施',
   'Basic Information': '基本信息',
   'Monitoring & Alerting': '监控告警',

@@ -132,8 +132,8 @@ module.exports = {
     '有状态服务用来管理有状态应用，可以保证部署和扩容缩容的顺序，提供了稳定的持久化存储和网络标识，有序伸缩等',
   STATELESS_SERVICE_DESC:
     '容器服务中最常用的一种服务，通过定义容器组模板来控制容器组状态，包括滚动升级和回滚',
-  SERVICE_FROM_CODE: '通过代码构建新的服务',
-  SERVICE_FROM_ARTIFACTS: '通过制品构建新的服务',
+  SERVICE_FROM_CODE: '通过代码构建新的应用',
+  SERVICE_FROM_ARTIFACTS: '通过制品构建新的应用',
   SERVICE_FROM_CODE_DESC:
     '您可以将已有的代码通过  Source to Image 的方式构建成镜像并部署',
   SERVICE_FROM_ARTIFACTS_DESC: '您可以将已有制品构建成新的镜像并完成部署',

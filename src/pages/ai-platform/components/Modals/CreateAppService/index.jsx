@@ -1,6 +1,6 @@
 import React from 'react'
 import { Icon } from '@kube-design/components'
-import { set, pick, isEmpty } from 'lodash'
+import { set, pick, isEmpty, get } from 'lodash'
 
 import { Modal } from 'components/Base'
 import CreateModal from 'components/Modals/Create'
@@ -146,6 +146,7 @@ export default class ServiceCreateModal extends React.Component {
       isFederated,
       projectDetail,
       isSubmitting,
+      // detail,
     } = this.props
 
     if (s2iType) {
@@ -157,27 +158,41 @@ export default class ServiceCreateModal extends React.Component {
       //     languageType: type,
       //   }),
       //   Deployment: FORM_TEMPLATES.deployments({ namespace }),
+      //   Service: FORM_TEMPLATES.services({ namespace }),
       // }
-      const formTemplate = !isEmpty(detail)
-        ? pick(detail, ['StatefulSet', 'Service'])
-        : {
-            S2i: FORM_TEMPLATES.s2ibuilders({
-              namespace,
-              isS2i,
-              languageType: type,
-            }),
-            Deployment: FORM_TEMPLATES.deployments({ namespace }),
-            Service: FORM_TEMPLATES.services({ namespace }),
+      let formTemplate
+      if (!isEmpty(detail)) {
+        if (detail.S2iBuilder) {
+          formTemplate = {
+            ...pick(detail, ['Deployment', 'Service']),
+            S2i: detail.S2iBuilder,
           }
+          type = get(detail, 'S2iBuilder.metadata.annotations.languageType')
+        } else {
+          formTemplate = {
+            ...pick(detail, ['Deployment', 'Service']),
+          }
+        }
+      } else {
+        formTemplate = {
+          S2i: FORM_TEMPLATES.s2ibuilders({
+            namespace,
+            isS2i,
+            languageType: type,
+          }),
+          Deployment: FORM_TEMPLATES.deployments({ namespace }),
+          Service: FORM_TEMPLATES.services({ namespace }),
+        }
+      }
 
       const steps = isS2i ? FORM_STEPS.s2iservice : FORM_STEPS.b2iservice
 
-      // steps[0] = {
-      //   ...steps[0],
-      //   component: withProps(steps[0].component, {
-      //     noApp: true,
-      //   }),
-      // }
+      steps[0] = {
+        ...steps[0],
+        component: withProps(steps[0].component, {
+          noApp: true,
+        }),
+      }
       const description = `${
         isS2i ? t('Language Type') : t('Artifacts Type')
       } : ${t(type)}`
@@ -360,11 +375,19 @@ export default class ServiceCreateModal extends React.Component {
   }
 
   render() {
-    const { visible, onCancel } = this.props
-    const { type, s2iType } = this.state
+    const { visible, onCancel, detail } = this.props
+    let defaultS2iType = ''
 
+    if (detail.S2iBuilder) {
+      defaultS2iType = 's2i'
+    }
+    // if (detail.B2iBuilder) {
+    //   defaultType = 'b2i'
+    // }
+
+    const { type, s2iType } = this.state
     if (type) {
-      return this.renderSubModal(type, s2iType)
+      return this.renderSubModal(type, s2iType || defaultS2iType)
     }
 
     return (

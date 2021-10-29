@@ -39,7 +39,14 @@ export default class ServiceItem extends React.Component {
           icon="network-router"
           title={
             <>
-              <Link to={`${prefix}/services/${detail.name}`}>{detailName}</Link>
+              <Link
+                to={{
+                  pathname: `${prefix}/services/${detail.name}`,
+                  state: { prevPath: location.pathname },
+                }}
+              >
+                {detailName}
+              </Link>
               {serviceMonitor && (
                 <Tooltip
                   content={`${t('Monitoring Exporter')}: ${serviceMonitor}`}

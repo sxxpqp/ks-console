@@ -84,6 +84,7 @@ const config = {
           },
         },
       ],
+      threads: 5,
     }),
     new webpack.DefinePlugin({
       'process.env.BROWSER': false,

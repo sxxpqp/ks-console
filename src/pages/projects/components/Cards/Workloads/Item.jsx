@@ -55,7 +55,12 @@ export default class WorkloadItem extends React.Component {
         <Text
           icon={ICON_TYPES[detail.module]}
           title={
-            <Link to={`${prefix}/${detail.module}/${detail.name}`}>
+            <Link
+              to={{
+                pathname: `${prefix}/${detail.module}/${detail.name}`,
+                state: { prevPath: location.pathname },
+              }}
+            >
               {getDisplayName(detail)}
             </Link>
           }

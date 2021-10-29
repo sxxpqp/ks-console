@@ -401,6 +401,7 @@ export default class ContainerSetting extends React.Component {
   }
 
   renderContainerForm(data) {
+    debugger
     const { withService, isFederated } = this.props
     const { configMaps, secrets, limitRange, imageRegistries } = this.state
     const type = !data.image ? 'Add' : 'Edit'

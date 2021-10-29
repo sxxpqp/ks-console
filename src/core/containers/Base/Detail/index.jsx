@@ -100,8 +100,11 @@ class DetailPage extends React.Component {
 
   render() {
     const { stores, nav, ...sideProps } = this.props
+    const { state } = this.props.location
+    if (state && state.prevPath) {
+      localStorage.setItem('prevPath', state.prevPath)
+    }
     const { routes } = this.state
-
     return (
       <Provider {...this.stores} {...stores}>
         <>

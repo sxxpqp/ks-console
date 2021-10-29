@@ -264,6 +264,7 @@ export default class VolumeDetail extends React.Component {
         stores={stores}
         {...sideProps}
         routes={getRoutes(this.props.match.path)}
+        noBread
       />
     )
   }

@@ -118,7 +118,7 @@ export function flattenObject(obj) {
 export const generateId = length =>
   generate('0123456789abcdefghijklmnopqrstuvwxyz', length || 6)
 
-export const genName = (len = 12) => {
+export const genName = (len = 6) => {
   const id = generateId(len)
   if (
     '0123456789'.indexOf(id[0]) === -1 &&
