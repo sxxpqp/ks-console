@@ -25,6 +25,8 @@ const { redisInit } = require('./services/redis-helper')
 const { ftpsInit } = require('./services/ftps')
 const { sshInit } = require('./services/ssh')
 const { cronJob } = require('./services/cron')
+// const { createProject } = require('./libs/user')
+
 // const { kubctl, getImage } = require('./libs/platform')
 
 // const info = {
@@ -55,11 +57,12 @@ const { cronJob } = require('./services/cron')
 cronJob.start()
 
 const app = new Koa()
-
-const serverConfig = getServerConfig().server
+const config = getServerConfig()
+const serverConfig = config.server
 
 global.HOSTNAME = serverConfig.http.hostname || 'localhost'
 global.PORT = serverConfig.http.port || 8000
+global.config = config
 global.server = serverConfig
 
 // 数据库初始化
@@ -80,6 +83,11 @@ global.sshInit = sshInit
 
 app.keys = ['kubesphere->_<']
 
+// const run = async () => {
+//   const result = await createProject('test4-namespace', 'project5', 'test2')
+//   console.log('🚀 ~ file: server.js ~ line 89 ~ run ~ result', result)
+// }
+// run()
 app
   .apply(boot)
   // 提供翻译

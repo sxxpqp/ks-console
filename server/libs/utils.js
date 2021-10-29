@@ -5,6 +5,7 @@ const get = require('lodash/get')
 const merge = require('lodash/merge')
 const isEmpty = require('lodash/isEmpty')
 const pick = require('lodash/pick')
+const generate = require('nanoid/generate')
 
 const MANIFEST_CACHE_KEY_PREFIX = 'MANIFEST_CACHE_KEY_'
 const LOCALE_MANIFEST_CACHE_KEY = 'LOCALE_MANIFEST_CACHE_KEY'
@@ -165,6 +166,9 @@ const getLocaleManifest = () => {
 
 const firstUpperCase = str => `${str[0].toUpperCase()}${str.slice(1)}`
 
+const generateId = length =>
+  generate('0123456789abcdefghijklmnopqrstuvwxyz', length || 6)
+
 module.exports = {
   root,
   loadYaml,
@@ -177,4 +181,5 @@ module.exports = {
   decryptPassword,
   safeParseJSON,
   firstUpperCase,
+  generateId,
 }
