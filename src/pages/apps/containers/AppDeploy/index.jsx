@@ -41,6 +41,8 @@ export default class App extends React.Component {
       },
     }
 
+    // console.log(this.props.rootStore.myCluster)
+
     this.formRef = React.createRef()
   }
 
@@ -110,7 +112,12 @@ export default class App extends React.Component {
     const form = this.formRef.current
     form &&
       form.validate(() => {
-        const { cluster, workspace, namespace, ...rest } = this.state.formData
+        const {
+          cluster,
+          workspace,
+          namespace,
+        } = this.props.rootStore.myClusters
+        const { ...rest } = this.state.formData
         this.appStore
           .deploy(rest, { cluster, namespace, workspace })
           .then(() => {
@@ -123,7 +130,8 @@ export default class App extends React.Component {
 
   handlePrev = () => {
     if (this.state.currentStep <= 0) {
-      this.routing.push(`/apps/${this.appId}`)
+      // this.routing.push(`/apps/${this.appId}`)
+      this.routing.goBack()
     } else {
       this.setState(({ currentStep }) => ({
         currentStep: Math.max(0, currentStep - 1),
@@ -174,14 +182,28 @@ export default class App extends React.Component {
   }
 
   renderControl() {
-    const { currentStep } = this.state
+    // const { currentStep } = this.state
 
-    const total = this.steps.length - 1
+    // const total = this.steps.length - 1
     return (
       <div className={styles.control}>
-        {currentStep < total ? (
+        <div>
+          <Button type="default" onClick={this.handleNext}>
+            {'配置详情'}
+          </Button>
+        </div>
+        <div>
+          <Button
+            type="control"
+            onClick={this.handleOk}
+            loading={this.appStore.isSubmitting}
+          >
+            部署
+          </Button>
+        </div>
+        {/* {currentStep < total ? (
           <Button type="control" onClick={this.handleNext}>
-            {t('Next')}
+            {'t('Next')'}
           </Button>
         ) : (
           <Button
@@ -191,7 +213,7 @@ export default class App extends React.Component {
           >
             {t('Deploy')}
           </Button>
-        )}
+        )} */}
       </div>
     )
   }
@@ -199,7 +221,10 @@ export default class App extends React.Component {
   renderSteps() {
     return (
       <div className={styles.steps}>
-        <Steps steps={this.steps} current={this.state.currentStep} />
+        <div className={styles.stepsWrapper}>
+          <Steps steps={this.steps} current={this.state.currentStep} />
+          <div>{this.renderControl()}</div>
+        </div>
       </div>
     )
   }
@@ -216,7 +241,7 @@ export default class App extends React.Component {
           {this.renderSteps()}
           <Columns className={styles.formWrapper}>
             <Column>{this.renderForm()}</Column>
-            <Column className="is-narrow">{this.renderControl()}</Column>
+            {/* <Column className="is-narrow"></Column> */}
           </Columns>
         </div>
       </div>

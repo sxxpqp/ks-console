@@ -72,6 +72,7 @@ class ProjectLayout extends Component {
             navs={navs}
             location={location}
             match={match}
+            rootStore={rootStore}
           />
         </Sider>
         <Layout style={{ overflow: 'hidden', height: '100vh' }}>

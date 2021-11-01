@@ -2,6 +2,7 @@ import { action, observable, extendObservable } from 'mobx'
 import { RouterStore } from 'mobx-react-router'
 import { parse } from 'qs'
 import { getQueryString } from 'utils'
+import { saveItem, getItem } from 'utils/localStorage'
 
 import UserStore from 'stores/user'
 import WebSocketStore from 'stores/websocket'
@@ -21,7 +22,10 @@ export default class RootStore {
   oauthServers = []
 
   @observable
-  myClusters = {}
+  myClusters = getItem('myClusters') || {}
+
+  @observable
+  selectNavKey = getItem('selectNavKey') || []
 
   constructor() {
     this.websocket = new WebSocketStore()
@@ -89,6 +93,13 @@ export default class RootStore {
 
   @action
   saveClusters(params) {
+    saveItem('myClusters', params)
     this.myClusters = params
+  }
+
+  @action
+  saveSelectNavKey(params) {
+    saveItem('selectNavKey', params)
+    this.selectNavKey = params
   }
 }

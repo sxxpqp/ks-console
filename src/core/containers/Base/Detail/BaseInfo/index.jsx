@@ -57,21 +57,21 @@ class BaseInfo extends React.Component {
   }
 
   renderName() {
-    const { icon, name } = this.props
+    const { icon, desc, name } = this.props
 
     return (
       <div className={styles.name} title={name} data-test="detail-title">
         {isString(icon) ? <Icon name={icon} size={28} /> : icon}
-        {name}
+        {desc}
       </div>
     )
   }
 
   renderDesc() {
-    const { desc } = this.props
+    const { name } = this.props
     return (
       <div className={styles.desc} data-test="detail-desc">
-        {desc}
+        ID：{name}
       </div>
     )
   }

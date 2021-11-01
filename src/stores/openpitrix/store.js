@@ -22,4 +22,11 @@ export default class Store extends Base {
         )
       )
     )
+
+  @action
+  transfer = async params => {
+    return await request.post('/transfer', {
+      text: params,
+    })
+  }
 }

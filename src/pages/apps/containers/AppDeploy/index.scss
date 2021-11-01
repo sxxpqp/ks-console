@@ -8,7 +8,7 @@
 
 .formWrapper {
   width: $apps-content-width;
-  padding: 32px 24px;
+  padding: 32px 24px 0;
   margin: 0 auto;
   margin-bottom: 0 !important;
 }
@@ -17,15 +17,28 @@
   padding-right: 76px;
 }
 
+.stepsWrapper {
+  width: $apps-content-width;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .steps {
   background-color: $bg-color;
 }
 
 .control {
-  width: 200px;
+  display: flex;
+  align-items: center;
   button {
-    width: 100%;
+    width: 120px;
+    margin-right: 40px;
   }
+  // justify-content: space-between;
+  // width: 300px;
+  // justify-content: ;
 }
 
 .loading {

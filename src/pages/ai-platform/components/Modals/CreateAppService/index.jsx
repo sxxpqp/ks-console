@@ -397,7 +397,7 @@ export default class ServiceCreateModal extends React.Component {
         visible={visible}
         onCancel={onCancel}
         hideHeader
-        hideFooter
+        // hideFooter
       >
         {this.renderHeader()}
         {this.renderGroups()}

@@ -4,7 +4,16 @@ import Banner from 'components/Cards/Banner'
 import { Button, Notify } from '@kube-design/components'
 import Apps from 'ai-review/components/Apps'
 import { Panel } from 'components/Base'
-import { Select, InputNumber, Radio, Input, Table } from 'antd'
+import {
+  Select,
+  InputNumber,
+  Radio,
+  Input,
+  Table,
+  Row,
+  Col,
+  Statistic,
+} from 'antd'
 // import { Radio, Space } from 'antd'
 
 import { applyRes } from 'api/apply'
@@ -210,21 +219,8 @@ export default class ApplyDefault extends React.Component {
       }
     }
 
-    // 查看历史
-
-    const showApplyHis = () => {
-      const { history } = this.props
-      const { cluster, workspace, namespace } = this.props.match.params
-
-      const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}/applyhis`
-      history.push(PATH)
-    }
-
     return (
       <div className={styles.footer}>
-        <Button type="default" data-test="modal-create" onClick={showApplyHis}>
-          查看历史
-        </Button>
         <Button
           type="control"
           // onClick={this.handleCreate}
@@ -473,6 +469,61 @@ export default class ApplyDefault extends React.Component {
     )
   }
 
+  renderHisResource() {
+    // 查看历史
+    const showApplyHis = () => {
+      const { history } = this.props
+      const { cluster, workspace, namespace } = this.props.match.params
+
+      const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}/applyhis`
+      history.push({ pathname: PATH, state: { name: 'applyhis' } })
+    }
+
+    return (
+      <Panel title="资源情况统计">
+        <Row>
+          <Col span={6}>
+            <Statistic
+              title="CPU"
+              value={'12 vCore'}
+              valueStyle={{ color: '#333' }}
+            />
+          </Col>
+          <Col span={6}>
+            <Statistic
+              title="内存"
+              value={'128 GiB'}
+              valueStyle={{ color: '#333' }}
+            />
+          </Col>
+          <Col span={6}>
+            <Statistic
+              title="磁盘"
+              value={'48 GiB'}
+              valueStyle={{ color: '#333' }}
+            />
+          </Col>
+          <Col span={6}>
+            <Statistic
+              title="GPU"
+              value={'4 vCore'}
+              valueStyle={{ color: '#333' }}
+            />
+          </Col>
+        </Row>
+        <Row justify="end">
+          <Button
+            type="default"
+            data-test="modal-create"
+            onClick={showApplyHis}
+          >
+            查看历史
+          </Button>
+        </Row>
+      </Panel>
+    )
+  }
+
   renderReasonArea() {
     const { reason } = this.state
     const onChange = e => {
@@ -512,6 +563,7 @@ export default class ApplyDefault extends React.Component {
     return (
       <div>
         <Banner {...bannerProps} />
+        {this.renderHisResource()}
         {/* <Banner {...bannerProps} tips={this.tips} /> */}
         {this.renderApply()}
         <Panel title="选择部署方式">{this.renderRadios()}</Panel>

@@ -38,6 +38,7 @@ const {
   getNodes,
   saveDocker,
   copyApp,
+  handlerTransfer,
 } = require('./controllers/platform')
 
 // users
@@ -96,6 +97,8 @@ router
 
   // terminal
   .get('/terminal*', renderTerminal)
+  // transfer
+  .post('/transfer', parseBody, checkToken, handlerTransfer)
 
 router
   .use(parseBody)

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Icon, Menu, Button } from '@kube-design/components'
 import classnames from 'classnames'
 import PropTypes from 'prop-types'
@@ -84,6 +85,9 @@ class Header extends React.Component {
       >
         <div className="header-bottom" />
         <div>
+          <Button type="flat" icon="hammer" onClick={e => {}}>
+            创建工单
+          </Button>
           <Button
             type="flat"
             icon="appcenter"

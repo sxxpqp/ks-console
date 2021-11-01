@@ -140,7 +140,7 @@ export default class BaseInfo extends React.Component {
         <Form data={this.formTemplate} ref={formRef}>
           <Form.Item
             label={t('Application Name')}
-            desc={'请输入应用的名称，支持中文&字母打头'}
+            desc={'请输入应用的名称，支持中文&字母打头，最长16个字符'}
             rules={[
               { required: true, message: '请输入应用名称' },
               {
@@ -153,7 +153,7 @@ export default class BaseInfo extends React.Component {
           >
             <Input
               name="metadata.annotations['kubesphere.io/alias-name']"
-              maxLength={12}
+              maxLength={16}
               onChange={this.handleAliasChange.bind(this)}
             />
           </Form.Item>

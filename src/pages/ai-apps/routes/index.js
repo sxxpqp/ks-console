@@ -6,7 +6,7 @@ import AppDeploy from '../containers/AppDeploy'
 
 // import Layout from '../containers/layout'
 // import StoreManage from '../containers/StoreManage'
-// import Categories from '../containers/Categories'
+
 // import Reviews from '../containers/Reviews'
 
 // import detail from './detail'
@@ -25,11 +25,7 @@ export default [
   //       component: StoreManage,
   //       exact: true,
   //     },
-  //     {
-  //       path: `${PATH}/categories`,
-  //       component: Categories,
-  //       exact: true,
-  //     },
+
   //     {
   //       path: `${PATH}/reviews/:type`,
   //       component: Reviews,

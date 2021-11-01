@@ -15,8 +15,9 @@ import { compareVersion } from 'utils/app'
 import { PATTERN_SERVICE_NAME } from 'utils/constants'
 import { genName, turnName } from 'utils'
 import { Text } from 'components/Base'
+// import classnames from 'classnames'
 
-import Placement from './Placement'
+// import Placement from './Placement'
 
 import styles from './index.scss'
 
@@ -89,6 +90,7 @@ export default class BasicInfo extends React.Component {
     const tempName = `${turnName(value)}-${genName(6)}`
     set(formData, 'name', tempName)
     set(formData, 'description', value)
+
     this.setState({
       metaName: tempName,
     })
@@ -97,7 +99,7 @@ export default class BasicInfo extends React.Component {
 
   render() {
     const { formData, formRef, namespace, versionStore } = this.props
-
+    set(formData, 'namespace', namespace)
     const { metaName } = this.state
 
     return (
@@ -108,13 +110,13 @@ export default class BasicInfo extends React.Component {
             <Column>
               <Form.Item
                 label="名称"
-                desc="支持中英文名称，最长63个字符，汉字&字母打头"
+                desc="支持中英文名称，最长16个字符，汉字&字母打头"
                 rules={[{ required: true, message: '请输入名称' }]}
               >
                 <Input
                   autoFocus={true}
                   name="metadata.annotations['kubesphere.io/alias-name']"
-                  maxLength={63}
+                  maxLength={16}
                   onChange={this.handleAliasChange.bind(this)}
                   rules={[{ required: true, message: '请输入应用名称' }]}
                 />
@@ -137,6 +139,8 @@ export default class BasicInfo extends React.Component {
                 <Input name="name" maxLength={14} value={metaName} />
               </Form.Item>
             </Column>
+          </Columns>
+          <Columns>
             <Column>
               <Form.Item
                 label={t('Application Version')}
@@ -171,23 +175,25 @@ export default class BasicInfo extends React.Component {
             <Column />
           </Columns> */}
           <br />
-          <div className={styles.title}>{t('Deployment Location')}</div>
-          <div className={styles.placement}>
-            {!namespace ? (
-              <Form.Item
-                rules={[
-                  {
-                    required: true,
-                    message: t('Please select a project to deploy'),
-                  },
-                ]}
-              >
-                <Placement name="namespace" {...this.props} />
-              </Form.Item>
-            ) : (
-              this.renderStaticPlacement()
-            )}
-          </div>
+          {/* <div className="hidden">
+            <div className={styles.title}>{t('Deployment Location')}</div>
+            <div className={styles.placement}>
+              {!namespace ? (
+                <Form.Item
+                  rules={[
+                    {
+                      required: true,
+                      message: t('Please select a project to deploy'),
+                    },
+                  ]}
+                >
+                  <Placement name="namespace" {...this.props} />
+                </Form.Item>
+              ) : (
+                this.renderStaticPlacement()
+              )}
+            </div>
+          </div> */}
         </Form>
       </div>
     )

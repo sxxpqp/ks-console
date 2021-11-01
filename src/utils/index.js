@@ -131,7 +131,8 @@ export const genName = (len = 6) => {
 }
 
 export const turnName = value => {
-  return pinyin(value, { toneType: 'none', type: 'array' }).join('')
+  const result = pinyin(value, { toneType: 'none', type: 'array' }).join('')
+  return result.length > 16 ? result.substr(16) : result
 }
 
 /**

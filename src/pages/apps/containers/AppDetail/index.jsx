@@ -102,7 +102,15 @@ export default class App extends React.Component {
   }
 
   handleBack = () => {
+    // debugger
     this.routing.goBack()
+    // const prevPath = localStorage.getItem('prevPath')
+    // if (prevPath) {
+    //   this.routing.push(prevPath)
+    //   localStorage.removeItem('prevPath')
+    // } else {
+    //   this.routing.goBack()
+    // }
   }
 
   handleChangeAppVersion = version => {
@@ -111,6 +119,8 @@ export default class App extends React.Component {
   }
 
   handleDeploy = () => {
+    // console.log(this.props)
+    // debugger
     const link = `${this.props.match.url}/deploy${location.search}`
     if (!globals.user) {
       location.href = `/login?referer=${link}`
@@ -153,7 +163,7 @@ export default class App extends React.Component {
     return (
       <div className={styles.deployButton}>
         <Button onClick={this.handleDeploy} type="control">
-          {t('Deploy')}
+          {'创建应用'}
         </Button>
       </div>
     )
@@ -205,6 +215,10 @@ export default class App extends React.Component {
   }
 
   render() {
+    const { state } = this.props.location
+    if (state && state.prevPath) {
+      localStorage.setItem('prevPath', state.prevPath)
+    }
     return (
       <div className={styles.main}>
         <Banner

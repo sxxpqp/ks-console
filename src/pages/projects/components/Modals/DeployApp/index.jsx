@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { Icon } from '@kube-design/components'
 import { Modal } from 'components/Base'
+// import { inject, observer } from 'mobx-react'
 
 import styles from './index.scss'
 
@@ -34,10 +35,17 @@ export default class DeployAppModal extends React.Component {
 
   handleAppTemplate = () => {
     const { namespace, cluster, workspace, routing, onOk } = this.props
+    // console.log(
+    //   '🚀 ~ file: index.jsx ~ line 37 ~ DeployAppModal ~ this.props',
+    //   this.props
+    // )
+    this.props.rootStore.saveClusters({
+      namespace,
+      workspace,
+      cluster,
+    })
     onOk()
-    routing.push(
-      `/apps?workspace=${workspace}&cluster=${cluster}&namespace=${namespace}`
-    )
+    routing.push({ pathname: `/apps`, state: { prevPath: location.pathname } })
   }
 
   handleAppRepo = () => {

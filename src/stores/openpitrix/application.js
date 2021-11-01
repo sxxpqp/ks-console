@@ -7,6 +7,7 @@ import { CLUSTER_QUERY_STATUS } from 'configs/openpitrix/app'
 import ServiceStore from 'stores/service'
 import PodStore from 'stores/pod'
 
+import { transfer } from 'utils/service'
 import Base from './base'
 
 const STATUSES = {
@@ -127,6 +128,17 @@ export default class Application extends Base {
       workspace,
       cluster,
     }))
+
+    for (const item of data) {
+      if (item.additional_info) {
+        try {
+          const { code, data: data1 } = await transfer(item.additional_info)
+          if (code === 200) {
+            item.additional_info = data1
+          }
+        } catch (error) {}
+      }
+    }
 
     Object.assign(this.list, {
       data: more ? [...this.list.data, ...data] : data,

@@ -57,3 +57,14 @@ export const getSuccessRate = (total = [], error = []) => {
     totalNum > 0 ? ((totalNum - errorNum) / totalNum).toFixed(4) : NaN,
   ]
 }
+
+export const transfer = async text => {
+  try {
+    return await request.post('/transfer', {
+      text,
+    })
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log('🚀 ~ file: service.js ~ line 69 ~ error', error)
+  }
+}

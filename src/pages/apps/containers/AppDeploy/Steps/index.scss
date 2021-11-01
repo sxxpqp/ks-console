@@ -3,9 +3,10 @@
 
 .wrapper {
   display: flex;
-  width: $apps-content-width;
+  // width: $apps-content-width;
   padding: 16px 24px;
-  margin: 0 auto;
+  // margin: 0 auto;
+  flex: 1;
 
   & > div {
     @include TypographySymbolText();

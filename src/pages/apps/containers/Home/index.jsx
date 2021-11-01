@@ -211,6 +211,14 @@ export default class Home extends React.Component {
 
   handleBack = () => {
     this.routing.goBack()
+    // const prevPath = localStorage.getItem('prevPath')
+    // if (prevPath) {
+    //   this.routing.push(prevPath)
+    //   localStorage.removeItem('prevPath')
+    // } else {
+    //   this.routing.goBack()
+    // }
+    // this.routing.goBack()
   }
 
   render() {

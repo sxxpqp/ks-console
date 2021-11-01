@@ -26,6 +26,31 @@ module.exports = function(sequelize, DataTypes) {
           key: 'id',
         },
       },
+      isAdmin: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        comment: '是否是组管理员',
+      },
+      cluster: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: '集群',
+      },
+      workspace: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: '工作空间',
+      },
+      project: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: '项目名称',
+      },
+      devops: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'devops名称',
+      },
     },
     {
       sequelize,

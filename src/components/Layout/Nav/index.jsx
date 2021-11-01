@@ -46,13 +46,63 @@ class Nav extends React.Component {
     onItemClick() {},
   }
 
+  get routing() {
+    return this.props.rootStore.routing
+  }
+
   constructor(props) {
     super(props)
 
     this.state = {
-      openedNav: this.getOpenedNav(),
+      // openedNav: this.getOpenedNav(),
       openKeys: [],
+      selectedKeys: [],
+      names: {},
+      collapse: false,
     }
+
+    const { navs } = this.props
+    const navData = navs.length > 0 ? navs[0].items : []
+    navData.forEach(nav => {
+      this.state.names = {
+        ...this.state.names,
+        [nav.name]:
+          nav.children && nav.children.length > 0
+            ? nav.children.map(item => item.name)
+            : nav.name,
+      }
+    })
+  }
+
+  toggleCollapsed = () => {
+    this.setState({
+      collapsed: !this.state.collapsed,
+    })
+  }
+
+  componentDidMount() {
+    this.unsubscribe = this.routing.history.subscribe(location => {
+      const { state } = location
+      // debugger
+      if (state) {
+        // eslint-disable-next-line no-console
+        this.setState({
+          selectedKeys: [state.name],
+          openKeys: this.getOpenedNav(state.name),
+        })
+        this.props.rootStore.saveSelectNavKey(state.name)
+      } else {
+        const name = this.props.rootStore.selectNavKey
+        this.setState({
+          selectedKeys: [name],
+          openKeys: this.getOpenedNav(name),
+        })
+      }
+    })
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe && this.unsubscribe()
   }
 
   get currentPath() {
@@ -65,31 +115,37 @@ class Nav extends React.Component {
     return pathname.slice(length + 1)
   }
 
-  getOpenedNav() {
+  getNavName(path) {
+    // debugger
     let name = ''
-    const { navs } = this.props
-    const current = this.currentPath
-    navs.forEach(nav => {
-      nav.items.forEach(item => {
-        if (
-          item.children &&
-          item.children.some(child => {
-            if (child.name === current) {
-              return true
-            }
-            if (child.tabs) {
-              return child.tabs.some(tab => tab.name === current)
-            }
-
-            return false
-          })
-        ) {
-          name = item.name
-        }
-      })
+    const { match } = this.props
+    const { names } = this.state
+    const prefix = trimEnd(match.url, '/')
+    Object.keys(names).forEach(key => {
+      if (names[key] instanceof Array) {
+        name = names[key].filter(
+          p => path.indexOf(`${prefix}/${p.name}`) !== -1
+        )[0]
+      } else if (path.indexOf(names[key]) !== -1) {
+        name = names[key]
+      }
     })
-
     return name
+  }
+
+  getOpenedNav(path) {
+    let results = []
+    const { names } = this.state
+    Object.keys(names).forEach(key => {
+      if (
+        names[key] instanceof Array
+          ? names[key].some(p => p === path)
+          : path === names[key]
+      ) {
+        results = [key]
+      }
+    })
+    return results
   }
 
   handleItemOpen = name => {
@@ -111,7 +167,7 @@ class Nav extends React.Component {
 
   render() {
     // const [openKeys, setOpenKeys] = React.useState([])
-    const { openKeys } = this.state
+    const { openKeys, selectedKeys } = this.state
 
     const { className, navs, innerRef, onItemClick, match } = this.props
     const allKeys = this.getKeys(navs[0].items)
@@ -124,6 +180,9 @@ class Nav extends React.Component {
         this.setState({ openKeys: latestOpenKey ? [latestOpenKey] : [] })
       }
     }
+    const onSelectChange = ({ selectedKeys: key }) => {
+      this.setState({ selectedKeys: key })
+    }
     const prefix = trimEnd(match.url, '/')
 
     const arr = navs.length > 0 ? navs[0] : []
@@ -135,16 +194,21 @@ class Nav extends React.Component {
         mode="inline"
         theme="dark"
         openKeys={openKeys}
+        selectedKeys={selectedKeys}
         onOpenChange={onOpenChange}
         onClick={onItemClick}
+        onSelect={onSelectChange}
       >
-        {arr.items.map(nav =>
-          nav.children ? (
+        {arr.items.map(nav => {
+          return nav.children ? (
             <SubMenu key={nav.name} title={t(nav.title)} icon={icons[nav.icon]}>
               {nav.children.map(item => (
                 <Menu.Item key={item.name}>
                   <Link
-                    to={`${prefix}/${item.name}`}
+                    to={{
+                      pathname: `${prefix}/${item.name}`,
+                      state: { name: item.name },
+                    }}
                     link={item.link}
                     name={t(item.title)}
                     indent={!!item.link}
@@ -161,7 +225,7 @@ class Nav extends React.Component {
               </Link>
             </Menu.Item>
           )
-        )}
+        })}
       </Menu>
     )
   }

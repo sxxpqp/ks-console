@@ -41,11 +41,17 @@ export default class AppEditModal extends React.Component {
         visible={visible}
         isSubmitting={isSubmitting}
       >
-        <Form.Item label={t('Name')} desc={t('LONG_NAME_DESC')}>
-          <Input name="name" disabled />
+        <Form.Item
+          label={t('Name')}
+          desc={'支持中英文名称，最长63个字符，汉字&字母打头'}
+        >
+          <TextArea maxLength={16} name="description" />
         </Form.Item>
-        <Form.Item label={t('Description')} desc={t('DESCRIPTION_DESC')}>
-          <TextArea maxLength={256} name="description" />
+        <Form.Item
+          label={'ID'}
+          desc={'唯一标识，也是网络访问标识，可用于标定集群节点之间的关系。'}
+        >
+          <Input name="name" disabled />
         </Form.Item>
       </Modal.Form>
     )

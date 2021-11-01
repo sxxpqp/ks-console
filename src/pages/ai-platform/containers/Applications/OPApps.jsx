@@ -11,6 +11,8 @@ import Table from 'components/Tables/List'
 import { getLocalTime } from 'utils'
 
 import OpAppStore from 'stores/openpitrix/application'
+// import CategoryStore from 'stores/openpitrix/category'
+import PublishedAppStore from 'stores/openpitrix/store'
 
 import Banner from './Banner'
 
@@ -20,6 +22,13 @@ import Banner from './Banner'
   name: 'Application',
 })
 export default class OPApps extends React.Component {
+  constructor(props) {
+    super(props)
+    this.appStore = new PublishedAppStore()
+    this.appStore.fetchList({ noLimit: true })
+    // this.categoryStore = new CategoryStore()
+  }
+
   type = 'template'
 
   get prefix() {
@@ -93,13 +102,35 @@ export default class OPApps extends React.Component {
         render: this.renderStatus,
       },
       {
-        title: t('Application'),
+        title: t('模板'),
         dataIndex: 'app.name',
         isHideable: true,
         width: '16%',
         render: (name, record) => (
           <Link to={`/apps/${get(record, 'version.app_id')}`}>{name}</Link>
         ),
+      },
+      {
+        title: t('分类'),
+        dataIndex: 'app_id',
+        isHideable: true,
+        width: '16%',
+        render: id => {
+          const result = this.appStore.list.data.filter(
+            item => item.app_id.indexOf(id) !== -1
+          )
+          if (result && result.length) {
+            const { category_set } = result[0]
+            return category_set
+              .map(item =>
+                t(`APP_CATE_${item.name.toUpperCase()}`, {
+                  defaultValue: item.name,
+                })
+              )
+              .join(' ')
+          }
+          return '未设置'
+        },
       },
       {
         title: t('Version'),
@@ -135,7 +166,7 @@ export default class OPApps extends React.Component {
   }
 
   showDeploy = () => {
-    const { match, module, projectStore, trigger } = this.props
+    const { match, module, projectStore, trigger, rootStore } = this.props
     return this.props.trigger('app.deploy', {
       module,
       namespace: match.params.namespace,
@@ -143,6 +174,7 @@ export default class OPApps extends React.Component {
       workspace: get(projectStore, 'detail.workspace'),
       routing: this.props.rootStore.routing,
       trigger,
+      rootStore,
     })
   }
 

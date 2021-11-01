@@ -206,13 +206,13 @@ export default class ServiceBaseInfo extends React.Component {
           <Column>
             <Form.Item
               label="名称"
-              desc="支持中英文名称，最长63个字符，汉字&字母打头"
+              desc="支持中英文名称，最长16个字符，汉字&字母打头"
               rules={[{ required: true, message: '请输入名称' }]}
             >
               <Input
                 autoFocus={true}
                 name="metadata.annotations['kubesphere.io/alias-name']"
-                maxLength={63}
+                maxLength={16}
                 onChange={this.handleAliasChange.bind(this)}
                 rules={[{ required: true, message: '请输入应用名称' }]}
               />

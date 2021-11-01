@@ -1,6 +1,8 @@
 const { omit } = require('lodash')
 
 const { Op } = require('sequelize')
+const axios = require('axios')
+const qs = require('qs')
 const { imageCommit, imagePush } = require('../libs/platform')
 
 const resUsage = require('@/models/views/resources_usage_view')
@@ -183,5 +185,41 @@ export const saveDocker = async ctx => {
 export const copyApp = async ctx => {
   ctx.body = {
     code: 200,
+  }
+}
+
+// 翻译
+export const handlerTransfer = async ctx => {
+  const { body } = ctx.request
+  const { text } = body
+  const arr = text.match(/.{1,5000}/g)
+  const result = []
+
+  for (const item of arr) {
+    try {
+      const r = await axios.post(
+        `https://api-free.deepl.com/v2/translate`,
+        qs.stringify({
+          auth_key: global.server.auth_key,
+          text: item,
+          target_lang: 'ZH',
+        }),
+        {
+          headers: {
+            Host: 'api-free.deepl.com',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      )
+      // console.log(r.data)
+      result.push(r.data.translations[0].text)
+    } catch (error) {
+      global.appError.error(`handlerTransfer error: ${error}`)
+    }
+  }
+
+  ctx.body = {
+    code: 200,
+    data: result.join(''),
   }
 }

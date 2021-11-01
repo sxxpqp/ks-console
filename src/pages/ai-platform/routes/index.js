@@ -14,6 +14,7 @@ import appRoutes from 'ai-apps/routes'
 import StoreManage from 'ai-apps/containers/StoreManage'
 // 应用模板
 import Apps from 'ai-workspaces/containers/Apps'
+import Categories from 'ai-apps/containers/Categories'
 
 import grayReleaseRoutes from './grayrelease'
 import ListLayout from '../containers/Base/List'
@@ -95,6 +96,12 @@ export default [
         // 创建应用模板
         path: `${PATH}/appstemp`,
         component: Apps,
+        exact: true,
+      },
+      // 应用分类
+      {
+        path: `${PATH}/categories`,
+        component: Categories,
         exact: true,
       },
       {

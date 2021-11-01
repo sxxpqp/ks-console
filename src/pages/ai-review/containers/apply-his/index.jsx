@@ -104,6 +104,12 @@ export default class ApplyDefault extends React.Component {
     this.routing.history.push(`${PATH}/apps/${record.app}`)
   }
 
+  handleCreateApp() {
+    const { workspace, cluster, namespace } = this.props.match.params
+    const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}`
+    this.routing.history.push(`${PATH}/applications/template`)
+  }
+
   getColumns = () => {
     return [
       {
@@ -149,13 +155,13 @@ export default class ApplyDefault extends React.Component {
         isHideable: true,
         render: val => `${val}vGPU`,
       },
-      {
-        title: '申请人',
-        dataIndex: 'uid_user',
-        width: '10%',
-        search: true,
-        render: obj => obj.name || '未知',
-      },
+      // {
+      //   title: '申请人',
+      //   dataIndex: 'uid_user',
+      //   width: '10%',
+      //   search: true,
+      //   render: obj => obj.name || '未知',
+      // },
       {
         title: '创建时间',
         dataIndex: 'created',
@@ -214,7 +220,22 @@ export default class ApplyDefault extends React.Component {
                     disabled={record.status !== 1}
                   >
                     <CloudDownloadOutlined />
-                    部署应用
+                    快速部署
+                  </Button>
+                </Popover>
+              ) : record.status === 1 ? (
+                <Popover content="应用列表，用户自定义创建" title="">
+                  <Button
+                    type="text"
+                    size="small"
+                    className={classNames(
+                      record.status === 1 ? styles.active : styles.disabled
+                    )}
+                    onClick={() => this.handleCreateApp()}
+                    disabled={record.status !== 1}
+                  >
+                    <CloudDownloadOutlined />
+                    创建应用
                   </Button>
                 </Popover>
               ) : (

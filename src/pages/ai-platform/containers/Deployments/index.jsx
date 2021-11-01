@@ -32,6 +32,11 @@ import {
   name: 'Workload',
 })
 export default class Deployments extends React.Component {
+  constructor(props) {
+    super(props)
+    this.props.rootStore.saveSelectNavKey('workloadsPods')
+  }
+
   get prefix() {
     const { workspace, namespace, cluster } = this.props.match.params
     return `/${workspace}/clusters/${cluster}/projects/${namespace}`

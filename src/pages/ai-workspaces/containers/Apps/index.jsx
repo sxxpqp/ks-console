@@ -12,6 +12,7 @@ import { getLocalTime, getDisplayName } from 'utils'
 import { transferAppStatus } from 'utils/app'
 
 import AppStore from 'stores/openpitrix/app'
+import CategoryStore from 'stores/openpitrix/category'
 
 @withList({
   store: new AppStore(),
@@ -21,6 +22,17 @@ import AppStore from 'stores/openpitrix/app'
   rowKey: 'app_id',
 })
 export default class Apps extends React.Component {
+  constructor(props) {
+    super(props)
+    this.categoryStore = new CategoryStore()
+  }
+
+  async componentDidMount() {
+    const { fetchList } = this.categoryStore
+
+    await fetchList({ noLimit: true })
+    // await this.fetchApps()
+  }
   // get tips() {
   //   const { enabledActions } = this.props
   //   return [
@@ -99,6 +111,26 @@ export default class Apps extends React.Component {
             desc={app.description}
           />
         )
+      },
+    },
+    {
+      title: t('分类'),
+      dataIndex: 'category_set',
+      isHideable: true,
+      width: '20%',
+      render: record => {
+        // this.getCateName(record)
+        // console.log(this.categoryStore.list.data)
+        // console.log('🚀 ~ file: index.jsx ~ line 131 ~ Apps ~ record', record)
+        return record.length
+          ? record
+              .map(item =>
+                t(`APP_CATE_${item.name.toUpperCase()}`, {
+                  defaultValue: item.name,
+                })
+              )
+              .join(' ')
+          : '未设置'
       },
     },
     {
