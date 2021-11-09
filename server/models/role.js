@@ -1,3 +1,5 @@
+const { Sequelize } = require('sequelize')
+
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define(
     'role',
@@ -17,11 +19,13 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.DATE,
         allowNull: false,
         comment: '创建时间',
+        defaultValue: Sequelize.NOW,
       },
       pid: {
         type: DataTypes.INTEGER,
         allowNull: false,
         comment: '父角色id',
+        defaultValue: 0,
       },
       desc: {
         type: DataTypes.STRING(255),

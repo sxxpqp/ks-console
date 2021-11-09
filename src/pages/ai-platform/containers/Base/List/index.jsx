@@ -87,7 +87,12 @@ class ProjectLayout extends Component {
               jumpTo={this.handleJumpTo}
             />
           </OuterHeader>
-          <Content style={{ padding: '10px 20px', overflowX: 'hidden' }}>
+          <Content
+            style={{
+              padding: '10px 20px',
+              overflowX: 'hidden',
+            }}
+          >
             {renderRoutes(this.getRoutes(navs))}
           </Content>
         </Layout>

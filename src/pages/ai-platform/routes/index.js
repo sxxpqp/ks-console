@@ -41,6 +41,7 @@ import ServiceAccounts from '../containers/ServiceAccounts'
 import Secrets from '../containers/Secrets'
 import Roles from '../containers/Roles'
 import Members from '../containers/Members'
+import Groups from '../containers/Groups'
 import Menus from '../containers/Menus'
 import AdvancedSettings from '../containers/AdvancedSettings'
 // import AlertingPolicies from '../containers/Alerting/Policies'
@@ -189,6 +190,7 @@ export default [
       { path: `${PATH}/roles`, component: Roles, exact: true },
       { path: `${PATH}/members`, component: Members, exact: true },
       { path: `${PATH}/advanced`, component: AdvancedSettings, exact: true },
+      { path: `${PATH}/groups`, component: Groups, exact: true },
       // {
       //   path: `${PATH}/alert-rules`,
       //   component: AlertingPolicies,
@@ -205,16 +207,16 @@ export default [
         exact: true,
       },
       // gitlab
-      {
-        name: 'gitlab',
-        path: `${PATH}/gitlab`,
-        link: 'http://test.bontor.cn:30000',
-      },
-      {
-        name: 'harbor',
-        path: `${PATH}/harbor`,
-        link: 'http://test.bontor.cn:30006',
-      },
+      // {
+      //   name: 'gitlab',
+      //   path: `${PATH}/gitlab`,
+      //   link: 'http://test.bontor.cn:30000',
+      // },
+      // {
+      //   name: 'harbor',
+      //   path: `${PATH}/harbor`,
+      //   link: 'http://test.bontor.cn:30006',
+      // },
       getIndexRoute({
         path: `${PATH}/workloadsPods`,
         to: `${PATH}/deployments`,

@@ -1,15 +1,26 @@
 import React from 'react'
-import { get } from 'lodash'
-import { toJS } from 'mobx'
-import { Avatar, Status } from 'components/Base'
+// import { get } from 'lodash'
+// import { toJS } from 'mobx'
 import Banner from 'components/Cards/Banner'
 import { withProjectList, ListPage } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
+// import Table from 'components/Tables/List'
 
 import { getLocalTime } from 'utils'
+import { Tag, Popover, Table, Row, Col, Input, Form, Button, Radio } from 'antd'
 
 import UserStore from 'stores/user'
 import RoleStore from 'stores/role'
+
+import {
+  EyeOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
+
+import { getUsers } from 'api/users'
+import { Button as KButton } from '@kube-design/components'
+import styles from './index.scss'
 
 @withProjectList({
   store: new UserStore(),
@@ -21,147 +32,68 @@ import RoleStore from 'stores/role'
 export default class Members extends React.Component {
   roleStore = new RoleStore()
 
-  get canViewRoles() {
-    return globals.app.hasPermission({
-      ...this.props.match.params,
-      project: this.props.match.params.namespace,
-      module: 'roles',
-      action: 'view',
-    })
+  constructor(props) {
+    super(props)
+    this.state = {
+      data: [],
+      status: -1,
+    }
   }
+
+  // get canViewRoles() {
+  //   return globals.app.hasPermission({
+  //     ...this.props.match.params,
+  //     project: this.props.match.params.namespace,
+  //     module: 'roles',
+  //     action: 'view',
+  //   })
+  // }
 
   componentDidMount() {
-    this.canViewRoles &&
-      this.roleStore.fetchList({ ...this.props.match.params, limit: -1 })
-  }
-
-  get tips() {
-    return [
-      {
-        title: t('HOW_TO_INVITE_MEMBER_Q'),
-        description: t('HOW_TO_INVITE_MEMBER_A'),
-      },
-    ]
-  }
-
-  showAction(record) {
-    return globals.user.username !== record.name
-  }
-
-  get itemActions() {
-    const { getData, trigger } = this.props
-    return [
-      {
-        key: 'modify',
-        icon: 'pen',
-        text: t('Modify Member Role'),
-        action: 'edit',
-        show: this.showAction,
-        onClick: item =>
-          trigger('member.edit', {
-            detail: item,
-            ...this.props.match.params,
-            roles: toJS(this.roleStore.list.data),
-            role: item.role,
-            success: getData,
-          }),
-      },
-      {
-        key: 'delete',
-        icon: 'trash',
-        text: t('Remove Member'),
-        action: 'delete',
-        show: this.showAction,
-        onClick: item =>
-          trigger('member.remove', {
-            detail: item,
-            success: getData,
-            ...this.props.match.params,
-          }),
-      },
-    ]
-  }
-
-  get tableActions() {
-    const { routing, getData, trigger, tableProps } = this.props
-    return {
-      ...tableProps.tableActions,
-      actions: [
-        {
-          key: 'invite',
-          type: 'control',
-          text: t('Invite Member'),
-          action: 'create',
-          onClick: () =>
-            trigger('member.invite', {
-              ...this.props.match.params,
-              roles: toJS(this.roleStore.list.data),
-              roleModule: this.roleStore.module,
-              workspace: get(this.props, 'projectStore.detail.workspace'),
-              title: t('Invite Members to the Project'),
-              desc: t('INVITE_MEMBER_DESC'),
-              searchPlaceholder: t('INVITE_MEMBER_SEARCH_PLACEHODLER'),
-              success: routing.query,
-            }),
-        },
-      ],
-      selectActions: [
-        {
-          key: 'delete',
-          type: 'danger',
-          text: t('Remove Members'),
-          action: 'delete',
-          onClick: () =>
-            trigger('member.remove.batch', {
-              success: getData,
-              ...this.props.match.params,
-            }),
-        },
-      ],
-      getCheckboxProps: record => ({
-        disabled: !this.showAction(record),
-        name: record.name,
-      }),
-      emptyProps: {
-        desc: t('INVITE_MEMBER_DESC'),
-      },
-    }
+    getUsers().then(res => {
+      if (res.code === 200) {
+        this.setState({
+          data: res.data,
+        })
+      }
+    })
   }
 
   getColumns = () => [
     {
-      title: t('Member Name'),
+      title: '用户名',
+      dataIndex: 'name',
+      width: '10%',
+    },
+    {
+      title: '登录名',
       dataIndex: 'username',
-      sorter: true,
-      render: (name, record) => (
-        <Avatar
-          avatar={record.avatar_url || '/assets/default-user.svg'}
-          title={name}
-          desc={record.email || '-'}
-          noLink
-        />
-      ),
+      width: '10%',
+    },
+    {
+      title: t('Role'),
+      dataIndex: 'id',
+      width: '15%',
     },
     {
       title: t('Status'),
       dataIndex: 'status',
-      isHideable: true,
-      width: '19%',
-      render: status => (
-        <Status type={status} name={t(`USER_${status.toUpperCase()}`)} />
-      ),
-    },
-    {
-      title: t('Role'),
-      dataIndex: 'role',
-      isHideable: true,
-      width: '19%',
+      width: '5%',
+      render: val => {
+        switch (val) {
+          case 0:
+            return <Tag color="success">正常</Tag>
+          case 1:
+            return <Tag color="error">已禁用</Tag>
+          default:
+            return <Tag color="success">正常</Tag>
+        }
+      },
     },
     {
       title: t('Last Login Time'),
-      dataIndex: 'lastLoginTime',
-      isHideable: true,
-      width: 150,
+      dataIndex: 'last_login',
+      width: 250,
       render: login_time => (
         <p>
           {login_time
@@ -170,10 +102,74 @@ export default class Members extends React.Component {
         </p>
       ),
     },
+    {
+      title: '操作',
+      dataIndex: 'more',
+      isHideable: true,
+      width: '20%',
+      // eslint-disable-next-line no-unused-vars
+      render: _ => (
+        <div className={styles.btns}>
+          <Popover content="查看详情" title="">
+            <Button
+              type="text"
+              size="small"
+              style={{ color: '#096dd9' }}
+              icon={<EyeOutlined />}
+              // onClick={}
+            >
+              查看详情
+            </Button>
+          </Popover>
+          <Popover content="编辑" title="">
+            <Button
+              type="text"
+              size="small"
+              style={{ color: '#52c41a' }}
+              icon={<EditOutlined />}
+              // onClick={}
+            >
+              编辑
+            </Button>
+          </Popover>
+          <Popover content="设置角色" title="">
+            <Button
+              type="text"
+              size="small"
+              style={{ color: '#faad14' }}
+              icon={<UserOutlined />}
+              // onClick={}
+            >
+              设置角色
+            </Button>
+          </Popover>
+          <Popover content="删除" title="">
+            <Button
+              type="text"
+              size="small"
+              style={{ color: '#ff7875' }}
+              icon={<DeleteOutlined />}
+              // onClick={}
+            >
+              删除
+            </Button>
+          </Popover>
+        </div>
+      ),
+    },
   ]
 
+  radioChange(e) {
+    // eslint-disable-next-line no-console
+    console.log(
+      '🚀 ~ file: index.jsx ~ line 163 ~ Members ~ radioChange ~ e',
+      e
+    )
+  }
+
   render() {
-    const { bannerProps, tableProps } = this.props
+    const { bannerProps } = this.props
+    const { data, status } = this.state
     return (
       <ListPage {...this.props} noWatch>
         <Banner
@@ -181,13 +177,49 @@ export default class Members extends React.Component {
           tabs={this.tabs}
           description={t('INVITE_MEMBER_DESC')}
         />
-        <Table
-          {...tableProps}
-          searchType="name"
-          tableActions={this.tableActions}
-          itemActions={this.itemActions}
-          columns={this.getColumns()}
-        />
+        <div className="table-title">
+          <Form>
+            <Row justify="space-between" align="middle">
+              <Row justify="space-around" gutter={15}>
+                <Col>
+                  <Form.Item label="用户名" name="username">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item label="登录名" name="username">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item label="是否禁用" name="status">
+                    <Radio.Group
+                      onChange={this.radioChange.bind(this)}
+                      value={status}
+                      defaultValue={status}
+                    >
+                      <Radio value={-1}>全部</Radio>
+                      <Radio value={0}>正常</Radio>
+                      <Radio value={1}>已禁用</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item>
+                    <KButton type="control">搜索</KButton>
+                    <KButton type="default">清空</KButton>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Col>
+                <Form.Item>
+                  <KButton type="control">新增</KButton>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+        <Table columns={this.getColumns()} dataSource={data} />
       </ListPage>
     )
   }

@@ -48,6 +48,18 @@ const {
   editMenu,
   removeMenu,
   upload,
+  getUsers,
+  editUsers,
+  removeUsers,
+  addUsers,
+  getRoles,
+  addRole,
+  editRole,
+  removeRole,
+  getGroups,
+  addGroups,
+  editGroups,
+  removeGroups,
 } = require('./controllers/users')
 
 // const parseBody = convert(
@@ -109,13 +121,28 @@ router
 
   .get('/nodes', getNodes) // 获取节点资源
   // 用户相关
-  .get('/getMenus', getMenus) // 获取平台菜单
-  .post('/addMenu', addMenu) // 获取平台菜单
-  .post('/editMenu', editMenu) // 获取平台菜单
-  .post('/removeMenu', removeMenu) // 获取平台菜单
+  .get('/menus', getMenus) // 获取平台菜单
+  .post('/add-menu', addMenu) // 获取平台菜单
+  .post('/edit-menu', editMenu) // 获取平台菜单
+  .post('/remove-menu', removeMenu) // 获取平台菜单
   .post('/upload', upload) // 上传文件
   .post('/saveDocker', saveDocker) // 容器固化
   .post('/copyApp', copyApp) // 容器固化
+  // 用户信息CRUD
+  .get('/users', getUsers)
+  .post('/users', addUsers)
+  .patch('/users/:id', editUsers)
+  .post('/removeUsers', removeUsers)
+  // 角色信息CRUD
+  .get('/roles', getRoles)
+  .post('/roles', addRole)
+  .post('/edit-role', editRole)
+  .delete('/roles/:id', removeRole)
+  // 组织信息
+  .get('/groups', getGroups)
+  .post('/groups', addGroups)
+  .post('/edit-groups', editGroups)
+  .delete('/remove-groups/:id', removeGroups)
 
 // page entry
 router.all('*', renderView)

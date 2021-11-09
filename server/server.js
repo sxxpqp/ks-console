@@ -27,6 +27,10 @@ const { sshInit } = require('./services/ssh')
 const { cronJob } = require('./services/cron')
 // const { createProject } = require('./libs/user')
 
+const { getK8sAppList } = require('./services/platform')
+
+getK8sAppList({ workspace: 'test', namespace: 'test' })
+
 // const { kubctl, getImage } = require('./libs/platform')
 
 // const info = {

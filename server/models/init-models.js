@@ -14,6 +14,8 @@ const _usage_log = require('./usage_log')
 const _users = require('./users')
 const _users_group = require('./users_group')
 const _users_role = require('./users_role')
+const _users_app = require('./users_app')
+const _app_detail = require('./app_detail')
 
 function initModels(sequelize) {
   const applications = _applications(sequelize, DataTypes)
@@ -31,6 +33,8 @@ function initModels(sequelize) {
   const users = _users(sequelize, DataTypes)
   const users_group = _users_group(sequelize, DataTypes)
   const users_role = _users_role(sequelize, DataTypes)
+  const users_app = _users_app(sequelize, DataTypes)
+  const app_detail = _app_detail(sequelize, DataTypes)
 
   resources_applications.belongsTo(applications, {
     as: 'aid_application',
@@ -79,6 +83,8 @@ function initModels(sequelize) {
     users,
     users_group,
     users_role,
+    users_app,
+    app_detail,
   }
 }
 module.exports = initModels

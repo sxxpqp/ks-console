@@ -9,7 +9,8 @@ const orgCreate = SequelizeModel.create
 const dbError = err => {
   // eslint-disable-next-line no-console
   console.log('sequelize err...', err)
-  global.logError.error(err)
+  // global.logError.error(err)
+  throw err
 }
 
 SequelizeModel.findAll = function() {
@@ -29,7 +30,6 @@ const sequelize = ({ db, user, password, host, port }) => {
     port,
     dialect: 'mysql',
     dialectModule: mysql2,
-    logging: false, // 关闭日志
     typeValidation: true,
     timezone: '+08:00',
     pool: {
@@ -40,6 +40,9 @@ const sequelize = ({ db, user, password, host, port }) => {
     retry: {
       max: 0,
     },
+    // eslint-disable-next-line no-console
+    // logging: console.log,
+    logging: false, // 关闭日志
   })
   // instance.authenticate().then(() => {
   //   console.log('数据库连接成功')

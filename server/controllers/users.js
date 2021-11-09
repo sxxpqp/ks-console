@@ -106,10 +106,33 @@ export const removeMenu = async ctx => {
 // 角色列表
 export const getRoles = async ctx => {
   const { role } = global.models
-  const res = await role.findAll({})
+  const body = ctx.query
+  const { current, desc, role_name, pageSize } = body
+  const conditions = {
+    order: [['created', 'DESC']],
+    limit: parseInt(pageSize, 10) || 10,
+    offset: (parseInt(current || 1, 10) - 1) * (parseInt(pageSize, 10) || 10),
+  }
+  const descCondition = desc ? { desc: { [Op.like]: `%${desc}%` } } : null
+  const roleNameCondition = role_name
+    ? { role_name: { [Op.like]: `%${role_name}%` } }
+    : null
+  const where = { ...descCondition, ...roleNameCondition }
+  let total = 0
+  let lists = []
+  await role
+    .findAndCountAll({
+      where,
+      ...conditions,
+    })
+    .then(result => {
+      total = result.count
+      lists = result.rows
+    })
   ctx.body = {
     code: 200,
-    data: res,
+    data: lists,
+    total,
   }
 }
 
@@ -121,6 +144,7 @@ export const addRole = async ctx => {
   ctx.body = {
     code: 200,
     data: res,
+    total: res.length || 0,
   }
 }
 
@@ -136,16 +160,23 @@ export const editRole = async ctx => {
       },
     }
   )
-  ctx.body = {
-    code: 200,
-    data: res,
+  if (res && res.length > 0 && res[0] > 0) {
+    ctx.body = {
+      code: 200,
+      data: res,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+      data: res,
+    }
   }
 }
 
 // 删除角色
 export const removeRole = async ctx => {
   const { role } = global.models
-  const { body } = ctx.request
+  const body = ctx.params
   const res = await role.destroy({
     where: {
       [Op.or]: [
@@ -161,5 +192,178 @@ export const removeRole = async ctx => {
   ctx.body = {
     code: 200,
     data: res,
+  }
+}
+
+// 获取平台用户
+export const getUsers = async ctx => {
+  const { users } = global.models
+  const res = await users.findAll({})
+  ctx.body = {
+    code: 200,
+    data: res,
+  }
+}
+
+// 添加用户
+export const addUsers = async ctx => {
+  const { users } = global.models
+  const { body } = ctx.request
+  const res = await users.create({ ...body })
+  ctx.body = {
+    code: 200,
+    data: res,
+  }
+}
+
+// 编辑用户
+export const editUsers = async ctx => {
+  const { users } = global.models
+  const { body } = ctx.request
+  const { id } = ctx.params
+  if (id) {
+    const res = await users.update(
+      { ...omit(body, 'id') },
+      {
+        where: {
+          id,
+        },
+      }
+    )
+    ctx.body = {
+      code: 200,
+      // data: res,
+      msg: res && res.length && res[0] > 0 ? '更新成功' : '更新失败',
+      data: res,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+      msg: '更新失败',
+    }
+  }
+}
+
+// 删除用户
+export const removeUsers = async ctx => {
+  const { users } = global.models
+  const { body } = ctx.request
+  const res = await users.destroy({
+    where: {
+      [Op.or]: [
+        body.id
+          ? {
+              id: body.id,
+            }
+          : {},
+        body.email
+          ? {
+              email: body?.email,
+            }
+          : null,
+      ],
+    },
+  })
+  ctx.body = {
+    code: 200,
+    data: res,
+  }
+}
+
+// 获取组织信息
+export const getGroups = async ctx => {
+  const { groups } = global.models
+  const body = ctx.query
+  const { name } = body
+  // const { current, name, pageSize } = body
+  const conditions = {
+    order: [
+      ['created', 'ASC'],
+      ['sort', 'ASC'],
+    ],
+    // limit: parseInt(pageSize, 10) || 10,
+    // offset: (parseInt(current || 1, 10) - 1) * (parseInt(pageSize, 10) || 10),
+  }
+  const nameCond = name ? { name: { [Op.like]: `%${name}%` } } : null
+  const where = { ...nameCond }
+  let total = 0
+  let lists = []
+  await groups
+    .findAndCountAll({
+      where,
+      ...conditions,
+    })
+    .then(result => {
+      total = result.count
+      lists = result.rows
+    })
+  ctx.body = {
+    code: 200,
+    data: lists,
+    total,
+  }
+}
+
+// 添加组织信息
+export const addGroups = async ctx => {
+  const { groups } = global.models
+  const { body } = ctx.request
+  const res = await groups.create({ ...body })
+  ctx.body = {
+    code: 200,
+    data: res,
+  }
+}
+
+// 编辑组织信息
+export const editGroups = async ctx => {
+  const { groups } = global.models
+  const { body } = ctx.request
+  if (body.id) {
+    const res = await groups.update(
+      { ...omit(body, 'id') },
+      {
+        where: {
+          id: body.id,
+        },
+      }
+    )
+    ctx.body = {
+      code: 200,
+      // data: res,
+      msg: res && res.length && res[0] > 0 ? '更新成功' : '更新失败',
+      data: res,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+      msg: '更新失败',
+    }
+  }
+}
+
+// 删除组织信息
+export const removeGroups = async ctx => {
+  const { groups } = global.models
+  const { id } = ctx.params
+
+  const idCond = id
+    ? {
+        [Op.or]: [{ id }, { pid: id }],
+      }
+    : null
+  const res = await groups.destroy({
+    where: idCond,
+  })
+  if (res && res > 0) {
+    ctx.body = {
+      code: 200,
+      data: res,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+      msg: '删除失败',
+    }
   }
 }

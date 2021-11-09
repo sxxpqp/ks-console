@@ -3,11 +3,12 @@ import { toJS } from 'mobx'
 import { inject, observer } from 'mobx-react'
 import { get, isEmpty } from 'lodash'
 import { Link } from 'react-router-dom'
-import { Icon, Select } from '@kube-design/components'
+import { Icon } from '@kube-design/components'
 import { Panel } from 'components/Base'
 import { getValueByUnit, getSuitableUnit } from 'utils/monitoring'
 import Store from 'stores/rank/workload'
 
+import { Row, Radio } from 'antd'
 import styles from './index.scss'
 
 const UNITS = {
@@ -27,9 +28,16 @@ class UsageRanking extends React.Component {
       cluster: get(props.match, 'params.cluster'),
       namespaces: get(props.match, 'params.namespace'),
     })
+
+    // this.state = {
+    //   value: '',
+    // }
   }
 
   componentDidMount() {
+    this.setState({
+      value: this.options[0].value,
+    })
     this.store.fetchAll()
   }
 
@@ -62,16 +70,47 @@ class UsageRanking extends React.Component {
     return LINK_MAP[owner_kind]
   }
 
+  handleRadioChange(e) {
+    // this.setState({
+    //   value: e.target.value,
+    // })
+    this.store.changeSortMetric(e.target.value)
+  }
+
   renderHeader() {
+    // const { value } = this.state
     return (
       <div className={styles.header}>
-        <div className={styles.title}>{t('Resource Name')}</div>
-        <Select
-          className={styles.select}
-          value={this.store.sort_metric}
-          onChange={this.store.changeSortMetric}
-          options={this.options}
-        />
+        <Row justify="space-between" align="middle">
+          <div className={styles.title}>{t('Resource Name')}</div>
+          <div>
+            <Radio.Group
+              onChange={this.handleRadioChange.bind(this)}
+              value={this.store.sort_metric}
+            >
+              {this.options.map(option => {
+                let label = ''
+                switch (option.value) {
+                  case 'workload_cpu_usage':
+                    label = 'CPU'
+                    break
+                  case 'workload_memory_usage_wo_cache':
+                    label = '内存'
+                    break
+                  case 'workload_net_bytes_transmitted':
+                    label = '网络Out'
+                    break
+                  case 'workload_net_bytes_received':
+                    label = '网络In'
+                    break
+                  default:
+                    label = option.label
+                }
+                return <Radio value={option.value}>{label}</Radio>
+              })}
+            </Radio.Group>
+          </div>
+        </Row>
       </div>
     )
   }

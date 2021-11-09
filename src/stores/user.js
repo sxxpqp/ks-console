@@ -305,6 +305,7 @@ export default class UsersStore extends Base {
       isLoading: false,
       ...(this[type].silent ? {} : { selectedRowKeys: [] }),
     })
+    debugger
     return data
   }
 }

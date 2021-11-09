@@ -15,6 +15,7 @@ const cronJob = new CronJob('0 */30 * * * *', async () => {
   }
 })
 
+// 获取token任务
 const getAccessToken = async () => {
   const { setValue } = global.redis
   const config = getServerConfig().server

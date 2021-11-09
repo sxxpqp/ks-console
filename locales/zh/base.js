@@ -550,6 +550,7 @@ module.exports = {
   PlatformSettings: '平台设置',
   PlatformRole: '平台角色',
   PlatformMenu: '平台菜单',
+  GroupsManage: '组织管理',
   PlatformUsers: '平台用户',
   Harbor: '镜像管理平台',
   DockerImage: '容器镜像管理',

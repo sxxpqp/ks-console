@@ -242,3 +242,13 @@
 p {
   margin-bottom: unset !important;
 }
+
+.table-title {
+  :global(.ant-form-item) {
+    margin-bottom: 0 !important;
+  }
+}
+
+.search-value {
+  color: #f50;
+}

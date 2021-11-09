@@ -262,6 +262,7 @@ client:
             - { name: roles, title: PlatformRole }
             - { name: members, title: PlatformUsers }
             - { name: menu, title: PlatformMenu }
+            - { name: groups, title: GroupsManage }
             # - {
             #     name: advanced,
             #     title: Advanced Settings,
