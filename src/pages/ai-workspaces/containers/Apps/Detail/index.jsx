@@ -170,6 +170,10 @@ export default class RoleDetail extends React.Component {
 
   render() {
     const stores = { detailStore: this.store, versionStore: this.versionStore }
+    const { state } = this.props.location
+    if (state && state.prevPath) {
+      localStorage.setItem('prevPath', state.prevPath)
+    }
 
     if (this.store.isLoading && !this.store.detail.name) {
       return <Loading className="ks-page-loading" />
@@ -191,6 +195,6 @@ export default class RoleDetail extends React.Component {
       ],
     }
 
-    return <DetailPage stores={stores} routes={routes} {...sideProps} />
+    return <DetailPage noBread stores={stores} routes={routes} {...sideProps} />
   }
 }

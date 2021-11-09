@@ -37,7 +37,13 @@ export default class Avatar extends React.Component {
   render() {
     const { title, desc, to, onClick, className, showIcon } = this.props
 
-    const titleComponent = to ? <Link to={to}>{title}</Link> : title
+    const titleComponent = to ? (
+      <Link to={{ pathname: to, state: { prevPath: location.pathname } }}>
+        {title}
+      </Link>
+    ) : (
+      title
+    )
 
     return (
       <div className={classNames(styles.wrapper, className)}>
