@@ -1,40 +1,38 @@
+const { Sequelize } = require('sequelize')
+
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define(
-    'usage_log',
+    'groups_nodes',
     {
       id: {
+        autoIncrement: true,
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
       },
-      nid: {
+      gid: {
         type: DataTypes.INTEGER,
-        allowNull: true,
-        comment: '节点id',
+        allowNull: false,
+        comment: '组id',
         references: {
-          model: 'nodes',
+          model: 'groups',
           key: 'id',
         },
       },
-      cpu: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        comment: 'cpu使用率',
+      machine: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        comment: '节点id',
       },
-      mem: {
-        type: DataTypes.INTEGER,
+      created: {
+        type: DataTypes.DATE,
         allowNull: true,
-        comment: '内存使用',
-      },
-      disk: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        comment: '磁盘使用',
+        defaultValue: Sequelize.NOW,
       },
     },
     {
       sequelize,
-      tableName: 'usage_log',
+      tableName: 'groups_nodes',
       timestamps: false,
       indexes: [
         {
@@ -44,9 +42,10 @@ module.exports = function(sequelize, DataTypes) {
           fields: [{ name: 'id' }],
         },
         {
-          name: 'fk_usage_log_nodes_1',
+          name: 'ng_unique',
+          unique: true,
           using: 'BTREE',
-          fields: [{ name: 'nid' }],
+          fields: [{ name: 'gid' }, { name: 'machine' }],
         },
       ],
     }

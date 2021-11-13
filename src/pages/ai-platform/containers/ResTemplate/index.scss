@@ -1,0 +1,22 @@
+@import '~scss/variables';
+
+.btns {
+  display: flex;
+  :global(.ant-btn) {
+    font-size: 12px;
+  }
+}
+
+.wrapper {
+  :global(.ant-table-wrapper) {
+    padding: 0 !important;
+    box-shadow: unset !important;
+  }
+}
+
+.modal {
+  :global(.ant-select) {
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+  }
+}

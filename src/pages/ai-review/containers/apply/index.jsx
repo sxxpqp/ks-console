@@ -1,7 +1,7 @@
 import React from 'react'
 import { inject, observer } from 'mobx-react'
 import Banner from 'components/Cards/Banner'
-import { Button, Notify } from '@kube-design/components'
+import { Button, Notify, Icon } from '@kube-design/components'
 import Apps from 'ai-review/components/Apps'
 import { Panel } from 'components/Base'
 import {
@@ -13,11 +13,13 @@ import {
   Row,
   Col,
   Statistic,
+  Tooltip,
 } from 'antd'
 // import { Radio, Space } from 'antd'
 
 import { applyRes } from 'api/apply'
 // import { Link } from 'react-router-dom'
+import ReviewStore from 'stores/ai-platform/review'
 import styles from './index.scss'
 
 const { TextArea } = Input
@@ -89,7 +91,21 @@ export default class ApplyDefault extends React.Component {
     }
 
     this.formRef = React.createRef()
+    this.store = new ReviewStore()
+    this.store.getResTotal()
+    this.store.getGroupResTotal()
+    this.store.getTemplates()
   }
+
+  // componentDidMount() {
+  //   const { countGroupRes } = this.store
+  //   const { cpuOptions, memOptions, gpuOptions } = this.state
+  //   this.setState({
+  //     cpuOptions: cpuOptions.filter(i => i <= countGroupRes.cpu),
+  //     memOptions: memOptions.filter(i => i <= countGroupRes.mem),
+  //     gpuOptions: gpuOptions.filter(i => i <= countGroupRes.gpu),
+  //   })
+  // }
 
   get routing() {
     return this.props.rootStore.routing
@@ -189,19 +205,14 @@ export default class ApplyDefault extends React.Component {
     // 确定申请回调
     const onClick = async () => {
       // console.log(111)
-      const { status, data } = await applyRes({
+      const { code } = await applyRes({
         ...formData,
-        uid: 1,
+        // uid: 1,
         reason,
         type: value,
         app: defaultApp,
       })
-      // console.log(
-      //   '🚀 ~ file: index.jsx ~ line 172 ~ ApplyDefault ~ onClick ~ res',
-      //   data,
-      //   Status
-      // )
-      if (status === 200 && data.code) {
+      if (code === 200) {
         Notify.success({ content: `申请成功` })
         this.setState({
           value: 1,
@@ -237,6 +248,12 @@ export default class ApplyDefault extends React.Component {
 
   renderRecommend() {
     const { key } = this.state
+    const {
+      countGroupRes,
+      countGroupUsedRes,
+      cpuOptions,
+      memOptions,
+    } = this.store
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
         // console.log(
@@ -253,114 +270,72 @@ export default class ApplyDefault extends React.Component {
           },
         })
       },
+      getCheckboxProps: record => {
+        return {
+          disabled:
+            countGroupRes.cpu - countGroupUsedRes.cpu_used - record.cpu < 0 ||
+            countGroupRes.gpu - countGroupUsedRes.gpu_used - record.gpu < 0 ||
+            countGroupRes.mem - countGroupUsedRes.mem_used - record.mem < 0 ||
+            countGroupRes.disk - countGroupUsedRes.disk_used - record.disk < 0, // Column configuration not to be checked
+        }
+      },
     }
 
-    const items = [
-      {
-        id: 1,
-        name: 'tensorflow普通型',
-        cpu: 8,
-        mem: 48,
-        gpu: 1,
-        disk: 200,
-      },
-      {
-        id: 2,
-        name: 'tensorflow增强型',
-        cpu: 16,
-        mem: 64,
-        gpu: 2,
-        disk: 400,
-      },
-      {
-        id: 3,
-        name: 'tensorflow至强型',
-        cpu: 32,
-        mem: 128,
-        gpu: 3,
-        disk: 600,
-      },
-      {
-        id: 4,
-        name: 'torch普通型',
-        cpu: 8,
-        mem: 48,
-        gpu: 1,
-        disk: 100,
-      },
-      {
-        id: 5,
-        name: 'mysql普通型',
-        cpu: 2,
-        mem: 8,
-        gpu: 0,
-        disk: 100,
-      },
-      {
-        id: 6,
-        name: 'mysql增强型',
-        cpu: 4,
-        mem: 16,
-        gpu: 0,
-        disk: 200,
-      },
-      {
-        id: 7,
-        name: 'mysql高主频型',
-        cpu: 8,
-        mem: 32,
-        gpu: 0,
-        disk: 200,
-      },
-      {
-        id: 8,
-        name: 'tomcat普通型',
-        cpu: 2,
-        mem: 8,
-        gpu: 0,
-        disk: 100,
-      },
-      {
-        id: 9,
-        name: 'tomcat增强型',
-        cpu: 4,
-        mem: 16,
-        gpu: 0,
-        disk: 200,
-      },
-      {
-        id: 10,
-        name: 'tomcat高主频型',
-        cpu: 8,
-        mem: 32,
-        gpu: 0,
-        disk: 200,
-      },
-    ]
+    const items = this.store.templates
     const columns = [
       {
         title: '推荐配置',
         dataIndex: 'name',
+        render: (item, record) => {
+          const flag =
+            countGroupRes.cpu - countGroupUsedRes.cpu_used - record.cpu < 0 ||
+            countGroupRes.gpu - countGroupUsedRes.gpu_used - record.gpu < 0 ||
+            countGroupRes.mem - countGroupUsedRes.mem_used - record.mem < 0 ||
+            countGroupRes.disk - countGroupUsedRes.disk_used - record.disk < 0
+          return flag ? (
+            <>
+              <Tooltip title="组织资源不够，无申请该资源" placement="topLeft">
+                {item}
+                <Icon name="question" />
+              </Tooltip>
+            </>
+          ) : (
+            item
+          )
+        },
       },
+
       {
         title: 'vCPU',
         dataIndex: 'cpu',
         render: item => `${item} vCPU`,
+        sorter: (a, b) => a.cpu - b.cpu,
+        filters: cpuOptions.map(i => ({ text: `${i} Core`, value: i })),
+        onFilter: (value, record) => record.cpu === value,
       },
       {
         title: '内存',
         dataIndex: 'mem',
         render: item => `${item} GiB`,
+        sorter: (a, b) => a.mem - b.mem,
+        filters: memOptions.map(i => ({ text: `${i} GiB`, value: i })),
+        onFilter: (value, record) => record.mem === value,
       },
       {
         title: 'vGPU',
         dataIndex: 'gpu',
         render: item => `${item} vGPU`,
+        sorter: (a, b) => a.gpu - b.gpu,
       },
       {
         title: '磁盘',
         dataIndex: 'disk',
         render: item => `${item} GiB`,
+        sorter: (a, b) => a.disk - b.disk,
+      },
+      {
+        title: '描述',
+        dataIndex: 'desc',
       },
     ]
     return (
@@ -381,7 +356,8 @@ export default class ApplyDefault extends React.Component {
   }
 
   renderApply() {
-    const { cpuOptions, memOptions, gpuOptions, formData } = this.state
+    const { gpuOptions, formData } = this.state
+    const { cpuOptions, memOptions } = this.store
     const handleChange = (e, type) => {
       this.setState({
         formData: {
@@ -479,34 +455,36 @@ export default class ApplyDefault extends React.Component {
       history.push({ pathname: PATH, state: { name: 'applyhis' } })
     }
 
+    const { countRes } = this.store
+
     return (
       <Panel title="资源情况统计">
         <Row>
           <Col span={6}>
             <Statistic
               title="CPU"
-              value={'12 vCore'}
+              value={`${countRes.cpu} vCore`}
               valueStyle={{ color: '#333' }}
             />
           </Col>
           <Col span={6}>
             <Statistic
               title="内存"
-              value={'128 GiB'}
+              value={`${countRes.mem} GiB`}
               valueStyle={{ color: '#333' }}
             />
           </Col>
           <Col span={6}>
             <Statistic
               title="磁盘"
-              value={'48 GiB'}
+              value={`${countRes.disk} GB`}
               valueStyle={{ color: '#333' }}
             />
           </Col>
           <Col span={6}>
             <Statistic
               title="GPU"
-              value={'4 vCore'}
+              value={`${countRes.gpu} vCore`}
               valueStyle={{ color: '#333' }}
             />
           </Col>

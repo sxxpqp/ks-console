@@ -76,6 +76,7 @@ export default class NodeStore extends Base {
       namespace,
       ...this.mapper(item),
     }))
+    // console.log('🚀 ~ file: node.js ~ line 79 ~ NodeStore ~ data ~ data', data)
 
     this.list.update({
       data: more ? [...this.list.data, ...data] : data,

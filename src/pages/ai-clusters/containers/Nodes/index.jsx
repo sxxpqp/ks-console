@@ -1,477 +1,414 @@
 import React from 'react'
-import { isEmpty, get } from 'lodash'
-import { Tooltip, Icon } from '@kube-design/components'
-
-import { cpuFormat, memoryFormat } from 'utils'
-import { ICON_TYPES, NODE_STATUS } from 'utils/constants'
-import { getNodeStatus } from 'utils/node'
-import { getValueByUnit } from 'utils/monitoring'
-import NodeStore from 'stores/node'
-import NodeMonitoringStore from 'stores/monitoring/node'
-
-import { withClusterList, ListPage } from 'components/HOCs/withList'
-
-import { Avatar, Status, Panel, Text } from 'components/Base'
 import Banner from 'components/Cards/Banner'
-import Table from 'components/Tables/List'
+import {
+  Popover,
+  Table,
+  Row,
+  Col,
+  Input,
+  Form,
+  Button,
+  Radio,
+  TreeSelect,
+} from 'antd'
 
-import { toJS } from 'mobx'
+import {
+  EyeOutlined,
+  EditOutlined,
+  // DeleteOutlined,
+  // UserOutlined,
+} from '@ant-design/icons'
+
+import { getNodes, editNodes } from 'api/platform'
+import { Button as KButton, Icon, Notify } from '@kube-design/components'
+import { observer } from 'mobx-react'
+import { get } from 'lodash'
+import { Text, Status } from 'components/Base'
+import GroupStore from 'stores/ai-platform/group'
+import { Link } from 'react-router-dom'
 import styles from './index.scss'
+import EditForm from './form'
 
-const MetricTypes = {
-  cpu_used: 'node_cpu_usage',
-  cpu_total: 'node_cpu_total',
-  cpu_utilisation: 'node_cpu_utilisation',
-  memory_used: 'node_memory_usage_wo_cache',
-  memory_total: 'node_memory_total',
-  memory_utilisation: 'node_memory_utilisation',
-  pod_used: 'node_pod_running_count',
-  pod_total: 'node_pod_quota',
-}
-
-@withClusterList({
-  store: new NodeStore(),
-  name: 'Cluster Node',
-  module: 'nodes',
-})
+@observer
 export default class Nodes extends React.Component {
-  store = this.props.store
-
-  monitoringStore = new NodeMonitoringStore({ cluster: this.cluster })
-
-  componentDidMount() {
-    this.store.fetchCount(this.props.match.params)
-    this.props.rootStore.saveClusters({
-      cluster: this.cluster,
-      workspace: this.workspace,
-      namespace: this.namespace,
-    })
+  constructor(props) {
+    super(props)
+    this.state = {
+      data: [],
+      status: -1,
+      pagination: {
+        // pageSizeOptions: [10, 20, 50, 100],
+        // showSizeChanger: true,
+        // showQuickJumper: true,
+        current: 1,
+        pageSize: 10,
+        total: 0,
+      },
+      show: false,
+      item: null,
+      loading: false,
+    }
+    this.groupStore = new GroupStore()
+    this.groupStore.getData()
+    this.form = React.createRef()
+    this.getData()
   }
 
   get cluster() {
     return this.props.match.params.cluster
   }
 
-  get workspace() {
-    return this.props.match.params.workspace
-  }
-
-  get namespace() {
-    return this.props.match.params.namespace
-  }
-
-  // get tips() {
-  //   return [
-  //     {
-  //       title: t('NODE_TYPES_Q'),
-  //       description: t('NODE_TYPES_A'),
-  //     },
-  //     {
-  //       title: t('WHAT_IS_NODE_TAINTS_Q'),
-  //       description: t('WHAT_IS_NODE_TAINTS_A'),
-  //     },
-  //   ]
-  // }
-
-  get itemActions() {
-    const { store, clusterStore, routing, trigger, name } = this.props
-    return [
-      {
-        key: 'uncordon',
-        icon: 'start',
-        text: t('Uncordon'),
-        action: 'edit',
-        show: item =>
-          item.importStatus === 'success' && this.getUnschedulable(item),
-        onClick: item => store.uncordon(item).then(routing.query),
-      },
-      {
-        key: 'cordon',
-        icon: 'stop',
-        text: t('Cordon'),
-        action: 'edit',
-        show: item =>
-          item.importStatus === 'success' && !this.getUnschedulable(item),
-        onClick: item => store.cordon(item).then(routing.query),
-      },
-      {
-        key: 'logs',
-        icon: 'eye',
-        text: t('Show Logs'),
-        action: 'edit',
-        show: item => item.importStatus !== 'success',
-        onClick: () =>
-          trigger('node.add.log', { detail: toJS(clusterStore.detail) }),
-      },
-      {
-        key: 'delete',
-        icon: 'trash',
-        text: t('Delete'),
-        action: 'delete',
-        show: item => item.importStatus === 'failed',
-        onClick: item =>
-          trigger('resource.delete', {
-            type: t(name),
-            detail: item,
-            success: routing.query,
-          }),
-      },
-    ]
-  }
-
-  get tableActions() {
-    const { trigger, routing, clusterStore, tableProps } = this.props
-    const actions = []
-    if (clusterStore.detail.kkName) {
-      actions.push({
-        key: 'add',
-        type: 'control',
-        text: t('Add Node'),
-        action: 'create',
-        onClick: () =>
-          trigger('node.add', {
-            kkName: clusterStore.detail.kkName || 'ddd',
-          }),
+  getData(params) {
+    getNodes({ ...params, ...this.state.pagination })
+      .then(res => {
+        if (res.code === 200) {
+          this.setState({
+            data: res.data,
+            pagination: {
+              ...this.state.pagination,
+              total: res.total,
+            },
+          })
+          this.setState({
+            loading: false,
+          })
+        }
       })
-    }
-
-    return {
-      ...tableProps.tableActions,
-      actions,
-      selectActions: [
-        {
-          key: 'taint',
-          type: 'default',
-          text: t('Taint Management'),
-          action: 'edit',
-          onClick: () =>
-            trigger('node.taint.batch', {
-              success: routing.query,
-            }),
-        },
-      ],
-    }
+      // eslint-disable-next-line no-unused-vars
+      .catch(err => {
+        this.setState({
+          loading: false,
+        })
+      })
   }
 
-  getData = async params => {
-    await this.store.fetchList({
-      ...params,
-      ...this.props.match.params,
-    })
-
-    await this.monitoringStore.fetchMetrics({
-      ...this.props.match.params,
-      resources: this.store.list.data.map(node => node.name),
-      metrics: Object.values(MetricTypes),
-      last: true,
-    })
-  }
-
-  getUnschedulable = record => {
-    const taints = record.taints
-
-    return taints.some(
-      taint => taint.key === 'node.kubernetes.io/unschedulable'
-    )
-  }
-
-  getLastValue = (node, type, unit) => {
-    const metricsData = this.monitoringStore.data
-    const result = get(metricsData[type], 'data.result') || []
-    const metrics = result.find(item => get(item, 'metric.node') === node.name)
-    return getValueByUnit(get(metrics, 'value[1]', 0), unit)
-  }
-
-  getRecordMetrics = (record, configs) => {
-    const metrics = {}
-    configs.forEach(cfg => {
-      metrics[cfg.type] = parseFloat(
-        this.getLastValue(record, MetricTypes[cfg.type], cfg.unit)
-      )
-    })
-    return metrics
-  }
-
-  renderTaintsTip = data => (
-    <div>
-      <div>{t('Taints')}:</div>
-      <div>
-        {data.map(item => {
-          const text = `${item.key}=${item.value || ''}:${item.effect}`
-          return <div key={text}>{text}</div>
-        })}
-      </div>
-    </div>
-  )
-
-  getStatus() {
-    return NODE_STATUS.map(status => ({
-      text: t(status.text),
-      value: status.value,
-    }))
-  }
-
-  getColumns = () => {
-    // const { module, prefix, getSortOrder, getFilteredValue } = this.props
-    const { module, getSortOrder, getFilteredValue } = this.props
-    // /clusters/default/nodes/node1/status
-
-    return [
-      {
-        title: t('Name'),
-        dataIndex: 'name',
-        sorter: true,
-        sortOrder: getSortOrder('name'),
-        search: true,
-        render: (name, record) => (
-          <Avatar
-            icon={ICON_TYPES[module]}
-            iconSize={40}
-            to={
-              record.importStatus !== 'success'
-                ? null
-                : `/clusters/${this.cluster}/nodes/${name}/status`
-            }
-            title={name}
-            desc={record.ip}
-          />
-        ),
+  getColumns = () => [
+    {
+      title: '名称',
+      dataIndex: 'name',
+      render: (_, record) => {
+        return record.name ? record.name : record.node
       },
-      {
-        title: t('Status'),
-        dataIndex: 'status',
-        filters: this.getStatus(),
-        filteredValue: getFilteredValue('status'),
-        isHideable: true,
-        search: true,
-        render: (_, record) => {
-          const status = getNodeStatus(record)
-          const taints = record.taints
-
-          return (
-            <div className={styles.status}>
-              <Status
-                type={status}
-                name={t(`NODE_STATUS_${status.toUpperCase()}`)}
-              />
-              {!isEmpty(taints) && record.importStatus === 'success' && (
-                <Tooltip content={this.renderTaintsTip(taints)}>
-                  <span className={styles.taints}>{taints.length}</span>
-                </Tooltip>
-              )}
-            </div>
-          )
-        },
+    },
+    {
+      title: '组织',
+      dataIndex: 'group',
+      render: (_, record) => {
+        return record.groups_node
+          ? get(record, 'groups_node.group.name') || '未分配'
+          : '未分配'
       },
-      {
-        title: t('Role'),
-        dataIndex: 'role',
-        isHideable: true,
-        search: true,
-        render: roles => roles.join(','),
-      },
-      {
-        title: t('CPU'),
-        key: 'cpu',
-        isHideable: true,
-        render: record => {
-          const metrics = this.getRecordMetrics(record, [
-            {
-              type: 'cpu_used',
-              unit: 'Core',
-            },
-            {
-              type: 'cpu_total',
-              unit: 'Core',
-            },
-            {
-              type: 'cpu_utilisation',
-            },
-          ])
-
-          return (
-            <Text
-              title={
-                <div className={styles.resource}>
-                  <span>{`${Math.round(metrics.cpu_utilisation * 100)}%`}</span>
-                  {metrics.cpu_utilisation >= 0.9 && (
-                    <Icon name="exclamation" />
-                  )}
-                </div>
-              }
-              description={`${metrics.cpu_used}/${metrics.cpu_total} Core`}
-            />
-          )
-        },
-      },
-      {
-        title: t('Memory'),
-        key: 'memory',
-        isHideable: true,
-        render: record => {
-          const metrics = this.getRecordMetrics(record, [
-            {
-              type: 'memory_used',
-              unit: 'Gi',
-            },
-            {
-              type: 'memory_total',
-              unit: 'Gi',
-            },
-            {
-              type: 'memory_utilisation',
-            },
-          ])
-
-          return (
-            <Text
-              title={
-                <div className={styles.resource}>
-                  <span>{`${Math.round(
-                    metrics.memory_utilisation * 100
-                  )}%`}</span>
-                  {metrics.memory_utilisation >= 0.9 && (
-                    <Icon name="exclamation" />
-                  )}
-                </div>
-              }
-              description={`${metrics.memory_used}/${metrics.memory_total} Gi`}
-            />
-          )
-        },
-      },
-      {
-        title: t('Pods'),
-        key: 'pods',
-        isHideable: true,
-        render: record => {
-          const metrics = this.getRecordMetrics(record, [
-            {
-              type: 'pod_used',
-            },
-            {
-              type: 'pod_total',
-            },
-          ])
-          const uitilisation = metrics.pod_total
-            ? parseFloat(metrics.pod_used / metrics.pod_total)
-            : 0
-
-          return (
-            <Text
-              title={`${Math.round(uitilisation * 100)}%`}
-              description={`${metrics.pod_used}/${metrics.pod_total}`}
-            />
-          )
-        },
-      },
-      {
-        title: t('Allocated CPU'),
-        key: 'allocated_resources_cpu',
-        isHideable: true,
-        render: this.renderCPUTooltip,
-      },
-      {
-        title: t('Allocated Memory'),
-        key: 'allocated_resources_memory',
-        isHideable: true,
-        render: this.renderMemoryTooltip,
-      },
-    ]
-  }
-
-  renderCPUTooltip = record => {
-    const content = (
-      <p>
-        {t('Resource Limits')}:{' '}
-        {cpuFormat(get(record, 'annotations["node.kubesphere.io/cpu-limits"]'))}{' '}
-        Core (
-        {get(record, 'annotations["node.kubesphere.io/cpu-limits-fraction"]')})
-      </p>
-    )
-    return (
-      <Tooltip content={content} placement="top">
-        <Text
-          title={`${cpuFormat(
-            get(record, 'annotations["node.kubesphere.io/cpu-requests"]')
-          )} Core (${get(
-            record,
-            'annotations["node.kubesphere.io/cpu-requests-fraction"]'
-          )})`}
-          description={t('Resource Requests')}
-        />
-      </Tooltip>
-    )
-  }
-
-  renderMemoryTooltip = record => {
-    const content = (
-      <p>
-        {t('Resource Limits')}:{' '}
-        {memoryFormat(
-          get(record, 'annotations["node.kubesphere.io/memory-limits"]'),
-          'Gi'
-        )}{' '}
-        Gi (
-        {get(
-          record,
-          'annotations["node.kubesphere.io/memory-limits-fraction"]'
-        )}
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      render: val => {
+        // console.log('🚀 ~ file: index.jsx ~ line 95 ~ Nodes ~ val', val)
+        // switch (val) {
+        //   case 'Running':
+        //     return <Tag color="success">正常</Tag>
+        //   case 'Warnning':
+        //     return <Tag color="error">异常</Tag>
+        //   default:
+        //     return <Tag color="success">未知</Tag>
+        // }
+        return (
+          <Status type={val} name={t(`NODE_STATUS_${val.toUpperCase()}`)} />
         )
-      </p>
-    )
-    return (
-      <Tooltip content={content} placement="top">
-        <Text
-          title={`${memoryFormat(
-            get(record, 'annotations["node.kubesphere.io/memory-requests"]'),
-            'Gi'
-          )} Gi (${get(
-            record,
-            'annotations["node.kubesphere.io/memory-requests-fraction"]'
-          )})`}
-          description={t('Resource Requests')}
-        />
-      </Tooltip>
-    )
+      },
+    },
+    {
+      title: 'IP',
+      dataIndex: 'ip',
+      width: '15%',
+    },
+    {
+      title: 'CPU',
+      dataIndex: 'cpu',
+      width: '10%',
+      sorter: (a, b) => {
+        const aRate = parseFloat(a.cpu_used) / parseFloat(a.cpu)
+        const bRate = parseFloat(b.cpu_used) / parseFloat(b.cpu)
+        return aRate - bRate
+      },
+      render: (_, record) => {
+        const rate = Math.round(
+          (parseFloat(record.cpu_used) / parseFloat(record.cpu)) * 100
+        )
+        return (
+          <Text
+            title={
+              <div className={styles.resource}>
+                <span>{`${rate}%`}</span>
+                {rate >= 90 && <Icon name="exclamation" />}
+              </div>
+            }
+            description={`${record.cpu_used}/${parseInt(record.cpu, 10)} Core`}
+          />
+        )
+      },
+    },
+    {
+      title: '内存',
+      dataIndex: 'cpu',
+      width: '10%',
+      sorter: (a, b) => {
+        const aRate = parseFloat(a.mem_used) / parseFloat(a.mem)
+        const bRate = parseFloat(b.mem_used) / parseFloat(b.mem)
+        return aRate - bRate
+      },
+      render: (_, record) => {
+        const rate = Math.round(
+          (parseFloat(record.mem_used) / parseFloat(record.mem)) * 100
+        )
+        return (
+          <Text
+            title={
+              <div className={styles.resource}>
+                <span>{`${rate}%`}</span>
+                {rate >= 90 && <Icon name="exclamation" />}
+              </div>
+            }
+            description={`${record.mem_used}/${record.mem} Gi`}
+          />
+        )
+      },
+    },
+    {
+      title: '磁盘',
+      dataIndex: 'disk',
+      width: '10%',
+      render: (_, record) => {
+        const rate = Math.round(
+          (parseFloat(record.disk_used) / parseFloat(record.disk)) * 100
+        )
+        return (
+          <Text
+            title={
+              <div className={styles.resource}>
+                <span>{`${rate}%`}</span>
+                {rate >= 90 && <Icon name="exclamation" />}
+              </div>
+            }
+            description={`${record.disk_used}/${record.disk} GB`}
+          />
+        )
+      },
+    },
+    {
+      title: 'GPU',
+      dataIndex: 'gpu',
+      width: '10%',
+      render: (_, record) => {
+        const rate = parseFloat(record.gpu)
+          ? Math.round(
+              (parseFloat(record.gpu_used) / parseFloat(record.gpu)) * 100
+            )
+          : 0
+        return (
+          <Text
+            title={
+              <div className={styles.resource}>
+                <span>{`${rate}%`}</span>
+                {rate >= 90 && <Icon name="exclamation" />}
+              </div>
+            }
+            description={`${record.gpu_used}/${record.gpu} Core`}
+          />
+        )
+      },
+    },
+    // {
+    //   title: 'GPU',
+    //   dataIndex: 'gpu',
+    //   width: '5%',
+    // },
+    {
+      title: '容器组',
+      dataIndex: 'pod',
+      width: '10%',
+      render: (_, record) => {
+        const rate = Math.round(
+          (parseFloat(record.pod_used) / parseFloat(record.pod)) * 100
+        )
+        return (
+          <Text
+            title={
+              <div className={styles.resource}>
+                <span>{`${rate}%`}</span>
+                {rate >= 90 && <Icon name="exclamation" />}
+              </div>
+            }
+            description={`${record.pod_used}/${record.pod}`}
+          />
+        )
+      },
+    },
+    {
+      title: '操作',
+      dataIndex: 'more',
+      width: '10%',
+      // eslint-disable-next-line no-unused-vars
+      render: (_, record) => (
+        <div className={styles.btns}>
+          <Popover content="查看详情" title="">
+            <Link to={`/clusters/${this.cluster}/nodes/${record.node}/status`}>
+              <Button
+                type="text"
+                size="small"
+                style={{ color: '#096dd9' }}
+                icon={<EyeOutlined />}
+                // onClick={}
+              ></Button>
+            </Link>
+          </Popover>
+          <Popover content="编辑" title="">
+            <Button
+              type="text"
+              size="small"
+              style={{ color: '#52c41a' }}
+              icon={<EditOutlined />}
+              onClick={this.handleEdit.bind(this, record)}
+            ></Button>
+          </Popover>
+        </div>
+      ),
+    },
+  ]
+
+  handleEdit(item) {
+    item.gid = item.groups_node ? item.groups_node.gid : null
+    item.name = item.name ? item.name : item.node
+    this.setState({
+      show: true,
+      item,
+    })
   }
 
-  renderOverview() {
-    const { masterCount, masterWorkerCount, list } = this.store
-    const totalCount = list.total
-    const workerCount = Math.max(
-      Number(totalCount) - Number(masterCount) + Number(masterWorkerCount),
-      0
-    )
+  // eslint-disable-next-line no-unused-vars
+  radioChange(e) {
+    const values = this.form.current.getFieldsValue()
+    this.getData(values)
+  }
 
-    return (
-      <Panel className="margin-b12">
-        <div className={styles.overview}>
-          <Text icon="nodes" title={totalCount} description={t('Node Count')} />
-          <Text title={masterCount} description={t('Master Node')} />
-          <Text title={workerCount} description={t('Worker Node')} />
-        </div>
-      </Panel>
-    )
+  resetForm = () => {
+    this.form.current.resetFields()
+    this.getData()
+  }
+
+  search = () => {
+    this.setState({
+      loading: true,
+    })
+    const values = this.form.current.getFieldsValue()
+    this.getData(values)
+  }
+
+  handleModelCancel = () => {
+    this.setState({
+      show: false,
+      item: null,
+    })
+  }
+
+  handleModelSubmit = values => {
+    editNodes(values).then(res => {
+      if (res.code === 200) {
+        Notify.success('更新成功')
+      } else {
+        Notify.error('更新失败，请重试')
+      }
+      this.getData()
+    })
   }
 
   render() {
-    const { bannerProps, tableProps } = this.props
-    const isLoadingMonitor = this.monitoringStore.isLoading
-
+    const { data, status, pagination, show, item, loading } = this.state
     return (
-      <ListPage {...this.props} getData={this.getData} noWatch>
-        <Banner {...bannerProps} />
-        {this.renderOverview()}
-        <Table
-          className={styles.tableWrapper}
-          {...tableProps}
-          itemActions={this.itemActions}
-          tableActions={this.tableActions}
-          columns={this.getColumns()}
-          isLoading={tableProps.isLoading || isLoadingMonitor}
+      <div>
+        <Banner
+          title="集群节点"
+          description="集群节点提供了当前集群下节点的运行状态，以及可以编辑节点"
         />
-      </ListPage>
+        <div className="table-title">
+          <Form
+            ref={this.form}
+            Initializing={{
+              name: '',
+              pid: '',
+              status: -1,
+            }}
+          >
+            <Row justify="space-between" align="middle">
+              <Row justify="space-around" gutter={15}>
+                <Col>
+                  <Form.Item label="节点名称" name="name">
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item label="组织" name="gid">
+                    <TreeSelect
+                      showSearch
+                      style={{
+                        width: '180px',
+                        border: '1px solid #d9d9d9',
+                        borderRadius: '2px',
+                      }}
+                      dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                      placeholder="请选择上级部门"
+                      allowClear
+                      treeDefaultExpandAll
+                      // initialValues={-1}
+                      // onChange={onChange}
+                      fieldNames={{ label: 'name', value: 'id', key: 'id' }}
+                      treeData={this.groupStore.treeData}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Form.Item label="状态" name="status">
+                    <Radio.Group
+                      onChange={this.radioChange.bind(this)}
+                      defaultValue={status}
+                    >
+                      <Radio value={-1}>全部</Radio>
+                      <Radio value={0}>正常</Radio>
+                      <Radio value={1}>异常</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Col>
+                <Form.Item>
+                  <KButton
+                    type="control"
+                    onClick={this.search}
+                    loading={loading}
+                  >
+                    搜索
+                  </KButton>
+                  <KButton type="default" onClick={this.resetForm}>
+                    重置刷新
+                  </KButton>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+        <Table
+          columns={this.getColumns()}
+          dataSource={data}
+          pagination={pagination}
+        />
+        <EditForm
+          show={show}
+          item={item}
+          onCancel={this.handleModelCancel}
+          onSubmit={this.handleModelSubmit}
+          treeData={this.groupStore.treeData}
+        ></EditForm>
+      </div>
     )
   }
 }

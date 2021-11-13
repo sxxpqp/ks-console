@@ -42,6 +42,8 @@ import Secrets from '../containers/Secrets'
 import Roles from '../containers/Roles'
 import Members from '../containers/Members'
 import Groups from '../containers/Groups'
+// 资源模板管理
+import ResTemplate from '../containers/ResTemplate'
 import Menus from '../containers/Menus'
 import AdvancedSettings from '../containers/AdvancedSettings'
 // import AlertingPolicies from '../containers/Alerting/Policies'
@@ -191,6 +193,8 @@ export default [
       { path: `${PATH}/members`, component: Members, exact: true },
       { path: `${PATH}/advanced`, component: AdvancedSettings, exact: true },
       { path: `${PATH}/groups`, component: Groups, exact: true },
+      // 资源模板管理
+      { path: `${PATH}/res-template`, component: ResTemplate, exact: true },
       // {
       //   path: `${PATH}/alert-rules`,
       //   component: AlertingPolicies,

@@ -24,41 +24,16 @@ const { initModels } = require('./models/init-models')
 const { redisInit } = require('./services/redis-helper')
 const { ftpsInit } = require('./services/ftps')
 const { sshInit } = require('./services/ssh')
-const { cronJob } = require('./services/cron')
+const { cronJob, cronJob1 } = require('./services/cron')
 // const { createProject } = require('./libs/user')
 
-const { getK8sAppList } = require('./services/platform')
+// const { getK8sAppList, getK8sNodes } = require('./services/platform')
 
-getK8sAppList({ workspace: 'test', namespace: 'test' })
-
-// const { kubctl, getImage } = require('./libs/platform')
-
-// const info = {
-//   podName: 'nginx-y9lhg3-5847d595f4-s56x6',
-//   namespace: 'test',
-// }
-
-// const options = {
-//   host: '192.168.4.33',
-//   port: 22,
-//   username: 'root',
-//   password: 'Xl123456..',
-// }
-
-// kubctl(info, options)
-//   .then(res => {
-//     console.log(res)
-//     const names = res.map(item => item.name)
-//     getImage({ ...info, container: names[0] }, options).then(res1 => {
-//       console.log(res1)
-//     })
-//   })
-//   .catch(err => {
-//     console.log(err)
-//   })
+// getK8sAppList({ workspace: 'test', namespace: 'test' })
 
 // 定时任务
 cronJob.start()
+cronJob1.start()
 
 const app = new Koa()
 const config = getServerConfig()

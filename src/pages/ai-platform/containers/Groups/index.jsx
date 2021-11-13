@@ -177,6 +177,11 @@ export default class GroupsManage extends React.Component {
                   border
                   columns={this.getColumns()}
                   dataSource={this.store.childItems}
+                  expandable={{
+                    // 关闭子节点展开
+                    // eslint-disable-next-line no-unused-vars
+                    expandIcon: (expanded, onExpand, record) => null,
+                  }}
                 />
               </Panel>
             </Card>

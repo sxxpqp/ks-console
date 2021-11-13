@@ -1,222 +1,110 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react'
+import { get } from 'lodash'
+// import { toJS } from 'mobx'
 import Banner from 'components/Cards/Banner'
-// import { ListPage } from 'components/HOCs/withList'
-import Table from 'components/Tables/List'
-import { toJS } from 'mobx'
-// import { cloneDeep, get, isEmpty, omit } from 'lodash'
-// import { omit } from 'lodash'
-import ApplyStore from 'stores/apply'
-import { parse } from 'qs'
-import dayjs from 'dayjs'
-
-import { Button, Tag, Row, Col, Radio } from 'antd'
-import { Modal } from 'components/Base'
-import RefuseModal from 'components/Modals/Audit/refuse'
-import AuditModal from 'components/Modals/Audit/index'
-import DetailModal from 'components/Modals/AuditDetail'
-import { Notify } from '@kube-design/components'
-import { updateApply } from 'api/apply'
+import {
+  Table,
+  Row,
+  Col,
+  Input,
+  Form,
+  Button,
+  Radio,
+  Tag,
+  TreeSelect,
+  Modal,
+} from 'antd'
+import { Notify, Button as KButton } from '@kube-design/components'
 
 import {
   EyeOutlined,
   AuditOutlined,
   ExportOutlined,
-  // DeleteOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons'
+
+import { observer, inject } from 'mobx-react'
+import ReviewStore from 'stores/ai-platform/review'
+import GroupStore from 'stores/ai-platform/group'
+import dayjs from 'dayjs'
+import { getUsers } from 'api/users'
+// import VersionStore from 'stores/openpitrix/version'
+import AppStore from 'stores/openpitrix/app'
+import { updateApply } from 'api/apply'
 import styles from './index.scss'
+import Detail from './detail'
 
 @inject('rootStore')
 @observer
-export default class ApplyDefault extends React.Component {
+export default class ApplyHistory extends React.Component {
   constructor(props) {
     super(props)
-    this.store = new ApplyStore()
-    this.state = {
-      type: 0,
-      name: '',
-    }
-  }
+    this.form = React.createRef()
+    this.store = new ReviewStore()
 
-  getData = param => {
-    const params = parse(location.search.slice(1))
-    this.store.fetchList({
-      ...this.props.match.params,
-      ...params,
-      ...param,
-      ...this.state,
-    })
-    // const tmp = {
-    //   ...omit(this.props.match.params, 'namespace'),
-    //   devops: 'ks-consolekkwfw',
-    // }
-    // this.props.rootStore.getRules(tmp)
+    this.store.getApplyHisAll()
+    this.appStore = new AppStore()
+    // this.versionStore = new VersionStore()
+
+    // 获取组织资源
+    // this.store.getGroupResTotal()
+    this.groupStore = new GroupStore()
+    this.groupStore.getData()
+    this.state = {
+      status: 0,
+      value: '',
+      show: false,
+      item: null,
+      user: null,
+      groupRes: null,
+      userRes: null,
+    }
   }
 
   get routing() {
     return this.props.rootStore.routing
   }
 
-  // 请求列表
-  componentDidMount() {
-    this.unsubscribe = this.routing.history.subscribe(() => {
-      this.getData()
-    })
-  }
-
-  componentWillUnmount() {
-    this.unsubscribe && this.unsubscribe()
-  }
-
-  // get tips() {
-  //   return [
-  //     {
-  //       title: '资源选择',
-  //       description: t('SERVICE_TYPES_A'),
-  //     },
-  //     {
-  //       title: '应用选择',
-  //       description: t('SCENARIOS_FOR_SERVICES_A'),
-  //     },
-  //   ]
-  // }
-
-  // 驳回处理
-  handleRefuse(item) {
-    const modal = Modal.open({
-      onOk: async msg => {
-        // store.delete(detail).then(() => {
-        const res = await updateApply({
-          id: item.id,
-          msg,
-          status: 2, // 驳回
-        })
-        if (res.status === 200) {
-          Notify.success({ content: `驳回成功` })
-          this.getData()
-        } else {
-          Notify.error({ content: `驳回失败` })
-        }
-        Modal.close(modal)
-        // success && success()
-        // })
-      },
-      modal: RefuseModal,
-      title: '确定驳回吗？',
-      desc: `确定驳回 ${item.uid_user.name} 的资源申请吗？`,
-      resource: `CPU:${item.cpu}vCPU, 内存:${item.mem}GiB, 磁盘:${item.disk}GiB, GPU:${item.gpu}vGPU`,
-      reason: item.reason,
-      // ...props,
-    })
-  }
-
-  // 查看详情
-  handleDetail(record) {
-    const modal = Modal.open({
-      onOk: async () => {
-        // store.delete(detail).then(() => {
-        Modal.close(modal)
-        // success && success()
-        // })
-      },
-      detail: record,
-      modal: DetailModal,
-      // ...props,
-    })
-  }
-
-  // 审批
-  handleApply(item) {
-    const modal = Modal.open({
-      onOk: async data => {
-        const res = await updateApply({
-          id: item.id,
-          msg: data.msg,
-          status: 1, // 通过
-          nid: data.rowData.id,
-        })
-        if (res.status === 200) {
-          Notify.success({ content: `审批成功` })
-          this.getData()
-        } else {
-          Notify.error({ content: `驳回失败` })
-        }
-        this.getData()
-        Modal.close(modal)
-        // success && success()
-        // })
-      },
-      detail: item,
-      modal: AuditModal,
-      // ...props,
-    })
-  }
-
   getColumns = () => [
     {
-      title: '序号',
-      dataIndex: 'id',
-      width: '7%',
-      render: val => {
-        const { data, limit, page } = toJS(this.store.list)
-        // 计算val的index
-        // console.log(
-        //   '🚀 ~ file: index.jsx ~ line 88 ~ ApplyDefault ~ data',
-        //   data
-        // )
-        const index = data.findIndex(i => i.id === val)
-        return index + limit * (page - 1) + 1
-      },
-    },
-    {
-      title: 'CPU',
+      title: 'cpu',
       dataIndex: 'cpu',
-      width: '7%',
-      isHideable: true,
-      render: val => `${val}vCPU`,
+      render: item => `${item} Core`,
     },
     {
       title: '内存',
       dataIndex: 'mem',
-      width: '7%',
-      isHideable: true,
-      render: val => `${val}GiB`,
+      render: item => `${item} GiB`,
     },
     {
       title: '磁盘',
       dataIndex: 'disk',
-      width: '7%',
-      isHideable: true,
-      render: val => `${val}GiB`,
+      render: item => `${item} GB`,
     },
     {
       title: 'GPU',
       dataIndex: 'gpu',
-      width: '7%',
-      isHideable: true,
-      render: val => `${val}vGPU`,
-    },
-    {
-      title: '申请人',
-      dataIndex: 'uid_user',
-      width: '10%',
-      render: obj => obj.name || '未知',
+      render: item => `${item} Core`,
     },
     {
       title: '创建时间',
       dataIndex: 'created',
-      width: '15%',
       render: time => dayjs(time).format('YYYY-MM-DD hh:mm:ss'),
+    },
+    {
+      title: '申请人',
+      dataIndex: 'user',
+      render: user => user.name,
     },
     {
       title: '事由',
       dataIndex: 'reason',
     },
     {
-      title: '状态',
+      title: '审核状态',
       dataIndex: 'status',
       render: val => {
-        switch (val) {
+        switch (parseInt(val, 10)) {
           case 0:
             return <Tag color="processing">未审核</Tag>
           case 1:
@@ -230,171 +118,274 @@ export default class ApplyDefault extends React.Component {
     },
     {
       title: '操作',
-      width: '20%',
+      dataIndex: 'more',
       // eslint-disable-next-line no-unused-vars
-      render: (_, record) => {
-        return (
-          <div className={styles.btns}>
-            {record.status === 0 ? (
-              <>
-                <Button
-                  type="text"
-                  size="small"
-                  style={{ color: '#389e0d' }}
-                  onClick={() => this.handleApply(record)}
-                >
-                  <AuditOutlined />
-                  审批
-                </Button>
-                <Button
-                  type="text"
-                  size="small"
-                  danger
-                  onClick={() => this.handleRefuse(record)}
-                >
-                  <ExportOutlined />
-                  驳回
-                </Button>
-              </>
-            ) : (
+      render: (_, record) => (
+        <div className={styles.btns}>
+          {record.status === 0 ? (
+            <>
               <Button
                 type="text"
                 size="small"
-                style={{ color: '#096dd9' }}
-                onClick={() => this.handleDetail(record)}
+                style={{ color: '#389e0d' }}
+                onClick={() => this.showDetail(record)}
               >
-                <EyeOutlined />
-                查看详情
+                <AuditOutlined />
+                审批
               </Button>
-            )}
-            {/* <Button type="text" danger size="small">
+              <Button
+                type="text"
+                size="small"
+                danger
+                onClick={() => this.handleRefuse(record)}
+              >
+                <ExportOutlined />
+                驳回
+              </Button>
+            </>
+          ) : (
+            <Button
+              type="text"
+              size="small"
+              style={{ color: '#096dd9' }}
+              onClick={() => this.showDetail(record)}
+            >
+              <EyeOutlined />
+              查看详情
+            </Button>
+          )}
+          {/* <Button type="text" danger size="small">
               <DeleteOutlined />
               删除
             </Button> */}
-          </div>
-        )
-      },
+        </div>
+      ),
     },
   ]
 
-  get enabledActions() {
-    return globals.app.getActions({
-      module: 'pipelines',
-      cluster: this.props.match.params.cluster,
-      devops: this.devops,
+  async showDetail(item) {
+    const res = await getUsers({ id: item.uid })
+    const { code, data, msg } = res
+    if (code === 200) {
+      const groups = get(data[0], 'users_groups')
+      const gres = await this.store.getGroupResTotal({
+        id: groups.map(i => i.gid).join(','),
+      })
+      const user = await this.store.getResTotal(item.uid)
+      if (item.app) {
+        this.appStore.fetchDetail({
+          appId: item.app,
+        })
+      }
+      this.setState({
+        show: true,
+        item,
+        user: data[0],
+        groupRes: gres.code === 200 ? gres.data : [],
+        userRes: user.code === 200 ? user.data : [],
+      })
+    } else {
+      Notify.error(msg || '无法获取用户信息')
+    }
+  }
+
+  radioChange(e) {
+    const { value } = e.target
+    // eslint-disable-next-line no-console
+    this.store.setParams({
+      current: 1,
+      status: value,
+    })
+    this.store.getApplyHisAll()
+  }
+
+  onTreeChange(e) {
+    this.store.setParams({
+      gid: e,
+    })
+    // eslint-disable-next-line no-console
+    // this.store.setParams({
+    //   current: 1,
+    //   status: value,
+    // })
+    // this.store.getApplyHisAll()
+  }
+
+  handleInput(e) {
+    const { value } = e.target
+    this.store.setParams({
+      name: value,
     })
   }
 
-  handleFetch = (params, refresh) => {
-    this.routing.query(params, refresh)
+  handleSearch() {
+    this.store.getApplyHisAll()
   }
 
-  renderContent() {
-    const { data, isLoading, total, page, limit, selectedRowKeys } = toJS(
-      this.store.list
-    )
-
-    const pagination = { total, page, limit }
-
-    const defaultTableProps = {
-      hideCustom: false,
-      onSelectRowKeys: this.store.onSelectRowKeys,
-      selectedRowKeys,
-      selectActions: [],
-    }
-
-    return (
-      <Table
-        rowKey="id"
-        data={data}
-        columns={this.getColumns()}
-        pagination={pagination}
-        isLoading={isLoading}
-        hideSearch
-        // isLoading={isLoading}
-        onFetch={this.handleFetch}
-        // onCreate={showCreate}
-        searchType="name"
-        tableActions={defaultTableProps}
-        // itemActions={this.itemActions}
-        enabledActions={this.enabledActions}
-        customFilter={this.renderTypeSearch()}
-      />
-    )
-  }
-
-  renderTypeSearch() {
-    // eslint-disable-next-line no-unused-vars
-    const { type, name } = this.state
-
-    const onTypeChange = e => {
-      // console.log(location.search)
-      this.setState({ type: e.target.value })
+  handleReset() {
+    if (this.form.current) {
+      this.form.current.resetFields()
+      this.setState({
+        status: -1,
+      })
+      this.store.setParams({
+        current: 1,
+        status: -1,
+        reason: '',
+        name: '',
+        gid: null,
+      })
       setTimeout(() => {
-        this.getData()
+        this.store.getApplyHisAll()
       }, 0)
     }
+  }
 
-    // const search = () => {
-    //   this.getData({
-    //     name,
-    //     type,
-    //   })
-    // }
+  handleRefuse(item) {
+    const { user } = item
+    Modal.confirm({
+      title: `确定驳回组织${user.name}的申请吗？`,
+      icon: <ExclamationCircleOutlined />,
+      centered: true,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        this.onSubmit(0, item)
+      },
+    })
+  }
 
-    // const clear = () => {
-    //   this.setState({
-    //     type: '',
-    //     name: '',
-    //   })
-    //   this.getData({
-    //     type: '',
-    //   })
-    // }
+  // modal取消
+  onCancel = () => {
+    this.setState({
+      show: false,
+    })
+  }
 
-    return (
-      <Row className={styles.flex}>
-        <Col>
-          <span>审核状态：</span>
-          <Radio.Group
-            name="type"
-            defaultValue={''}
-            onChange={onTypeChange}
-            value={type}
-          >
-            <Radio value={''}>全部</Radio>
-            <Radio value={0}>未审核</Radio>
-            <Radio value={1}>已通过</Radio>
-            <Radio value={2}>已驳回</Radio>
-          </Radio.Group>
-        </Col>
-        {/* <Col>
-          <Row>
-            <AIButton type="control" onClick={search}>
-              筛选
-            </AIButton>
-            <AIButton onClick={clear}>清空</AIButton>
-          </Row>
-        </Col> */}
-      </Row>
-    )
+  // modal确定
+  onSubmit = async (flag, item) => {
+    this.setState({
+      show: false,
+    })
+    const { id, msg } = item
+    const res = await updateApply({
+      id,
+      msg,
+      status: flag || 2, // 通过
+    })
+    if (res.code === 200) {
+      Notify.success({ content: flag ? `审批成功` : `驳回成功` })
+      // this.store.getApplyHisAll()
+    }
+    this.store.getApplyHisAll()
   }
 
   render() {
-    // const { match } = this.props
-    const bannerProps = {
-      className: 'margin-b12',
-      title: '容器资源审批',
-      description:
-        '人工智能平台用户申请的资源清单，查看资源详情，对资源申请进行审批。',
-      module: 'review',
+    // 查看历史
+    const showApply = () => {
+      const { workspace, cluster, namespace } = this.props.match.params
+      const { history } = this.props
+      const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}/apply`
+      history.push({ pathname: PATH, state: { name: 'apply' } })
     }
+
+    const { allAdminHis, params } = this.store
+    const { status, value, show, item, user, groupRes, userRes } = this.state
+
     return (
-      <div>
-        <Banner {...bannerProps} />
-        {/* {this.renderTypeSearch()} */}
-        {this.renderContent()}
-      </div>
+      <>
+        <Banner
+          title="容器资源审批"
+          description="人工智能平台用户申请的资源清单，查看资源详情，对资源申请进行审批。"
+        />
+        <div className="table-title">
+          <Form ref={this.form}>
+            <Row justify="space-between" align="middle" className="margin-b12">
+              <Row justify="space-around" gutter={15}>
+                <Col>
+                  <Form.Item label="审核状态" name="status">
+                    <Radio.Group
+                      onChange={this.radioChange.bind(this)}
+                      defaultValue={status}
+                    >
+                      <Radio value={-1}>全部</Radio>
+                      <Radio value={0}>未审核</Radio>
+                      <Radio value={1}>已审核</Radio>
+                      <Radio value={2}>已驳回</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Col>
+                <Form.Item>
+                  <KButton type="control" onClick={() => showApply()}>
+                    新增申请
+                  </KButton>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row justify="start" align="middle" gutter={15}>
+              <Col>
+                <Form.Item label="组织" name="gid">
+                  <TreeSelect
+                    showSearch
+                    style={{
+                      width: '180px',
+                      borderRadius: '2px',
+                      border: '1px solid #d9d9d9',
+                    }}
+                    dropdownStyle={{ overflow: 'auto' }}
+                    dropdownMatchSelectWidth={false}
+                    placeholder="请选择部门"
+                    allowClear
+                    treeDefaultExpandAll
+                    // initialValues={-1}
+                    onChange={this.onTreeChange.bind(this)}
+                    fieldNames={{ label: 'name', value: 'id', key: 'id' }}
+                    treeData={this.groupStore.treeData}
+                  >
+                    {/* <TreeNode value="-1" title="无"></TreeNode> */}
+                  </TreeSelect>
+                </Form.Item>
+              </Col>
+              <Col>
+                <Form.Item label="用户名" name="name">
+                  <Input
+                    placeholder="请输入搜索的用户"
+                    value={value}
+                    onChange={this.handleInput.bind(this)}
+                  />
+                </Form.Item>
+              </Col>
+              <Col>
+                <Form.Item>
+                  <KButton type="control" onClick={() => this.handleSearch()}>
+                    搜索
+                  </KButton>
+                  <KButton type="default" onClick={() => this.handleReset()}>
+                    清空
+                  </KButton>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+        <Table
+          columns={this.getColumns()}
+          dataSource={allAdminHis}
+          pagination={{ params }}
+        />
+        <Detail
+          show={show}
+          item={item}
+          user={user}
+          groupRes={groupRes}
+          userRes={userRes}
+          appStore={this.appStore}
+          onSubmit={this.onSubmit}
+          onCancel={this.onCancel}
+        ></Detail>
+      </>
     )
   }
 }

@@ -6,8 +6,8 @@ import {
   // Select, TextArea
 } from '@kube-design/components'
 import { Modal } from 'components/Base'
-import { Tag, Input, Table } from 'antd'
-import { getNodes } from 'api/apply'
+import { Tag, Input, Table, Descriptions } from 'antd'
+// import { getNodes } from 'api/apply'
 import styles from './index.scss'
 
 const { TextArea } = Input
@@ -41,20 +41,21 @@ export default class AuditDetailModal extends React.Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const { reviewStore, detail } = this.props
+    await reviewStore.getResTotal(detail.uid)
     // 获取用户的组织
     // 通过组织获取用户的组织节点
-    getNodes().then(res => {
-      if (res.status === 200) {
-        const { data } = res
-        const { code, data: nodes } = data
-
-        code === 200 &&
-          this.setState({
-            nodes,
-          })
-      }
-    })
+    // getNodes().then(res => {
+    //   if (res.status === 200) {
+    //     const { data } = res
+    //     const { code, data: nodes } = data
+    //     code === 200 &&
+    //       this.setState({
+    //         nodes,
+    //       })
+    //   }
+    // })
   }
 
   handleOk() {
@@ -67,7 +68,7 @@ export default class AuditDetailModal extends React.Component {
       {
         title: 'vCPU',
         dataIndex: 'cpu',
-        render: item => `${item} vCPU`,
+        render: item => `${item} Core`,
       },
       {
         title: '内存',
@@ -77,34 +78,34 @@ export default class AuditDetailModal extends React.Component {
       {
         title: 'vGPU',
         dataIndex: 'gpu',
-        render: item => `${item} vGPU`,
+        render: item => `${item} Core`,
       },
       {
         title: '磁盘',
         dataIndex: 'disk',
-        render: item => `${item} GiB`,
+        render: item => `${item} GB`,
       },
-      {
-        title: '节点类型',
-        dataIndex: 'type',
-        render: item => {
-          let tag
-          switch (item) {
-            case 1:
-              tag = <Tag color="processing">不限</Tag>
-              break
-            case 2:
-              tag = <Tag color="success">优先自有</Tag>
-              break
-            case 3:
-              tag = <Tag color="error">仅自有</Tag>
-              break
-            default:
-              tag = <Tag color="processing">不限</Tag>
-          }
-          return tag
-        },
-      },
+      // {
+      //   title: '节点类型',
+      //   dataIndex: 'type',
+      //   render: item => {
+      //     let tag
+      //     switch (item) {
+      //       case 1:
+      //         tag = <Tag color="processing">不限</Tag>
+      //         break
+      //       case 2:
+      //         tag = <Tag color="success">优先自有</Tag>
+      //         break
+      //       case 3:
+      //         tag = <Tag color="error">仅自有</Tag>
+      //         break
+      //       default:
+      //         tag = <Tag color="processing">不限</Tag>
+      //     }
+      //     return tag
+      //   },
+      // },
     ]
     return (
       <Table
@@ -112,7 +113,7 @@ export default class AuditDetailModal extends React.Component {
         columns={columns}
         dataSource={items}
         pagination={{ position: ['none', 'none'] }}
-        scroll={{ y: 320 }}
+        // scroll={{ y: 320 }}
       />
     )
   }
@@ -198,6 +199,19 @@ export default class AuditDetailModal extends React.Component {
     )
   }
 
+  renderUser(user) {
+    return (
+      <Descriptions title="" bordered>
+        <Descriptions.Item label="用户名称">{user.name}</Descriptions.Item>
+        <Descriptions.Item label="部门" span={2}>
+          {user.users_groups.map(i => (
+            <Tag color="processing">{i.group.name}</Tag>
+          ))}
+        </Descriptions.Item>
+      </Descriptions>
+    )
+  }
+
   handleInputChange(e) {
     this.setState({
       msg: e,
@@ -227,11 +241,15 @@ export default class AuditDetailModal extends React.Component {
         isSubmitting={isSubmitting}
         visible={visible}
       >
-        <Form.Item label={'申请配置'}>{this.renderForm([detail])}</Form.Item>
-        <Form.Item label={'申请理由'}>
-          <Input name="reason" disabled />
+        <Form.Item label={'用户信息'}>{this.renderUser(detail.user)}</Form.Item>
+        <Form.Item label={'已申请信息'}>
+          {this.renderForm([this.props.reviewStore.countRes])}
         </Form.Item>
-        <Form.Item label={'节点资源选择'}>{this.renderNodes()}</Form.Item>
+        <Form.Item label={'新申请配置'}>{this.renderForm([detail])}</Form.Item>
+        <Form.Item label={'申请理由'}>
+          <TextArea name="reason" disabled rows={4} />
+        </Form.Item>
+        {/* <Form.Item label={'节点资源选择'}>{this.renderNodes()}</Form.Item> */}
         <Form.Item label={'审批理由(选填)'}>
           <TextArea
             rows={4}

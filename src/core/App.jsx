@@ -7,9 +7,12 @@ import { renderRoutes } from 'utils/router.config'
 import { lazy } from 'utils'
 
 import RootStore from 'stores/root'
+import { ConfigProvider } from 'antd'
 
 import '@kube-design/components/esm/styles/index.scss'
 import 'scss/main.scss'
+
+import zhCN from 'antd/lib/locale/zh_CN'
 
 import routes from './routes'
 
@@ -37,7 +40,9 @@ class App extends Component {
   render() {
     return (
       <Provider rootStore={this.rootStore}>
-        <Router history={this.history}>{renderRoutes(routes)}</Router>
+        <ConfigProvider locale={zhCN}>
+          <Router history={this.history}>{renderRoutes(routes)}</Router>
+        </ConfigProvider>
       </Provider>
     )
   }

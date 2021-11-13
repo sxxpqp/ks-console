@@ -551,6 +551,7 @@ module.exports = {
   PlatformRole: '平台角色',
   PlatformMenu: '平台菜单',
   GroupsManage: '组织管理',
+  ResourceTemplate: '资源模板管理',
   PlatformUsers: '平台用户',
   Harbor: '镜像管理平台',
   DockerImage: '容器镜像管理',

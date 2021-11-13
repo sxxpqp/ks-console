@@ -1,145 +1,59 @@
-const { omit } = require('lodash')
+// const { omit } = require('lodash')
 
 const { Op } = require('sequelize')
 const axios = require('axios')
 const qs = require('qs')
 const { imageCommit, imagePush } = require('../libs/platform')
 
-const resUsage = require('@/models/views/resources_usage_view')
+// const resUsage = require('@/models/views/resources_usage_view')
 const { getServerConfig } = require('@/libs/utils')
 
-// 申请资源
-export const applyRes = async ctx => {
-  const { body } = ctx.request
-  const { resources } = global.models
-  // const res = await models.resources.findAll()
-  // console.log('🚀 ~ file: platform.js ~ line 6 ~ res', res)
-  const { uid, cpu, mem, gpu, disk, reason, type, app } = body
-  const res = await resources.create({
-    uid: parseInt(uid, 10),
-    cpu: parseInt(cpu, 10),
-    mem: parseInt(mem, 10),
-    gpu: parseInt(gpu, 10),
-    disk: parseInt(disk, 10),
-    type,
-    reason,
-    app,
-  })
-  ctx.body = {
-    code: 200,
-    data: res,
-  }
-}
-
-// 获取申请资源列表
-export const getApply = async ctx => {
-  const params = ctx.query
-  const { limit, start, type, name } = params
-  const { resources, users } = global.models
-  let whereState = {}
-  if (type || name) {
-    whereState = {
-      status: {
-        [Op.eq]: parseInt(type, 10),
-      },
-      // reason: {
-      //   [Op.like]: name,
-      // },
-    }
-  }
-  const res = await resources.findAll({
-    where: whereState,
-    order: [['created', 'desc']],
-    limit: parseInt(limit || 10, 10),
-    offset: parseInt(start || 0, 10),
-    include: [
-      {
-        model: users,
-        attributes: ['id', 'name'],
-        as: 'uid_user',
-      },
-    ],
-  })
-  const resCount = await resources.findAndCountAll({
-    where: whereState,
-  })
-  ctx.body = {
-    code: 200,
-    data: res,
-    total_count: resCount.count,
-  }
-}
-
-// 审核
-export const updateApply = async ctx => {
-  const { resources } = global.models
-  const { body } = ctx.request
-  const res = await resources.update(
-    {
-      // 0-未审核，1-已审核，2-驳回
-      status: body.status || 1,
-      msg: body.msg,
-      // todo
-      auditorId: 1,
-      nid: body.nid,
-    },
-    {
-      where: {
-        id: body.id,
-      },
-    }
-  )
-  ctx.body = {
-    code: 200,
-    data: res,
-  }
-}
-
 // 获取节点列表
-export const getNodes = async ctx => {
-  // todo 组织未实现
-  // eslint-disable-next-line no-unused-vars
-  const { body } = ctx.request
-  // 1.获取用户组织, 节点id
-  // 2.获取nodes列表
-  const { nodes } = global.models
-  const res = await nodes.findAll({})
-  // 3.获取nodes资源应用占用情况
-  const nodesUsage = await resUsage()
-  const obj = {}
-  nodesUsage.forEach(item => {
-    obj[item.nid] = {
-      ...item.dataValues,
-    }
-  })
-  const allNodes = res.map(item => {
-    const node = omit(item.dataValues, [
-      'password',
-      'sshPort',
-      'remark',
-      'cert',
-    ])
-    const { id: nid } = node
-    if (obj[nid]) {
-      node.cpuRest = node.cpu - parseInt(obj[nid].cpuUsage, 10)
-      node.memRest = node.mem - parseInt(obj[nid].memUsage, 10)
-      node.diskRest = node.disk - parseInt(obj[nid].diskUsage, 10)
-      node.gpuRest = node.gpu - parseInt(obj[nid].gpuUsage, 10)
-    } else {
-      node.cpuRest = node.cpu
-      node.memRest = node.mem
-      node.diskRest = node.disk
-      node.gpuRest = node.gpu
-    }
-    return node
-  })
-  // 4.返回列表
+// deperated
+// export const getNodes = async ctx => {
+//   // todo 组织未实现
+//   // eslint-disable-next-line no-unused-vars
+//   const { body } = ctx.request
+//   // 1.获取用户组织, 节点id
+//   // 2.获取nodes列表
+//   const { nodes } = global.models
+//   const res = await nodes.findAll({})
+//   // 3.获取nodes资源应用占用情况
+//   const nodesUsage = await resUsage()
+//   const obj = {}
+//   nodesUsage.forEach(item => {
+//     obj[item.nid] = {
+//       ...item.dataValues,
+//     }
+//   })
+//   const allNodes = res.map(item => {
+//     const node = omit(item.dataValues, [
+//       'password',
+//       'sshPort',
+//       'remark',
+//       'cert',
+//     ])
+//     const { id: nid } = node
+//     if (obj[nid]) {
+//       node.cpuRest = node.cpu - parseInt(obj[nid].cpuUsage, 10)
+//       node.memRest = node.mem - parseInt(obj[nid].memUsage, 10)
+//       node.diskRest = node.disk - parseInt(obj[nid].diskUsage, 10)
+//       node.gpuRest = node.gpu - parseInt(obj[nid].gpuUsage, 10)
+//     } else {
+//       node.cpuRest = node.cpu
+//       node.memRest = node.mem
+//       node.diskRest = node.disk
+//       node.gpuRest = node.gpu
+//     }
+//     return node
+//   })
+//   // 4.返回列表
 
-  ctx.body = {
-    code: 200,
-    data: allNodes,
-  }
-}
+//   ctx.body = {
+//     code: 200,
+//     data: allNodes,
+//   }
+// }
 
 // 容器固化
 export const saveDocker = async ctx => {
@@ -223,3 +137,132 @@ export const handlerTransfer = async ctx => {
     data: result.join(''),
   }
 }
+
+// 获取节点
+export const getNodes = async ctx => {
+  const { name, gid, status, current, pageSize } = ctx.query
+  const cond = {
+    limit: parseInt(pageSize, 10) || 10,
+    offset: (parseInt(current || 1, 10) - 1) * (parseInt(pageSize, 10) || 10),
+  }
+  const nameCond = name
+    ? {
+        [Op.or]: [
+          { name: { [Op.like]: `%${name}%` } },
+          { node: { [Op.like]: `%${name}%` } },
+        ],
+      }
+    : null
+
+  const statusConf =
+    status && status !== '-1'
+      ? {
+          status:
+            status === '0' ? { [Op.eq]: `Running` } : { [Op.ne]: 'Running' },
+        }
+      : null
+  const gidCond = gid
+    ? { where: { gid: { [Op.eq]: parseInt(gid, 10) } } }
+    : null
+  // todo
+  // 查询 token -> username
+  // 查询 user -> group -> groups_nodes -> nodes
+  const { nodes, nodes_log, groups_nodes, groups } = global.models
+  const res = await nodes.findAndCountAll({
+    where: {
+      ...nameCond,
+      ...statusConf,
+    },
+    include: [
+      {
+        model: nodes_log,
+        order: [['created', 'DESC']],
+        limit: 1,
+      },
+      {
+        model: groups_nodes,
+        ...gidCond,
+        include: [
+          {
+            model: groups,
+          },
+        ],
+      },
+    ],
+    ...cond,
+  })
+  if (res && res.rows) {
+    ctx.body = {
+      code: 200,
+      data: res.rows,
+      total: res.count,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+      msg: '查询失败',
+    }
+  }
+}
+
+// 编辑节点
+export const editNodes = async ctx => {
+  const { body } = ctx.request
+  const { name, gid, machine } = body
+  let arr = 0
+  if (name) {
+    const { nodes } = global.models
+    const res = await nodes.update(
+      { name },
+      {
+        where: {
+          machine,
+        },
+      }
+    )
+    arr += res[0]
+  }
+  if (gid) {
+    const { groups_nodes } = global.models
+    const res = await groups_nodes
+      .findAll({
+        where: {
+          machine,
+        },
+      })
+      .then(item => {
+        if (item && item.length > 0) {
+          // update
+          return groups_nodes.update(
+            {
+              gid,
+            },
+            {
+              where: { machine },
+            }
+          )
+        }
+        // create
+        return groups_nodes.create({
+          machine,
+          gid,
+        })
+      })
+    arr += res[0]
+  }
+  if (arr > 0) {
+    ctx.body = {
+      code: 200,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+    }
+  }
+}
+
+// 添加节点
+// todo
+
+// 删除节点
+// todo

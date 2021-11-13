@@ -263,6 +263,7 @@ client:
             - { name: members, title: PlatformUsers }
             - { name: menu, title: PlatformMenu }
             - { name: groups, title: GroupsManage }
+            - { name: res-template, title: ResourceTemplate }
             # - {
             #     name: advanced,
             #     title: Advanced Settings,

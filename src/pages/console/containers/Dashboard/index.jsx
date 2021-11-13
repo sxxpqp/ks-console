@@ -1,5 +1,5 @@
 import React from 'react'
-import { isEmpty } from 'lodash'
+// import { isEmpty } from 'lodash'
 
 import { getLocalTime } from 'utils'
 import { Icon } from '@kube-design/components'
@@ -16,17 +16,16 @@ class Dashboard extends React.Component {
     super(props)
 
     if (!globals.app.isPlatformAdmin) {
-      if (globals.user.globalrole === 'users-manager') {
-        return this.routing.push(`/access/accounts`)
-      }
-
-      if (globals.app.getActions({ module: 'workspaces' }).includes('create')) {
-        return this.routing.push(`/access/workspaces`)
-      }
-
-      if (!isEmpty(globals.user.workspaces)) {
-        return this.routing.push(`/workspaces/${this.workspace}`)
-      }
+      // if (globals.user.globalrole === 'users-manager') {
+      //   return this.routing.push(`/access/accounts`)
+      // }
+      // if (globals.app.getActions({ module: 'workspaces' }).includes('create')) {
+      //   return this.routing.push(`/access/workspaces`)
+      // }
+      // // debugger
+      // if (!isEmpty(globals.user.workspaces)) {
+      //   return this.routing.push(`/workspaces/${this.workspace}`)
+      // }
     }
   }
 

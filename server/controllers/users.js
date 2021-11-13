@@ -197,11 +197,45 @@ export const removeRole = async ctx => {
 
 // 获取平台用户
 export const getUsers = async ctx => {
-  const { users } = global.models
-  const res = await users.findAll({})
-  ctx.body = {
-    code: 200,
-    data: res,
+  const { id, pageSize, current } = ctx.query
+  const { users, users_group, groups } = global.models
+  const conditions = {
+    order: [['created', 'DESC']],
+    limit: parseInt(pageSize, 10) || 10,
+    offset: (parseInt(current || 1, 10) - 1) * (parseInt(pageSize, 10) || 10),
+  }
+  let where = {}
+  if (id) {
+    const idCond = { id: { [Op.eq]: id } }
+    where = { ...where, ...idCond }
+  }
+  const res = await users.findAndCountAll({
+    attributes: Object.keys(omit(users.rawAttributes, ['password'])),
+    where,
+    ...conditions,
+    include: [
+      {
+        model: users_group,
+        include: [
+          {
+            model: groups,
+          },
+        ],
+      },
+    ],
+    // raw: true,
+  })
+  if (res && res.rows) {
+    ctx.body = {
+      code: 200,
+      data: res.rows,
+      total: res.count,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+      msg: '获取用户消息失败',
+    }
   }
 }
 

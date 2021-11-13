@@ -169,6 +169,33 @@ const firstUpperCase = str => `${str[0].toUpperCase()}${str.slice(1)}`
 const generateId = length =>
   generate('0123456789abcdefghijklmnopqrstuvwxyz', length || 6)
 
+// 获得所有父级Id
+const getAllPids = (tree, id) => {
+  const arr = []
+  for (let i = 0; i < tree.length; i++) {
+    if (tree[i].id === id) {
+      if (tree[i].pid !== -1) {
+        arr.push(...getAllPids(tree, tree[i].pid))
+      } else {
+        arr.push(tree[i].id)
+      }
+    }
+  }
+  return arr
+}
+
+// 获得所有子级Id
+const getAllChildIds = (tree, id) => {
+  const arr = []
+  for (let i = 0; i < tree.length; i++) {
+    if (tree[i].pid === id) {
+      arr.push(tree[i].id)
+      arr.push(...getAllChildIds(tree, tree[i].id))
+    }
+  }
+  return arr
+}
+
 module.exports = {
   root,
   loadYaml,
@@ -182,4 +209,6 @@ module.exports = {
   safeParseJSON,
   firstUpperCase,
   generateId,
+  getAllPids,
+  getAllChildIds,
 }

@@ -39,8 +39,18 @@
   }
 }
 
+.btns {
+  display: flex;
+}
+
 // .tableWrapper {
 //   a {
 //     color: $black !important;
 //   }
 // }
+.modal {
+  :global(.ant-select) {
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+  }
+}

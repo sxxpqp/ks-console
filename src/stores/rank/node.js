@@ -10,7 +10,7 @@ const sort_metric_options = [
   'node_pod_utilisation',
 ]
 
-const metrics_filter = [
+export const metrics_filter = [
   'node_cpu_utilisation',
   'node_cpu_usage',
   'node_cpu_total',

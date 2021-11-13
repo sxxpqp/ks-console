@@ -1,7 +1,7 @@
 // import { set, cloneDeep } from 'lodash'
 import { action, observable } from 'mobx'
 // import axios from 'axios'
-import BaseStore from './base.list'
+import BaseStore from '../base.list'
 
 const TABLE_LIMIT = 10
 
