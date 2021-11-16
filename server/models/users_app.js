@@ -57,8 +57,8 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: true,
         comment: '工作空间',
       },
-      uid: {
-        type: DataTypes.INTEGER,
+      username: {
+        type: DataTypes.STRING(255),
         allowNull: true,
       },
     },

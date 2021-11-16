@@ -27,9 +27,11 @@ const { sshInit } = require('./services/ssh')
 const { cronJob, cronJob1 } = require('./services/cron')
 // const { createProject } = require('./libs/user')
 
-// const { getK8sAppList, getK8sNodes } = require('./services/platform')
+const { getK8sAppList } = require('./services/platform')
 
-// getK8sAppList({ workspace: 'test', namespace: 'test' })
+setTimeout(async () => {
+  await getK8sAppList({ workspace: 'test', namespace: 'test' })
+}, 2000)
 
 // 定时任务
 cronJob.start()

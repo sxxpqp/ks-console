@@ -12,10 +12,6 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.INTEGER,
         allowNull: false,
         comment: '用户id',
-        references: {
-          model: 'users',
-          key: 'id',
-        },
       },
       gid: {
         type: DataTypes.INTEGER,

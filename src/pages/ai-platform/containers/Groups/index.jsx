@@ -153,14 +153,14 @@ export default class GroupsManage extends React.Component {
       <div className={styles.wrapper}>
         <Banner title="组织管理" description={t('INVITE_MEMBER_DESC')} />
         <Row>
-          <Col span={8} style={{ paddingRight: '5px' }}>
+          <Col span={6} style={{ paddingRight: '5px' }}>
             <Tree
               store={this.store}
               select={this.selectNode.bind(this)}
               onEdit={() => this.handleEdit()}
             ></Tree>
           </Col>
-          <Col span={16} style={{ paddingLeft: '5px' }}>
+          <Col span={18} style={{ paddingLeft: '5px' }}>
             <Card>
               {item && (
                 <Panel title="选择详情" className="margin-b12">

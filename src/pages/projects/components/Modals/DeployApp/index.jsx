@@ -45,13 +45,25 @@ export default class DeployAppModal extends React.Component {
       cluster,
     })
     onOk()
-    routing.push({ pathname: `/apps`, state: { prevPath: location.pathname } })
+    routing.push({
+      pathname: `/apps`,
+      state: { prevPath: location.pathname },
+    })
   }
 
   handleAppRepo = () => {
     const { onOk, trigger, ...rest } = this.props
     onOk()
     trigger('openpitrix.app.create', {
+      trigger,
+      ...rest,
+    })
+  }
+
+  handleCreateApp = () => {
+    const { onOk, trigger, ...rest } = this.props
+    onOk()
+    trigger('crd.app.create', {
       trigger,
       ...rest,
     })
@@ -94,6 +106,14 @@ export default class DeployAppModal extends React.Component {
             title={t('From App Templates')}
             desc={t('FROM_APP_TEMPLATES_DESC')}
             onEnter={this.handleAppRepo}
+          />
+          <Item
+            icon="listview"
+            title={'自制应用'}
+            desc={
+              '容器平台提供全生命周期的应用管理，可以上传或者创建新的应用模板，并且快速部署它们。'
+            }
+            onEnter={this.handleCreateApp}
           />
         </div>
       </Modal>

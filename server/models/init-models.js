@@ -18,6 +18,8 @@ const _users_group = require('./users_group')
 const _users_role = require('./users_role')
 const _users_app = require('./users_app')
 const _app_detail = require('./app_detail')
+const _app_labels = require('./app_labels')
+const _labels = require('./labels')
 
 // 在Sequelize中建立关联关系，通过调用模型(源模型)的belongsTo、hasOne、hasMany、belongsToMany方法，再将要建立关系的模型(目标模型)做为参数传入即可。这些方法会按以下规则创建关联关系：
 
@@ -56,6 +58,8 @@ function initModels(sequelize) {
   const users_role = _users_role(sequelize, DataTypes)
   const users_app = _users_app(sequelize, DataTypes)
   const app_detail = _app_detail(sequelize, DataTypes)
+  const app_labels = _app_labels(sequelize, DataTypes)
+  const labels = _labels(sequelize, DataTypes)
 
   // resources_applications.belongsTo(applications, {
   //   as: 'aid_application',
@@ -107,6 +111,13 @@ function initModels(sequelize) {
   users.hasMany(resources, { sourceKey: 'id', foreignKey: 'uid' })
   resources.hasOne(users, { sourceKey: 'uid', foreignKey: 'id' })
 
+  // 应用与标签的关系
+  users_app.hasMany(app_labels, { sourceKey: 'appId', foreignKey: 'appId' })
+  app_labels.belongsTo(users_app, { sourceKey: 'appId', foreignKey: 'appId' })
+
+  app_labels.hasOne(labels, { sourceKey: 'tagId', foreignKey: 'id' })
+  labels.hasMany(app_labels, { sourceKey: 'id', foreignKey: 'tagId' })
+
   return {
     applications,
     groups,
@@ -127,6 +138,8 @@ function initModels(sequelize) {
     users_role,
     users_app,
     app_detail,
+    app_labels,
+    labels,
   }
 }
 module.exports = initModels

@@ -22,7 +22,8 @@ import ListLayout from '../containers/Base/List'
 import Overview from '../containers/Overview'
 import CRDApps from '../containers/Applications/CRDApps'
 // 应用列表
-import OPApps from '../containers/Applications/OPApps'
+import CustomApplications from '../containers/CustomApplications'
+// import OPApps from '../containers/Applications/OPApps'
 import Deployments from '../containers/Deployments'
 import StatefulSets from '../containers/StatefulSets'
 import DaemonSets from '../containers/DaemonSets'
@@ -135,7 +136,8 @@ export default [
       },
       {
         path: `${PATH}/applications/template`,
-        component: OPApps,
+        // component: OPApps,
+        component: CustomApplications,
         exact: true,
       },
       // 生命周期的管理 - 工作负载

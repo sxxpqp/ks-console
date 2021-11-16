@@ -127,7 +127,7 @@ export default class ApplyHistory extends React.Component {
               <Button
                 type="text"
                 size="small"
-                style={{ color: '#389e0d' }}
+                style={{ color: '#1890ff' }}
                 onClick={() => this.showDetail(record)}
               >
                 <AuditOutlined />
@@ -147,7 +147,7 @@ export default class ApplyHistory extends React.Component {
             <Button
               type="text"
               size="small"
-              style={{ color: '#096dd9' }}
+              style={{ color: '#1890ff' }}
               onClick={() => this.showDetail(record)}
             >
               <EyeOutlined />
@@ -281,14 +281,6 @@ export default class ApplyHistory extends React.Component {
   }
 
   render() {
-    // 查看历史
-    const showApply = () => {
-      const { workspace, cluster, namespace } = this.props.match.params
-      const { history } = this.props
-      const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}/apply`
-      history.push({ pathname: PATH, state: { name: 'apply' } })
-    }
-
     const { allAdminHis, params } = this.store
     const { status, value, show, item, user, groupRes, userRes } = this.state
 
@@ -316,13 +308,6 @@ export default class ApplyHistory extends React.Component {
                   </Form.Item>
                 </Col>
               </Row>
-              <Col>
-                <Form.Item>
-                  <KButton type="control" onClick={() => showApply()}>
-                    新增申请
-                  </KButton>
-                </Form.Item>
-              </Col>
             </Row>
             <Row justify="start" align="middle" gutter={15}>
               <Col>

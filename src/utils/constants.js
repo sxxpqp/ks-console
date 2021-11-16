@@ -1058,3 +1058,17 @@ export const NODE_ROLE_TAG_TYPE = {
   master: 'secondary',
   worker: 'default',
 }
+
+export const TAGS_COLORS = [
+  'magenta',
+  'blue',
+  'gold',
+  'orange',
+  'lime',
+  'purple',
+  'green',
+  'red',
+  'cyan',
+  'volcano',
+  'geekblue',
+]

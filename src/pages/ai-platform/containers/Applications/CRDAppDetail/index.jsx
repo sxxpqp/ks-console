@@ -166,6 +166,6 @@ export default class CRDAppDetail extends React.Component {
       ],
     }
 
-    return <DetailPage stores={stores} {...sideProps} routes={routes} />
+    return <DetailPage noBread stores={stores} {...sideProps} routes={routes} />
   }
 }

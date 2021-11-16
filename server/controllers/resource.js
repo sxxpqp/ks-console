@@ -108,6 +108,7 @@ export const getApply = async ctx => {
   const uid = ctx.user.id
   await handleApply(ctx, uid)
 }
+
 // 获取申请资源列表, 用于管理员审核
 export const getApplyHis = async ctx => {
   await handleApply(ctx)
@@ -173,9 +174,18 @@ export const getGroupResources = async ctx => {
       where: {
         uid: ctx.user.id,
       },
+      raw: true,
     })
     if (res && res.length) {
       tmpId = res.map(item => item.gid)
+    } else {
+      ctx.body = {
+        code: 200,
+        data: [],
+        total: 0,
+        msg: '用户未分配组织',
+      }
+      return
     }
   } else if (id.indexOf(',') !== -1) {
     tmpId = id.split(',')
@@ -205,7 +215,9 @@ export const getGroupResources = async ctx => {
       {
         model: groups_nodes,
         where: {
-          gid: [ids],
+          gid: {
+            [Op.in]: ids,
+          },
         },
       },
     ],

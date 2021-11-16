@@ -75,6 +75,22 @@ const {
   removeGroups,
 } = require('./controllers/users')
 
+// applications
+const {
+  getAppList,
+  getAppTags,
+  getAppTagsCountApp,
+  getAppTagsById,
+  getAppByTagsName,
+  getAppByTagsId,
+  addAppTags,
+  editAppTags,
+  removeAppTags,
+  updateAppTags,
+  resetAppTags,
+  batchSetAppTags,
+} = require('./controllers/applications')
+
 // const parseBody = convert(
 //   bodyParser({
 //     formLimit: '200kb',
@@ -167,6 +183,24 @@ router
   .post('/resources-template', addResourceTemplate)
   .post('/edit-resources-template', editResourceTemplate)
   .delete('/resources-template/:id', removeResourceTemplate)
+
+  // 应用相关
+  .post('/app-list', getAppList)
+  // 通过应用名称 获取 应用标签
+  .get('/app-tags', getAppTagsById)
+  .get('/app-tagsname', getAppByTagsName)
+  // 通过标签ID 获取 应用
+  .get('/app-tags-id', getAppByTagsId)
+  // 标签
+  .get('/app-labels', getAppTags)
+  .get('/app-labels-sum', getAppTagsCountApp)
+  .post('/app-labels', addAppTags)
+  .post('/edit-labels', editAppTags)
+  .delete('/app-labels/:id', removeAppTags)
+  // 给应用添加标签
+  .post('/add-app-labels', updateAppTags)
+  .post('/reset-app-labels', resetAppTags)
+  .post('/batch-app-labels', batchSetAppTags)
 
 // page entry
 router.all('*', renderView)

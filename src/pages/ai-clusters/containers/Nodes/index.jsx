@@ -256,7 +256,7 @@ export default class Nodes extends React.Component {
               <Button
                 type="text"
                 size="small"
-                style={{ color: '#096dd9' }}
+                style={{ color: '#1890ff' }}
                 icon={<EyeOutlined />}
                 // onClick={}
               ></Button>

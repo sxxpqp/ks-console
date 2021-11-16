@@ -1,10 +1,9 @@
 // import axios from 'axios'
+// 获取申请列表历史
+export const getApply = params => request.get('/apply', params)
 
 // 申请资源
 export const applyRes = params => request.post('/apply', params)
-
-// 获取申请列表历史
-export const getApply = params => request.get('/apply', params)
 
 // 获取申请列表历史
 export const getApplyHisAll = params => request.get('/applyhis', params)

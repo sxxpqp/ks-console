@@ -315,7 +315,7 @@ export default class Deployments extends React.Component {
                   <Button
                     type="text"
                     size="small"
-                    style={{ color: '#096dd9' }}
+                    style={{ color: '#1890ff' }}
                     onClick={() => this.handleStop(record)}
                   >
                     <StopOutlined />

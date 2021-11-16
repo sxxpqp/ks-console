@@ -7,7 +7,7 @@ import styles from './index.scss'
 export default class Item extends PureComponent {
   handleSelect = () => {
     const { onSelect, data } = this.props
-    onSelect(data.category_id)
+    onSelect(data)
   }
 
   handleEdit = e => {
@@ -36,26 +36,26 @@ export default class Item extends PureComponent {
         <Icon
           className={styles.icon}
           name={
-            ['uncategorized', ''].includes(data.description)
+            ['uncategorized', ''].includes(data.icon)
               ? 'tag'
-              : data.description
+              : data.icon || 'tag'
           }
           size={16}
           clickable
         />
-        {t(`APP_CATE_${data.name.toUpperCase()}`, {
-          defaultValue: data.name,
-        })}
-        <label className={styles.number}>{data.app_total || 0}</label>
-        <label className={styles.actions}>
-          <Icon onClick={this.handleEdit} name={'pen'} size={16} clickable />
-          <Icon
-            onClick={this.handleDelete}
-            name={'trash'}
-            size={16}
-            clickable
-          />
-        </label>
+        {data['name']}
+        <label className={styles.number}>{data.count || 0}</label>
+        {data.id !== -1 && (
+          <label className={styles.actions}>
+            <Icon onClick={this.handleEdit} name={'pen'} size={16} clickable />
+            <Icon
+              onClick={this.handleDelete}
+              name={'trash'}
+              size={16}
+              clickable
+            />
+          </label>
+        )}
       </li>
     )
   }

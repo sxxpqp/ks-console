@@ -1,4 +1,5 @@
 import { get } from 'lodash'
+import { Op } from 'sequelize'
 import axios from '../libs/axios'
 import {
   NodeMapper,
@@ -46,6 +47,7 @@ export const getK8sAppList = async ({ workspace, namespace }) => {
           : 0,
         namespace,
         workspace,
+        username: get(item, 'cluster.owner'),
       })
       // detail信息
       if (releaseInfo && releaseInfo.length > 0) {
@@ -94,6 +96,7 @@ export const getK8sAppList = async ({ workspace, namespace }) => {
           : 0,
         namespace,
         workspace,
+        username: get(metadata, 'annotations["kubesphere.io/creator"]'),
       })
       if (status.components && status.components.length > 0) {
         for (let j = 0; j < status.components.length; j++) {
@@ -108,17 +111,42 @@ export const getK8sAppList = async ({ workspace, namespace }) => {
       }
     })
   }
-  arr = arr.map(i => ({ ...i, status: i.status ? 1 : 0 }))
+  arr = arr.map(i => ({
+    ...i,
+    status: i.status ? 1 : 0,
+  }))
 
   // 保存用户应用信息 与 应用详情
   const { users_app, app_detail } = global.models
   const result = await users_app.bulkCreate(arr, {
     updateOnDuplicate: Object.keys(users_app.rawAttributes),
   })
+  const appIds = result.map(i => i.appId)
+  // 删除不存在列表中的应用
+  await users_app.destroy({
+    where: {
+      appId: {
+        [Op.notIn]: appIds,
+      },
+    },
+  })
   const result1 = await app_detail.bulkCreate(apps, {
     updateOnDuplicate: Object.keys(app_detail.rawAttributes),
   })
-  return { result, template: res, custom: res1, apps: result1 }
+  // 删除不存在列表中的应用
+  await app_detail.destroy({
+    where: {
+      app: {
+        [Op.notIn]: appIds,
+      },
+    },
+  })
+  return {
+    result,
+    template: res,
+    custom: res1,
+    apps: result1,
+  }
 }
 
 // 获取节点信息
@@ -136,7 +164,7 @@ export const getK8sNodes = async () => {
     )}&metrics_filter=node_cpu_utilisation%7Cnode_cpu_usage%7Cnode_cpu_total%7Cnode_memory_utilisation%7Cnode_memory_usage_wo_cache%7Cnode_memory_total%7Cnode_disk_size_utilisation%7Cnode_disk_size_usage%7Cnode_disk_size_capacity%7Cnode_pod_utilisation%7Cnode_pod_running_count%7Cnode_pod_quota%7Cnode_disk_inode_utilisation%7Cnode_disk_inode_total%7Cnode_disk_inode_usage%7Cnode_load1%24%24`
     const { results } = await axios.get(urlMetrics)
     // 数据入库
-    const { nodes, nodes_log } = global.models
+    const { nodes, nodes_log, groups_nodes } = global.models
     const arr = []
     const logs = []
     if (items && items.length > 0) {
@@ -283,6 +311,23 @@ export const getK8sNodes = async () => {
       await nodes.bulkCreate(arr, {
         updateOnDuplicate: Object.keys(arr[1]),
       })
+      const machineIds = arr.map(i => i.machine)
+      // 删除不在上面的id中的数据
+      await nodes.destroy({
+        where: {
+          machine: {
+            [Op.notIn]: machineIds,
+          },
+        },
+      })
+      await groups_nodes.destroy({
+        where: {
+          machine: {
+            [Op.notIn]: machineIds,
+          },
+        },
+      })
+      // todo 调整k8s -> workspace的大小
       await nodes_log.bulkCreate(logs)
     }
 

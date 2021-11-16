@@ -65,6 +65,8 @@ server:
 
   # backend service gateway server
   apiServer:
+    # url: http://192.168.4.35:30881
+    # wsUrl: ws://192.168.4.35:30881
     url: http://test.bontor.cn:30881
     wsUrl: ws://test.bontor.cn:30881
 
