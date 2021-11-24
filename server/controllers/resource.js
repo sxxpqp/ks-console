@@ -1,5 +1,5 @@
 import { omit } from 'lodash'
-import { Op } from 'sequelize'
+import { Op, fn, col } from 'sequelize'
 import { getAllPids, getAllChildIds } from '../libs/utils'
 
 // 申请资源
@@ -234,6 +234,36 @@ export const getGroupResources = async ctx => {
       code: 500,
       msg: '查询失败，请重试',
     }
+  }
+}
+
+// 获取组织所有的资源，统计
+export const getGroupResourcesCount = async ctx => {
+  const { groups_nodes, nodes, groups } = global.models
+  const res = await groups_nodes.findAll({
+    attributes: ['gid'],
+    include: [
+      {
+        model: groups,
+        attributes: ['name', 'pid'],
+      },
+      {
+        model: nodes,
+        attributes: [
+          [fn('SUM', col('cpu')), 'cpu_sum'],
+          [fn('SUM', col('mem')), 'mem_sum'],
+          [fn('SUM', col('disk')), 'disk_sum'],
+          [fn('SUM', col('gpu')), 'gpu_sum'],
+        ],
+      },
+    ],
+    // raw: true,
+    group: ['groups_nodes.gid', 'group.name', 'group.pid'],
+  })
+  ctx.body = {
+    code: 200,
+    data: res,
+    // total: res.count,
   }
 }
 

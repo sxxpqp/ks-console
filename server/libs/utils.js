@@ -1,30 +1,30 @@
-const fs = require('fs')
-const yaml = require('js-yaml/dist/js-yaml')
-const NodeCache = require('node-cache')
-const get = require('lodash/get')
-const merge = require('lodash/merge')
-const isEmpty = require('lodash/isEmpty')
-const pick = require('lodash/pick')
-const generate = require('nanoid/generate')
+import fs from 'fs'
+import yaml from 'js-yaml/dist/js-yaml'
+import NodeCache from 'node-cache'
+import get from 'lodash/get'
+import merge from 'lodash/merge'
+import isEmpty from 'lodash/isEmpty'
+import pick from 'lodash/pick'
+import generate from 'nanoid/generate'
 
-const MANIFEST_CACHE_KEY_PREFIX = 'MANIFEST_CACHE_KEY_'
-const LOCALE_MANIFEST_CACHE_KEY = 'LOCALE_MANIFEST_CACHE_KEY'
+export const MANIFEST_CACHE_KEY_PREFIX = 'MANIFEST_CACHE_KEY_'
+export const LOCALE_MANIFEST_CACHE_KEY = 'LOCALE_MANIFEST_CACHE_KEY'
 
-const root = dir => `${global.APP_ROOT}/${dir}`.replace(/(\/+)/g, '/')
+export const root = dir => `${global.APP_ROOT}/${dir}`.replace(/(\/+)/g, '/')
 
-const cache = global._pitrixCache || new NodeCache()
+export const cache = global._pitrixCache || new NodeCache()
 if (!global._pitrixCache) {
   global._pitrixCache = cache
 }
 
-const server_conf_key = 'pitrix-server-conf-key'
+export const server_conf_key = 'pitrix-server-conf-key'
 
 /**
  *
  * @param filePath
  * @returns {*} json formatted content
  */
-const loadYaml = filePath => {
+export const loadYaml = filePath => {
   try {
     return yaml.safeLoad(fs.readFileSync(filePath), 'utf8')
   } catch (e) {
@@ -37,7 +37,7 @@ const loadYaml = filePath => {
  *
  * @returns {*|{}}
  */
-const getServerConfig = key => {
+export const getServerConfig = key => {
   let config = cache.get(server_conf_key)
   if (!config) {
     // parse config yaml
@@ -60,16 +60,16 @@ const getServerConfig = key => {
   return key ? config[key] : config
 }
 
-const getCache = () => cache
+export const getCache = () => cache
 
-const isValidReferer = path =>
+export const isValidReferer = path =>
   !isEmpty(path) && path !== '/' && path.indexOf('/login') === -1
 
 /**
  *
  * @param path  koa ctx.path
  */
-const isAppsRoute = path => {
+export const isAppsRoute = path => {
   return path === '/apps' || /^\/apps\/?(app-([-0-9a-z]*)\/?)?$/.exec(path)
 }
 
@@ -88,7 +88,7 @@ const isAppsRoute = path => {
     7. encrypted one is constructed with prefix + '@' + new string.
  */
 
-const decryptPassword = (encrypted, salt) => {
+export const decryptPassword = (encrypted, salt) => {
   const specialToken = '@'
   const specialIndex = encrypted.indexOf(specialToken)
   if (specialIndex === -1 || !salt) {
@@ -117,7 +117,7 @@ const decryptPassword = (encrypted, salt) => {
   return Buffer.from(b64, 'base64').toString('utf-8')
 }
 
-const safeParseJSON = (json, defaultValue) => {
+export const safeParseJSON = (json, defaultValue) => {
   let result
   try {
     result = JSON.parse(json)
@@ -129,7 +129,7 @@ const safeParseJSON = (json, defaultValue) => {
   return result
 }
 
-const getManifest = entry => {
+export const getManifest = entry => {
   let manifestCache = cache.get(`${MANIFEST_CACHE_KEY_PREFIX}${entry}`)
 
   if (!manifestCache) {
@@ -145,7 +145,7 @@ const getManifest = entry => {
   return manifestCache
 }
 
-const getLocaleManifest = () => {
+export const getLocaleManifest = () => {
   let manifestCache = cache.get(LOCALE_MANIFEST_CACHE_KEY)
 
   if (!manifestCache) {
@@ -164,13 +164,23 @@ const getLocaleManifest = () => {
   return manifestCache
 }
 
-const firstUpperCase = str => `${str[0].toUpperCase()}${str.slice(1)}`
+export const firstUpperCase = str => `${str[0].toUpperCase()}${str.slice(1)}`
 
-const generateId = length =>
-  generate('0123456789abcdefghijklmnopqrstuvwxyz', length || 6)
+export const generateId = (length, flag = false) => {
+  const res = generate('0123456789abcdefghijklmnopqrstuvwxyz', length - 1 || 5)
+  const baseStr = 'abcdefghijklmnopqrstuvwxyz'
+  const firstStr = baseStr[Math.floor(Math.random() * baseStr.length)]
+  if (flag) {
+    const result = `${firstStr}${res}`.replace(/^\S/, s => s.toUpperCase())
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(result)
+      ? result
+      : generateId(length < 8 ? 8 : length, flag)
+  }
+  return `${firstStr}${res}`
+}
 
 // 获得所有父级Id
-const getAllPids = (tree, id) => {
+export const getAllPids = (tree, id) => {
   const arr = []
   for (let i = 0; i < tree.length; i++) {
     if (tree[i].id === id) {
@@ -185,7 +195,7 @@ const getAllPids = (tree, id) => {
 }
 
 // 获得所有子级Id
-const getAllChildIds = (tree, id) => {
+export const getAllChildIds = (tree, id) => {
   const arr = []
   for (let i = 0; i < tree.length; i++) {
     if (tree[i].pid === id) {
@@ -196,7 +206,21 @@ const getAllChildIds = (tree, id) => {
   return arr
 }
 
-module.exports = {
+// 获取根级group
+export const getRootGroup = (tree, id) => {
+  let group = tree.find(item => item.id === id)
+  if (group.pid !== -1) {
+    group = getRootGroup(tree, group.pid)
+  }
+  return group
+}
+
+export const base64 = str =>
+  typeof str === 'string'
+    ? Buffer.from(str).toString('base64')
+    : Buffer.from(JSON.stringify(str)).toString('base64')
+
+export default {
   root,
   loadYaml,
   getCache,
@@ -211,4 +235,6 @@ module.exports = {
   generateId,
   getAllPids,
   getAllChildIds,
+  base64,
+  getRootGroup,
 }

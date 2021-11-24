@@ -1,4 +1,4 @@
-import { generateId } from './utils'
+import { generateId, base64 } from './utils'
 
 export const getUserTemplate = user => {
   const { name, email, password } = user
@@ -8,7 +8,7 @@ export const getUserTemplate = user => {
     metadata: {
       name,
       annotations: {
-        'iam.kubesphere.io/globalrole': 'platform-regular',
+        'iam.kubesphere.io/globalrole': 'platform-admin',
         'iam.kubesphere.io/uninitialized': 'true',
         'kubesphere.io/creator': 'admin',
       },
@@ -129,6 +129,62 @@ export const getSpaceRoleUpdateTemplate = ({
       resourceVersion,
     },
     rules,
+  }
+}
+
+// 获取配置密钥template
+export const getSecretTemplate = ({ username, harborPass, harborUrl }) => {
+  const auth = base64(`${username}:${harborPass}`)
+  return {
+    apiVersion: 'v1',
+    kind: 'Secret',
+    metadata: {
+      namespace: username,
+      labels: {},
+      name: 'harbor-private',
+      annotations: {
+        'kubesphere.io/alias-name': '私有仓库',
+        'kubesphere.io/creator': username,
+      },
+    },
+    type: 'kubernetes.io/dockerconfigjson',
+    spec: {
+      template: {
+        metadata: {
+          labels: {},
+        },
+      },
+    },
+    data: {
+      '.dockerconfigjson': base64({
+        auths: {
+          [harborUrl]: {
+            username,
+            password: harborPass,
+            email: '',
+            auth,
+          },
+        },
+      }),
+    },
+  }
+}
+
+// 获取devopsTemplate
+export const getDevopsTemplate = (workspace, devops, creator = 'admin') => {
+  return {
+    metadata: {
+      name: devops,
+      generateName: devops,
+      labels: {
+        'kubesphere.io/workspace': workspace,
+      },
+      annotations: {
+        'kubesphere.io/creator': creator,
+      },
+    },
+    kind: 'DevOpsProject',
+    apiVersion: 'devops.kubesphere.io/v1alpha3',
   }
 }
 

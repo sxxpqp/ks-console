@@ -115,8 +115,18 @@ export function flattenObject(obj) {
   return result
 }
 
-export const generateId = length =>
-  generate('0123456789abcdefghijklmnopqrstuvwxyz', length || 6)
+export const generateId = (length, flag = false) => {
+  const res = generate('0123456789abcdefghijklmnopqrstuvwxyz', length - 1 || 5)
+  const baseStr = 'abcdefghijklmnopqrstuvwxyz'
+  const firstStr = baseStr[Math.floor(Math.random() * baseStr.length)]
+  if (flag) {
+    const result = `${firstStr}${res}`.replace(/^\S/, s => s.toUpperCase())
+    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(result)
+      ? result
+      : generateId(length < 8 ? 8 : length, flag)
+  }
+  return `${firstStr}${res}`
+}
 
 export const genName = (len = 6) => {
   const id = generateId(len)

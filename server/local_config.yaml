@@ -40,12 +40,11 @@ server:
     password: P@88w0rd
 
   harbor:
-    username: sxxpqp
-    password: Xl123456
-    url: 192.168.4.31:30002
-    repo: public
-    name: robot$myRobot
-    token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MzM3ODYyMDksImlzcyI6ImhhcmJvci10b2tlbi1kZWZhdWx0SXNzdWVyIiwiaWQiOjEsInBpZCI6MywiYWNjZXNzIjpbeyJSZXNvdXJjZSI6Ii9wcm9qZWN0LzMvcmVwb3NpdG9yeSIsIkFjdGlvbiI6InB1c2giLCJFZmZlY3QiOiIifV19.AXw6D3OrtjgMLk584AfOVpbOqTut0kDSYta9xM1PHyocp1QnIwQiJ6pq1oiV6DdZcchWoJowkKq7ZHGbt7fk0OREkYy1S_858UWNrBvqGv7nNzPFjtUMLZp68oy_JG8TX-kKphLnaOSp7kB4LfLs64NPTjfCXSAM1EMO7-Nn7Vdv-XXCe_31RjSDDSILkXuZLUg7jzXmrPAmkEDf3YZUEo4hpI7TosKeP2Kccl2iA4_bhpX1Mj2I4xR-YIjdyjNI-tTVE9ek_4zUViumOppKghNMp2m2oycoGa2uuRczt-T2eTpgLPFpbTbyCA--BzF8p7inNQHfTR2MsHgnmo6qF4Ackq-pPEV_SYcA02pyLwY0V-dTeNVjfNZbrD8ukDVsplSyTBvIMIvKo1DYSu5TRp56S_gajbapgx4MKAw1R7N_Ve5T5x26H6p-JgD0THpOmkA75Kgo8R_JaJcHXl3gaOPrwoCP_j1vIqzRbX7ead7Ytxa6RIojDaykpku1UK1VieNbpOBhzsZSAR2GUZHw-UBSlpkPE8LEuSUFL5t3kxutO4MItFTkr6p0tDYKYS01XvXeiZQ1Zcc-bO-C4vx-ApWoZ7MOhouAlV55VsmHo0I4tYn1QLQcioH17k_V64gNiyxWs47VFAaEDXN2RwwikmRrxwlnCK1FRt_xr1NtO2c
+    username: admin
+    password: Harbor12345
+    url: http://test.bontor.cn:30002
+    private: 192.168.4.31:30002
+    project: library
 
   auth_key: 9c6bb53c-be1b-4a78-63f6-5e225a954c97:fx
 
@@ -61,7 +60,7 @@ server:
 
   # kubesphere console session params, not login session
   sessionKey: "kubesphere:sess"
-  sessionTimeout: 3600000 # unit: millisecond
+  sessionTimeout: 7200000 # unit: millisecond
 
   # backend service gateway server
   apiServer:

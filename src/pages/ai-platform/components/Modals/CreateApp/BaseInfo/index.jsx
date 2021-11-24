@@ -4,7 +4,7 @@ import { PropTypes } from 'prop-types'
 import { Form, Input, TextArea } from '@kube-design/components'
 // import { Form, Input, Select, TextArea } from '@kube-design/components'
 import {
-  PATTERN_NAME,
+  // PATTERN_NAME,
   PATTERN_SERVICE_VERSION,
   PATTERN_APP_NAME,
 } from 'utils/constants'
@@ -119,7 +119,7 @@ export default class BaseInfo extends React.Component {
 
   handleAliasChange(value) {
     // 自动唯一标识
-    const tempName = `${turnName(value)}-${genName(6)}`
+    const tempName = `${turnName(value)}-${genName(6)}`.toLowerCase()
     set(this.formTemplate, 'metadata.name', tempName)
     this.setState({
       metaName: tempName,
@@ -193,19 +193,19 @@ export default class BaseInfo extends React.Component {
           <Form.Item
             className="hidden"
             label="应用标识"
-            rules={[
-              {
-                required: true,
-                message: t('Please input an application name'),
-              },
-              {
-                pattern: PATTERN_NAME,
-                message: t('Invalid name', {
-                  message: t('NAME_DESC'),
-                }),
-              },
-              { validator: this.nameValidator },
-            ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: t('Please input an application name'),
+            //   },
+            //   {
+            //     pattern: PATTERN_NAME,
+            //     message: t('Invalid name', {
+            //       message: t('NAME_DESC'),
+            //     }),
+            //   },
+            //   { validator: this.nameValidator },
+            // ]}
           >
             <Input
               name="metadata.name"

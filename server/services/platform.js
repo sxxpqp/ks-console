@@ -1,5 +1,6 @@
 import { get } from 'lodash'
 import { Op } from 'sequelize'
+import dayjs from 'dayjs'
 import axios from '../libs/axios'
 import {
   NodeMapper,
@@ -13,6 +14,7 @@ import {
 
 // 获取应用列表
 export const getK8sAppList = async ({ workspace, namespace }) => {
+  if (!(workspace && namespace)) return
   // 模板应用
   const tmpUrl = `/kapis/openpitrix.io/v1/workspaces/${workspace}/namespaces/${namespace}/applications?conditions=status%3Dcreating%7Cactive%7Cfailed%7Cdeleting%7Cupgrading%7Ccreated%7Cupgraded&orderBy=status_time&paging=limit%3D99999%2Cpage%3D1`
   // 模板应用详情
@@ -34,7 +36,9 @@ export const getK8sAppList = async ({ workspace, namespace }) => {
         status: get(item, 'cluster.status') === 'active',
         type: 0,
         appId: get(item, 'cluster.cluster_id'),
-        created: get(item, 'cluster.create_time'),
+        created: dayjs(get(item, 'cluster.create_time')).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ),
         updated: get(item, 'cluster.status_time'),
         meta: JSON.stringify(item),
         deployments: releaseInfo
@@ -83,7 +87,9 @@ export const getK8sAppList = async ({ workspace, namespace }) => {
         status: checkReady(get(status, 'componentsReady')),
         type: 1,
         appId: get(metadata, 'name'),
-        created: get(metadata, 'creationTimestamp'),
+        created: dayjs(get(metadata, 'creationTimestamp')).format(
+          'YYYY-MM-DD HH:mm:ss'
+        ),
         // updated: get(i, 'cluster.status_time'),
         meta: JSON.stringify(i),
         deployments: status.components
@@ -122,25 +128,29 @@ export const getK8sAppList = async ({ workspace, namespace }) => {
     updateOnDuplicate: Object.keys(users_app.rawAttributes),
   })
   const appIds = result.map(i => i.appId)
-  // 删除不存在列表中的应用
-  await users_app.destroy({
-    where: {
-      appId: {
-        [Op.notIn]: appIds,
+  if (result && result.length > 0) {
+    // 删除不存在列表中的应用
+    await users_app.destroy({
+      where: {
+        appId: {
+          [Op.notIn]: appIds,
+        },
       },
-    },
-  })
+    })
+  }
   const result1 = await app_detail.bulkCreate(apps, {
     updateOnDuplicate: Object.keys(app_detail.rawAttributes),
   })
-  // 删除不存在列表中的应用
-  await app_detail.destroy({
-    where: {
-      app: {
-        [Op.notIn]: appIds,
+  if (result1 && result1.length > 0) {
+    // 删除不存在列表中的应用
+    await app_detail.destroy({
+      where: {
+        app: {
+          [Op.notIn]: appIds,
+        },
       },
-    },
-  })
+    })
+  }
   return {
     result,
     template: res,

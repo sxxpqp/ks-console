@@ -152,6 +152,7 @@ export default class ContainerSetting extends React.Component {
         limitRange: get(limitRanges, '[0].limit'),
         imageRegistries,
       })
+      // console.log('imageRegistries', imageRegistries)
     })
   }
 

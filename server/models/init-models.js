@@ -8,11 +8,9 @@ const _nodes_log = require('./nodes_log')
 const _operations_log = require('./operations_log')
 const _resources = require('./resources')
 const _resources_template = require('./resources_template')
-const _resources_applications = require('./resources_applications')
 const _rights = require('./rights')
 const _role = require('./role')
 const _role_rights = require('./role_rights')
-const _system_log = require('./system_log')
 const _users = require('./users')
 const _users_group = require('./users_group')
 const _users_role = require('./users_role')
@@ -48,11 +46,9 @@ function initModels(sequelize) {
   const operations_log = _operations_log(sequelize, DataTypes)
   const resources = _resources(sequelize, DataTypes)
   const resources_template = _resources_template(sequelize, DataTypes)
-  const resources_applications = _resources_applications(sequelize, DataTypes)
   const rights = _rights(sequelize, DataTypes)
   const role = _role(sequelize, DataTypes)
   const role_rights = _role_rights(sequelize, DataTypes)
-  const system_log = _system_log(sequelize, DataTypes)
   const users = _users(sequelize, DataTypes)
   const users_group = _users_group(sequelize, DataTypes)
   const users_role = _users_role(sequelize, DataTypes)
@@ -102,10 +98,14 @@ function initModels(sequelize) {
     foreignKey: 'id',
   })
 
+  // 用户与角色的关系
+  users.hasMany(users_role, { sourceKey: 'id', foreignKey: 'uid' })
+  users_role.hasOne(role, { sourceKey: 'roleId', foreignKey: 'id' })
+
   // 用户与组的对应关系
   users.hasMany(users_group, { sourceKey: 'id', foreignKey: 'uid' })
   users_group.belongsTo(users, { sourceKey: 'uid', foreignKey: 'id' })
-  users_group.belongsTo(groups, { sourceKey: 'gid', foreignKey: 'id' })
+  users_group.hasOne(groups, { sourceKey: 'gid', foreignKey: 'id' })
 
   // 用户与申请资源的关系
   users.hasMany(resources, { sourceKey: 'id', foreignKey: 'uid' })
@@ -128,11 +128,9 @@ function initModels(sequelize) {
     operations_log,
     resources,
     resources_template,
-    resources_applications,
     rights,
     role,
     role_rights,
-    system_log,
     users,
     users_group,
     users_role,

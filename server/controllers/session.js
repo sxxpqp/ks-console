@@ -115,7 +115,22 @@ const handleLogin = async ctx => {
     }
   }
 
-  ctx.redirect(isValidReferer(referer) ? referer : '/')
+  const { users } = global.models
+  const res = await users.findAll({
+    where: {
+      username: user.username,
+    },
+    raw: true,
+  })
+  // console.log('🚀 ~ file: session.js ~ line 125 ~ res', res)
+  let url = '/'
+  if (res && res.length) {
+    const tmp = res[0]
+    const { namespace, workspace, cluster } = tmp
+    url = `/${workspace}/clusters/${cluster}/projects/${namespace}/overview`
+  }
+
+  ctx.redirect(isValidReferer(referer) ? referer : url)
 }
 
 const handleLogout = async ctx => {

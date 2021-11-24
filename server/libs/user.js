@@ -8,6 +8,8 @@ import {
   getSpaceRoleUpdateTemplate,
   getProjectRoleTemplate,
   getProjectTemplate,
+  getDevopsTemplate,
+  getSecretTemplate,
 } from './templates'
 
 // 创建用户
@@ -30,6 +32,13 @@ export const createUserSpace = async data => {
     template
   )
   // todo 创建企业空间存入数据库
+  return result
+}
+
+// 删除企业空间
+export const removeUserSpace = async workspace => {
+  const url = `/kapis/tenant.kubesphere.io/v1alpha2/workspaces/${workspace}`
+  const result = await request.delete(url)
   return result
 }
 
@@ -166,6 +175,13 @@ export const createProject = async (workspace, project, user = 'admin') => {
     `/kapis/tenant.kubesphere.io/v1alpha2/workspaces/${workspace}/namespaces`,
     template
   )
+  return result
+}
+
+// 删除项目
+export const removeK8sProject = async (workspace, project) => {
+  const url = `/kapis/tenant.kubesphere.io/v1alpha2/workspaces/${workspace}/namespaces/${project}`
+  const result = await request.delete(url)
   return result
 }
 
@@ -338,6 +354,15 @@ export const removeProjectUser = async (project, user) => {
   return result
 }
 
+// 删除k8s用户
+export const removeK8sUser = async username => {
+  // /kapis/iam.kubesphere.io/v1alpha2/users/
+  const result = await request.delete(
+    `/kapis/iam.kubesphere.io/v1alpha2/users/${username}`
+  )
+  return result
+}
+
 // 修改用户密码
 export const updateUserPassword = async (username, password) => {
   // /kapis/iam.kubesphere.io/v1alpha2/users/test2/password
@@ -347,6 +372,40 @@ export const updateUserPassword = async (username, password) => {
       password,
       rePassword: password,
     }
+  )
+  return result
+}
+
+// 创建devops工程
+export const createDevopsProject = async (workspace, devops) => {
+  // /kapis/devops.kubesphere.io/v1alpha3/workspaces/bqcmza/devops
+  const params = getDevopsTemplate(workspace, devops)
+  const result = await request.post(
+    `/kapis/devops.kubesphere.io/v1alpha3/workspaces/${workspace}/devops`,
+    params
+  )
+  return result
+}
+
+// 删除devOps工程
+export const removeDevopsProject = async (workspace, devops) => {
+  const url = `/kapis/devops.kubesphere.io/v1alpha3/workspaces/${workspace}/devops/${devops}`
+  const result = await request.delete(url)
+  return result
+}
+
+// 创建密钥
+export const createSecretConfig = async (username, password) => {
+  const { harbor } = global.server
+  // /api/v1/namespaces/liwei1/secrets
+  const params = getSecretTemplate({
+    username,
+    harborPass: password,
+    harborUrl: harbor.private,
+  })
+  const result = await request.post(
+    `/api/v1/namespaces/${username}/secrets`,
+    params
   )
   return result
 }

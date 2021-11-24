@@ -25,13 +25,24 @@ const { redisInit } = require('./services/redis-helper')
 const { ftpsInit } = require('./services/ftps')
 const { sshInit } = require('./services/ssh')
 const { cronJob, cronJob1 } = require('./services/cron')
-// const { createProject } = require('./libs/user')
-
+// const { sshcmd } = require('./libs/platform')
 const { getK8sAppList } = require('./services/platform')
 
 setTimeout(async () => {
+  // await getK8sNodes()
   await getK8sAppList({ workspace: 'test', namespace: 'test' })
-}, 2000)
+  // const res = await sshcmd(
+  //   'bash /root/gpu.sh',
+  //   {
+  //     host: '192.168.4.33',
+  //     port: 22,
+  //     username: 'root',
+  //     password: 'Xl123456..',
+  //   },
+  //   false
+  // )
+  // console.log(res.stdout)
+}, 1500)
 
 // 定时任务
 cronJob.start()

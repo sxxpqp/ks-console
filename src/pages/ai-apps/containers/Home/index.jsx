@@ -31,6 +31,10 @@ const scrollThreshold = 200
 export default class Home extends React.Component {
   constructor(props) {
     super(props)
+    // console.log(
+    //   '🚀 ~ file: index.jsx ~ line 34 ~ Home ~ constructor ~ props',
+    //   props
+    // )
     this.appStore = new PublishedAppStore()
     this.categoryStore = new CategoryStore()
 

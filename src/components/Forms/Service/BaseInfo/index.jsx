@@ -189,7 +189,7 @@ export default class ServiceBaseInfo extends React.Component {
 
   handleAliasChange(value) {
     // 自动唯一标识
-    const tempName = `${turnName(value)}-${genName(6)}`
+    const tempName = `${turnName(value)}-${genName(6)}`.toLowerCase()
     set(this.formTemplate, 'metadata.name', tempName)
     this.setState({
       metaName: tempName,

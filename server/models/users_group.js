@@ -37,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: true,
         comment: '工作空间',
       },
-      project: {
+      namespace: {
         type: DataTypes.STRING(255),
         allowNull: true,
         comment: '项目名称',

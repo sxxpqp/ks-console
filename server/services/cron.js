@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-const { get } = require('lodash')
-const CronJob = require('cron').CronJob
-const axios = require('axios')
-const qs = require('qs')
-const { getServerConfig } = require('@/libs/utils')
-const { getK8sNodes } = require('./platform')
+import { get } from 'lodash'
+import { CronJob } from 'cron'
+import axios from 'axios'
+import qs from 'qs'
+import { getServerConfig } from '../libs/utils'
+import { getK8sNodes } from './platform'
 
 // 获取token任务
 export const getAccessToken = async () => {
@@ -45,8 +45,8 @@ export const cronJob1 = new CronJob('0 */1 * * * *', async () => {
   try {
     // const d = new Date()
     // 每分钟获取节点信息
-    await getK8sNodes()
     console.log('update1')
+    await getK8sNodes()
   } catch (error) {
     console.log(error)
   }

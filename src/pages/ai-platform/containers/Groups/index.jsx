@@ -121,6 +121,9 @@ export default class GroupsManage extends React.Component {
         this.store.removeData(item.id).then(res => {
           if (res.code === 200) {
             Notify.success('删除成功')
+            this.setState({
+              item: null,
+            })
             this.getData()
           } else {
             Notify.success('删除失败，请重试')
@@ -155,6 +158,7 @@ export default class GroupsManage extends React.Component {
         <Row>
           <Col span={6} style={{ paddingRight: '5px' }}>
             <Tree
+              canEdit
               store={this.store}
               select={this.selectNode.bind(this)}
               onEdit={() => this.handleEdit()}

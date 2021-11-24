@@ -17,12 +17,31 @@ import RouterStore from 'stores/router'
 import ServiceMonitorStore from 'stores/monitoring/service.monitor'
 import formPersist from 'utils/form.persist'
 import CreateServiceModal from 'ai-platform/components/Modals/ServiceCreateFull'
+import { updateAppList } from 'api/platform'
+
+const customUpdateList = async props => {
+  const { namespace, workspace, updateList } = props
+  const res = await updateAppList({ namespace, workspace })
+  const { code } = res
+  if (code === 200) {
+    Notify.success('创建成功')
+    updateList && updateList()
+  } else {
+    Notify.error(`创建失败${res.message}`)
+  }
+}
 
 export default {
+  'app.update': {
+    on({ namespace, workspace, ...props }) {
+      Notify.success('创建中，创建成功后自动刷新列表，请等待')
+      customUpdateList({ namespace, workspace, ...props })
+    },
+  },
   'app.deploy': {
     on({ store, ...props }) {
       const modal = Modal.open({
-        onOk: () => {
+        onOk: async () => {
           Modal.close(modal)
         },
         modal: DeployAppModal,
@@ -64,10 +83,14 @@ export default {
     },
   },
   'crd.app.create': {
-    on({ store, cluster, namespace, workspace, success, ...props }) {
+    on({ store, cluster, namespace, workspace, success, appStore, ...props }) {
+      debugger
       const modal = Modal.open({
         onOk: data => {
-          store.create(data, { cluster, namespace }).then(() => {
+          store.create(data, { cluster, namespace }).then(async () => {
+            // Notify.success('创建中，创建成功后自动刷新列表，请等待')
+            // customUpdateList({ namespace, workspace, ...props })
+            appStore.updateList({ namespace, workspace })
             Modal.close(modal)
             success && success()
           })

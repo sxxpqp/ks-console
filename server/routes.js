@@ -52,6 +52,7 @@ const {
   addResourceTemplate,
   editResourceTemplate,
   removeResourceTemplate,
+  getGroupResourcesCount,
 } = require('./controllers/resource')
 
 // users
@@ -62,8 +63,8 @@ const {
   removeMenu,
   upload,
   getUsers,
-  editUsers,
-  removeUsers,
+  editUser,
+  removeUser,
   addUsers,
   getRoles,
   addRole,
@@ -78,6 +79,8 @@ const {
 // applications
 const {
   getAppList,
+  removeApp,
+  updateAppList,
   getAppTags,
   getAppTagsCountApp,
   getAppTagsById,
@@ -154,6 +157,7 @@ router
   .post('/edit-nodes', editNodes) // 编辑节点名称与节点组织，分配组织资源
   .get('/resource', getUsersResources) // 获取用户已申请资源
   .get('/group-resource', getGroupResources) // 获取用户组织已配置资源
+  .get('/group-resource-all', getGroupResourcesCount) // 获取组织已配置资源
 
   // 用户相关
   .get('/menus', getMenus) // 获取平台菜单
@@ -166,8 +170,8 @@ router
   // 用户信息CRUD
   .get('/users', getUsers)
   .post('/users', addUsers)
-  .patch('/users/:id', editUsers)
-  .post('/removeUsers', removeUsers)
+  .post('/edit-users', editUser)
+  .delete('/users/:id', removeUser)
   // 角色信息CRUD
   .get('/roles', getRoles)
   .post('/roles', addRole)
@@ -186,6 +190,8 @@ router
 
   // 应用相关
   .post('/app-list', getAppList)
+  .delete('/remove-app/:id', removeApp)
+  .post('/update-app-list', updateAppList)
   // 通过应用名称 获取 应用标签
   .get('/app-tags', getAppTagsById)
   .get('/app-tagsname', getAppByTagsName)

@@ -146,6 +146,7 @@ export default class TreeCustom extends Component {
 
   render() {
     const { show, selectedKeys, expandedKeys } = this.state
+    const { canEdit } = this.props
 
     return (
       <Card>
@@ -165,26 +166,28 @@ export default class TreeCustom extends Component {
                       >
                         取消选中
                       </Button>
-                      <Row>
-                        <Tooltip title="编辑">
-                          <EditOutlined
-                            style={{ fontSize: '18px', color: '#1890ff' }}
-                            onClick={() =>
-                              this.props.onEdit && this.props.onEdit()
-                            }
-                          />
-                        </Tooltip>
-                        <Tooltip title="删除">
-                          <DeleteOutlined
-                            style={{
-                              fontSize: '18px',
-                              paddingLeft: '10px',
-                              color: '#ff7875',
-                            }}
-                            onClick={() => this.handleRemove()}
-                          />
-                        </Tooltip>
-                      </Row>
+                      {canEdit && (
+                        <Row>
+                          <Tooltip title="编辑">
+                            <EditOutlined
+                              style={{ fontSize: '18px', color: '#1890ff' }}
+                              onClick={() =>
+                                this.props.onEdit && this.props.onEdit()
+                              }
+                            />
+                          </Tooltip>
+                          <Tooltip title="删除">
+                            <DeleteOutlined
+                              style={{
+                                fontSize: '18px',
+                                paddingLeft: '10px',
+                                color: '#ff7875',
+                              }}
+                              onClick={() => this.handleRemove()}
+                            />
+                          </Tooltip>
+                        </Row>
+                      )}
                     </Row>
                   </>
                 }

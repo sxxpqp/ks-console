@@ -11,6 +11,15 @@ export const removeMenu = params => axios.post('/remove-menu', params)
 // 获取用户列表
 export const getUsers = params => request.get('/users', params)
 
+// 添加用户
+export const addUser = params => request.post('/users', params)
+
+// 编辑用户
+export const editUser = params => request.post('/edit-users', params)
+
+// 删除用户
+export const removeUser = id => request.delete(`/users/${id}`)
+
 // 获取角色列表
 export const getRoles = params => request.get('/roles', params)
 

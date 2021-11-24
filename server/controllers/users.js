@@ -1,13 +1,34 @@
+import { Op } from 'sequelize'
+import { omit, get } from 'lodash'
+import mkdir from 'make-dir'
+import dayjs from 'dayjs'
+import { v4 as uuidv4 } from 'uuid'
+import fs from 'fs'
+import path from 'path'
+import {
+  createUserSpace,
+  createUser,
+  addUserToSpace,
+  createProject,
+  createDevopsProject,
+  createSecretConfig,
+  removeK8sUser,
+  removeK8sProject,
+  removeDevopsProject,
+} from '../libs/user'
 import { cpFileToPath } from '../libs/platform'
-
-const { Op } = require('sequelize')
-
-const { omit } = require('lodash')
-const mkdir = require('make-dir')
-const dayjs = require('dayjs')
-const { v4: uuidv4 } = require('uuid')
-const fs = require('fs')
-const path = require('path')
+import { getAllChildIds, generateId, getRootGroup } from '../libs/utils'
+import {
+  createHarborUser,
+  getHarborUserInfo,
+  createHarborRepo,
+  addUserToRepo,
+  getHarborRepo,
+  getUserRepos,
+  removeImages,
+  removeHarborUser,
+  removeRepo,
+} from '../libs/harbor'
 
 // 上传功能
 export const upload = async ctx => {
@@ -197,8 +218,8 @@ export const removeRole = async ctx => {
 
 // 获取平台用户
 export const getUsers = async ctx => {
-  const { id, pageSize, current } = ctx.query
-  const { users, users_group, groups } = global.models
+  const { id, pageSize, current, gid, status, username, name } = ctx.query
+  const { users, users_group, groups, role, users_role } = global.models
   const conditions = {
     order: [['created', 'DESC']],
     limit: parseInt(pageSize, 10) || 10,
@@ -209,6 +230,33 @@ export const getUsers = async ctx => {
     const idCond = { id: { [Op.eq]: id } }
     where = { ...where, ...idCond }
   }
+  if (username) {
+    const usernameCond = { username: { [Op.like]: `%${username}%` } }
+    where = { ...where, ...usernameCond }
+  }
+  if (name) {
+    const nameCond = { name: { [Op.like]: `%${name}%` } }
+    where = { ...where, ...nameCond }
+  }
+  if (status || status === '0') {
+    const statusCond = { status: { [Op.eq]: parseInt(status, 10) } }
+    where = { ...where, ...statusCond }
+  }
+  let gidWhere = {}
+  if (gid) {
+    const groupsData = await groups.findAll({
+      raw: true,
+    })
+    const gidArr = getAllChildIds(groupsData, parseInt(gid, 10))
+    gidArr.push(gid)
+    gidWhere = {
+      where: {
+        gid: {
+          [Op.in]: gidArr,
+        },
+      },
+    }
+  }
   const res = await users.findAndCountAll({
     attributes: Object.keys(omit(users.rawAttributes, ['password'])),
     where,
@@ -216,9 +264,18 @@ export const getUsers = async ctx => {
     include: [
       {
         model: users_group,
+        ...gidWhere,
         include: [
           {
             model: groups,
+          },
+        ],
+      },
+      {
+        model: users_role,
+        include: [
+          {
+            model: role,
           },
         ],
       },
@@ -241,9 +298,103 @@ export const getUsers = async ctx => {
 
 // 添加用户
 export const addUsers = async ctx => {
-  const { users } = global.models
   const { body } = ctx.request
-  const res = await users.create({ ...body })
+  const { users, groups, users_role, users_group } = global.models
+  const user = await users.findAll({
+    where: {
+      username: body.username,
+    },
+  })
+  if (user && user.length > 0) {
+    ctx.body = {
+      code: 500,
+      msg: '用户名重复',
+    }
+    return
+  }
+  const gname = generateId()
+  // 创建k8s用户
+  await createUser({
+    name: body.username,
+    email: body.email || `${gname}@netin.com`,
+    password: body.password,
+  })
+  // 根据级别添加到对应的企业空间
+  const groupData = await groups.findAll({
+    raw: true,
+  })
+  const userGroup = groupData.find(item => item.id === body.pid)
+  // 获取根级group
+  const rootGroup = getRootGroup(groupData, body.pid)
+  const workspace = rootGroup.code
+  const { username } = body
+  body.cluster = 'default'
+  body.workspace = workspace
+  await addUserToSpace(workspace, username)
+  // 创建项目 -> 创建同名project项目
+  await createProject(workspace, username, username)
+  body.namespace = username
+  // todo 设置项目的限额
+  // 创建harbor用户 -> 添加harbor密钥
+  const gPass = generateId(8, true)
+  body.harborPass = gPass
+  await createHarborUser({
+    username,
+    email: body.email || `${gname}@netin.com`,
+    realname: body.name || gname,
+    password: gPass,
+  })
+  const harborUser = await getHarborUserInfo(username)
+  if (
+    harborUser.status === 200 &&
+    harborUser.data &&
+    harborUser.data.length > 0
+  ) {
+    const userId = harborUser.data[0].user_id
+    body.harborId = userId
+  }
+  await createHarborRepo(username)
+  const repo = await getHarborRepo(username)
+  if (repo.status === 200 && repo.data && repo.data.length > 0) {
+    const data = repo.data[0]
+    const projectId = data.project_id
+    await addUserToRepo(projectId, username)
+    body.harborPid = projectId
+  }
+  // 添加私有仓库密钥
+  await createSecretConfig(username, gPass)
+  const devops = generateId()
+  // body.devops = devops
+  // 创建用户名同名devops工程
+  const devOpsRes = await createDevopsProject(workspace, devops)
+  if (devOpsRes) {
+    body.devops = get(devOpsRes, 'metadata.name')
+  }
+  const res = await users.create({
+    ...body,
+    created: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+  })
+  // 判断是否是空间管理员 -> 如果是添加在pid一级 为管理员 ->  users_group -> isAdmin
+
+  const userGroupObj = {
+    uid: res.id,
+    gid: body.pid,
+    isAdmin: userGroup.pid === -1 ? 1 : 0,
+    cluster: 'default',
+    workspace,
+    namespace: username,
+    devops,
+    cpu: 0,
+    mem: 0,
+    disk: 0,
+    gpu: 0,
+  }
+  users_group.create(userGroupObj)
+  const arr = body.role.map(i => ({
+    uid: res.id,
+    roleId: i,
+  }))
+  await users_role.bulkCreate(arr)
   ctx.body = {
     code: 200,
     data: res,
@@ -251,11 +402,14 @@ export const addUsers = async ctx => {
 }
 
 // 编辑用户
-export const editUsers = async ctx => {
+export const editUser = async ctx => {
   const { users } = global.models
   const { body } = ctx.request
-  const { id } = ctx.params
+  const { id } = body
   if (id) {
+    if (!body.password.trim()) {
+      delete body.password
+    }
     const res = await users.update(
       { ...omit(body, 'id') },
       {
@@ -273,34 +427,60 @@ export const editUsers = async ctx => {
   } else {
     ctx.body = {
       code: 500,
-      msg: '更新失败',
+      msg: '参数非法',
     }
   }
 }
 
 // 删除用户
-export const removeUsers = async ctx => {
+export const removeUser = async ctx => {
   const { users } = global.models
-  const { body } = ctx.request
-  const res = await users.destroy({
+  const { id } = ctx.params
+  const user = await users.findAll({
     where: {
-      [Op.or]: [
-        body.id
-          ? {
-              id: body.id,
-            }
-          : {},
-        body.email
-          ? {
-              email: body?.email,
-            }
-          : null,
-      ],
+      id: parseInt(id, 10),
     },
+    raw: true,
   })
-  ctx.body = {
-    code: 200,
-    data: res,
+  if (user && user.length > 0) {
+    const temp = user[0]
+    const { username, workspace, namespace, devops, harborId, harborPid } = temp
+    // 删除k8s用户
+    await removeK8sUser(username)
+    // 删除企业空间中的项目
+    await removeK8sProject(workspace, namespace)
+    // 删除devops工程
+    await removeDevopsProject(workspace, devops)
+    // 获取用户的镜像列表
+    const images = await getUserRepos(username, 999999)
+    if (images.status === 200 && images.data && images.data.length > 0) {
+      const tmps = images.data
+      // 删除镜像
+      for (let i = 0; i < tmps.length; i++) {
+        await removeImages(
+          username,
+          tmps[i].name.replace(new RegExp(`${username}/`), '')
+        )
+      }
+    }
+    // 删除harbor用户
+    await removeHarborUser(harborId)
+    // 删除harbor项目
+    await removeRepo(harborPid)
+    const res = await users.destroy({
+      where: {
+        id: parseInt(id, 10),
+      },
+    })
+    ctx.body = {
+      code: 200,
+      data: res,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+      msg: '用户不存在或已经删除',
+    }
   }
 }
 
@@ -343,6 +523,13 @@ export const addGroups = async ctx => {
   const { groups } = global.models
   const { body } = ctx.request
   const res = await groups.create({ ...body })
+  // 创建企业空间
+  if (body.type === 0) {
+    await createUserSpace({
+      user: 'admin',
+      workspace: body.code,
+    })
+  }
   ctx.body = {
     code: 200,
     data: res,

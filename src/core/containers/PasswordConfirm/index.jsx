@@ -66,9 +66,9 @@ export default class PasswordConfirm extends Component {
 
     return (
       <div>
-        <a href="#" className={styles.logo}>
+        {/* <a href="#" className={styles.logo}>
           <img src="/assets/logo.svg" alt="" />
-        </a>
+        </a> */}
         <div className={styles.login}>
           <div className={styles.header}>{t('Please reset your password')}</div>
           <div className={styles.divider}></div>

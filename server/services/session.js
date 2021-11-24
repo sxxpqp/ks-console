@@ -75,7 +75,7 @@ const getNewToken = async ctx => {
   newToken = {
     token: access_token,
     refreshToken: refresh_token,
-    expire: new Date().getTime() + Number(expires_in) * 1000,
+    expire: new Date().getTime() + Number(expires_in || 7200) * 1000,
   }
 
   return newToken

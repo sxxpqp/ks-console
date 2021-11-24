@@ -62,10 +62,13 @@ export default class DeployAppModal extends React.Component {
 
   handleCreateApp = () => {
     const { onOk, trigger, ...rest } = this.props
+    debugger
+    // this.crdAppStore.fetchDetail(this.props.match.params)
     onOk()
     trigger('crd.app.create', {
       trigger,
       ...rest,
+      store: rest.crdAppStore,
     })
   }
 
@@ -113,7 +116,7 @@ export default class DeployAppModal extends React.Component {
             desc={
               '容器平台提供全生命周期的应用管理，可以上传或者创建新的应用模板，并且快速部署它们。'
             }
-            onEnter={this.handleCreateApp}
+            onEnter={() => this.handleCreateApp()}
           />
         </div>
       </Modal>

@@ -1,7 +1,13 @@
 import React from 'react'
 import { get } from 'lodash'
 import { inject, observer } from 'mobx-react'
-import { Button, Columns, Column, Loading } from '@kube-design/components'
+import {
+  Button,
+  Columns,
+  Column,
+  Loading,
+  // Notify,
+} from '@kube-design/components'
 
 import VersionStore from 'stores/openpitrix/version'
 import AppStore from 'stores/openpitrix/app'
@@ -13,6 +19,7 @@ import Banner from 'apps/components/Banner'
 import { generateId } from 'utils'
 import { parse } from 'qs'
 
+// import { updateAppList } from 'api/platform'
 import Steps from './Steps'
 
 import styles from './index.scss'
@@ -22,6 +29,10 @@ import styles from './index.scss'
 export default class App extends React.Component {
   constructor(props) {
     super(props)
+    // console.log(
+    //   '🚀 ~ file: index.jsx ~ line 32 ~ App ~ constructor ~ props',
+    //   props
+    // )
 
     this.appId = this.props.match.params.appId
     this.appStore = new AppStore()
@@ -121,9 +132,14 @@ export default class App extends React.Component {
         this.appStore
           .deploy(rest, { cluster, namespace, workspace })
           .then(() => {
-            this.routing.push(
-              `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/template`
-            )
+            // updateAppList({ namespace, workspace })
+            // Notify.success('创建中，创建成功后自动刷新列表，请等待')
+            // this.applicationStore.updateList({ namespace, workspace })
+            setTimeout(() => {
+              this.routing.push(
+                `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/template`
+              )
+            }, 1000)
           })
       })
   }

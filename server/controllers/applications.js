@@ -1,5 +1,7 @@
 import { omit } from 'lodash'
 import { Op, fn, col } from 'sequelize'
+import { getK8sAppList } from '../services/platform'
+import request from '../libs/axios'
 
 // 获取应用列表
 export const getAppList = async ctx => {
@@ -79,6 +81,52 @@ export const getAppList = async ctx => {
       code: 500,
       msg: '请求应用列表失败',
     }
+  }
+}
+
+// 创建应用之后，更新应用列表
+export const updateAppList = async ctx => {
+  const { body } = ctx.request
+  const { workspace, namespace } = body
+  const res = await getK8sAppList({
+    workspace,
+    namespace,
+  })
+  ctx.body = {
+    code: 200,
+    data: res,
+  }
+}
+
+// 删除应用
+export const removeApp = async ctx => {
+  const { id } = ctx.params
+  const { users_app } = global.models
+  const app = await users_app.findAll({
+    where: {
+      appId: id,
+    },
+  })
+  let result
+  if (app && app.length > 0) {
+    const item = app[0]
+    if (item.type === 0) {
+      const url = `/kapis/openpitrix.io/v1/workspaces/${item.workspace}/namespaces/${item.namespace}/applications/${id}`
+      result = await request.delete(url)
+    } else {
+      const url = `/apis/app.k8s.io/v1beta1/namespaces/${item.namespace}/applications/${id}`
+      result = await request.delete(url)
+    }
+  }
+  const res = await users_app.destroy({
+    where: {
+      appId: id,
+    },
+  })
+  ctx.body = {
+    code: 200,
+    data: res,
+    msg: result,
   }
 }
 

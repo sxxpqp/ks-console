@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize')
+
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define(
     'users',
@@ -11,9 +13,14 @@ module.exports = function(sequelize, DataTypes) {
       },
       username: {
         type: DataTypes.STRING(255),
-        allowNull: true,
-        comment: '邮箱，登录名',
+        allowNull: false,
+        comment: '登录名',
         unique: 'username_unique',
+      },
+      email: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: '用户邮箱',
       },
       password: {
         type: DataTypes.STRING(255),
@@ -24,20 +31,21 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: true,
       },
       mobile: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(11),
         allowNull: true,
         comment: '手机号',
-        unique: 'mobile_unique',
       },
       status: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 0,
         comment: '是否禁用',
       },
       created: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
         comment: '创建时间',
+        default: Sequelize.NOW,
       },
       last_login: {
         type: DataTypes.DATE,
@@ -47,7 +55,43 @@ module.exports = function(sequelize, DataTypes) {
       count: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 0,
         comment: '登录次数',
+      },
+      namespace: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: '空间',
+      },
+      cluster: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: '集群',
+      },
+      workspace: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: '工作空间',
+      },
+      harborPass: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'harbor密码',
+      },
+      harborId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        comment: 'harborId',
+      },
+      harborPid: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        comment: 'harbor项目id，仓库id',
+      },
+      devops: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: 'devops名称',
       },
     },
     {
@@ -60,12 +104,6 @@ module.exports = function(sequelize, DataTypes) {
           unique: true,
           using: 'BTREE',
           fields: [{ name: 'id' }],
-        },
-        {
-          name: 'mobile_unique',
-          unique: true,
-          using: 'BTREE',
-          fields: [{ name: 'mobile' }],
         },
         {
           name: 'username_unique',
