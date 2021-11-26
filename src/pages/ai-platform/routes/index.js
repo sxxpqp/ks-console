@@ -30,6 +30,7 @@ import DaemonSets from '../containers/DaemonSets'
 import Pods from '../containers/Pods'
 // import Jobs from '../containers/Jobs'
 import ImageBuilder from '../containers/ImageBuilder'
+import ImageManage from '../containers/ImageManage'
 import CronJobs from '../containers/CronJobs'
 import Services from '../containers/Services'
 import GrayRelease from '../containers/GrayRelease'
@@ -162,6 +163,11 @@ export default [
       {
         path: `${PATH}/s2ibuilders`,
         component: ImageBuilder,
+        exact: true,
+      },
+      {
+        path: `${PATH}/image-manage`,
+        component: ImageManage,
         exact: true,
       },
       { path: `${PATH}/cronjobs`, component: CronJobs, exact: true },

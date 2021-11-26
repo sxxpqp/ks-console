@@ -195,7 +195,10 @@ export default function withList(options) {
 }
 
 export function withProjectList(options) {
-  return withList({ injectStores: ['rootStore', 'projectStore'], ...options })
+  return withList({
+    injectStores: ['rootStore', 'homeStore', 'projectStore'],
+    ...options,
+  })
 }
 
 export function withClusterList(options) {

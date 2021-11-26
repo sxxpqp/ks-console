@@ -29,6 +29,13 @@ class Dashboard extends React.Component {
     }
   }
 
+  componentDidMount() {
+    const { namespace, workspace, cluster } = this.props.rootStore.myClusters
+    this.routing.push(
+      `${workspace}/clusters/${cluster}/projects/${namespace}/overview`
+    )
+  }
+
   get routing() {
     return this.props.rootStore.routing
   }

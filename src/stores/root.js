@@ -92,12 +92,6 @@ export default class RootStore {
   }
 
   @action
-  saveClusters(params) {
-    saveItem('myClusters', params)
-    this.myClusters = params
-  }
-
-  @action
   saveSelectNavKey(params) {
     saveItem('selectNavKey', params)
     this.selectNavKey = params

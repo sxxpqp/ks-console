@@ -1,12 +1,12 @@
-// const { omit } = require('lodash')
+// const { omit } from 'lodash'
 
-const { Op } = require('sequelize')
-const axios = require('axios')
-const qs = require('qs')
-const { imageCommit, imagePush } = require('../libs/platform')
+import { Op } from 'sequelize'
+import axios from 'axios'
+import qs from 'qs'
+import { imageCommit, imagePush } from '../libs/platform'
 
-// const resUsage = require('@/models/views/resources_usage_view')
-const { getServerConfig } = require('@/libs/utils')
+import { getServerConfig } from '@/libs/utils'
+import { getUserRepoInfo, getUserRepos } from '../libs/harbor'
 
 // 获取节点列表
 // deperated
@@ -266,3 +266,49 @@ export const editNodes = async ctx => {
 
 // 删除节点
 // todo
+
+// 获取镜像
+export const getImages = async ctx => {
+  const { harborPid, username } = ctx.user
+  const { name, pageSize, current, type } = ctx.query
+  const result = {}
+  if (type === '1') {
+    const summary = await getUserRepoInfo(harborPid)
+    if (summary && summary.status === 200) {
+      result.summary = summary.data
+    }
+    const repos = await getUserRepos(
+      username,
+      parseInt(pageSize, 10) || 10,
+      parseInt(current, 10) || 1,
+      name
+    )
+    if (repos && repos.status === 200) {
+      result.data = repos.data
+      const { headers } = repos
+      result.total = headers['x-total-count']
+    }
+  } else if (type === '2') {
+    const { harbor } = global.server
+    const summary = await getUserRepoInfo(harbor.pid)
+    if (summary && summary.status === 200) {
+      result.summary = summary.data
+    }
+    const repos = await getUserRepos(
+      harbor.project,
+      parseInt(pageSize, 10) || 10,
+      parseInt(current, 10) || 1,
+      name
+    )
+    if (repos && repos.status === 200) {
+      result.data = repos.data
+      const { headers } = repos
+      result.total = headers['x-total-count']
+    }
+  }
+  // 查询用户repo
+  ctx.body = {
+    code: 200,
+    ...result,
+  }
+}

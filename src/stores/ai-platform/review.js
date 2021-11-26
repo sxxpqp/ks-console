@@ -10,11 +10,10 @@ import {
   removeResourceTemplate,
 } from 'api/apply'
 
-export const getSum = (lists, usedFlag = false) => {
+export const getSum = (lists = [], usedFlag = false) => {
   const keys = usedFlag
     ? ['cpu_used', 'mem_used', 'disk_used', 'gpu_used']
     : ['cpu', 'mem', 'disk', 'gpu']
-
   const obj = lists.reduce((sum, cur) => {
     keys.forEach(key => {
       sum[key] += parseFloat(cur[key], 10)
@@ -151,6 +150,7 @@ export default class ReviewStore {
     })
   }
 
+  // 管理员列表
   @action
   getApplyHisAll() {
     getApplyHisAll(this.params).then(res => {

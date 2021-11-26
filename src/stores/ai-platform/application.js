@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx'
+import { observable, action, computed } from 'mobx'
 import { getAppList, updateAppList } from 'api/platform'
 import { Notify } from '@kube-design/components'
 
@@ -18,7 +18,23 @@ export default class ApplicationStore {
     pageSize: 10,
     total: 0,
     tagId: '',
+    pid: '',
     onChange: this.handlePaginationChange,
+  }
+
+  @computed
+  get total() {
+    return this.pagination.total
+  }
+
+  @computed
+  get allNameSpaces() {
+    return Array.from(new Set(this.lists.map(i => i.namespace)))
+  }
+
+  @computed
+  get totalFail() {
+    return this.lists.filter(i => i.status === 0).length
   }
 
   @action

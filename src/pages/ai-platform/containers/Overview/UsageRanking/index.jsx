@@ -28,7 +28,7 @@ class UsageRanking extends React.Component {
       cluster: get(props.match, 'params.cluster'),
       namespaces: get(props.match, 'params.namespace'),
     })
-
+    // this.store = this.props.workLoadStore
     // this.state = {
     //   value: '',
     // }
@@ -39,6 +39,10 @@ class UsageRanking extends React.Component {
       value: this.options[0].value,
     })
     this.store.fetchAll()
+    // when(
+    //   () => this.props.appStore.allNameSpaces.length,
+    //   () => this.store.fetchAllNameSpaces()
+    // )
   }
 
   get options() {

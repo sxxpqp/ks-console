@@ -30,9 +30,10 @@ export const getHarborRepo = params =>
 // 添加用户到同名项目
 // /api/v2.0/projects/${projectId}/members POST
 // {"role_id":1,"member_user":{"username":"liwei1"}}
-export const addUserToRepo = (projectId, username) =>
+// role 1-管理员 2-开发者
+export const addUserToRepo = (projectId, username, role = 1) =>
   axios.post(`/api/v2.0/projects/${projectId}/members`, {
-    role_id: 1,
+    role_id: role,
     member_user: { username },
   })
 
@@ -48,10 +49,13 @@ export const getUserRepoInfo = projectId =>
 
 // 获取用户镜像列表
 // /api/v2.0/projects/${username}/repositories?page_size=${pageSize}&page=${current} GET
-export const getUserRepos = (username, pageSize = 10, current = 1) =>
-  axios.get(
-    `/api/v2.0/projects/${username}/repositories?page_size=${pageSize}&page=${current}`
-  )
+export const getUserRepos = (username, pageSize = 10, current = 1, name) => {
+  let url = `/api/v2.0/projects/${username}/repositories?page_size=${pageSize}&page=${current}`
+  if (name) {
+    url += `&q=name%253D~${name}`
+  }
+  return axios.get(url)
+}
 
 // 获取公共镜像列表
 export const getPublicRepo = (flag = false, pageSize = 10, current = 1) =>

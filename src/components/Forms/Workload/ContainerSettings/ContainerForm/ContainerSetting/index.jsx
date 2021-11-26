@@ -59,6 +59,7 @@ export default class ContainerSetting extends React.Component {
         label: item.name,
         value: item.name,
         cluster,
+        alias: get(item, 'annotations["kubesphere.io/alias-name"]') || '',
       }
     })
   }

@@ -57,33 +57,6 @@ function initModels(sequelize) {
   const app_labels = _app_labels(sequelize, DataTypes)
   const labels = _labels(sequelize, DataTypes)
 
-  // resources_applications.belongsTo(applications, {
-  //   as: 'aid_application',
-  //   foreignKey: 'aid',
-  // })
-  // applications.hasMany(resources_applications, {
-  //   as: 'resources_applications',
-  //   foreignKey: 'aid',
-  // })
-  // users_group.belongsTo(groups, { as: 'gid_group', foreignKey: 'gid' })
-  // groups.hasMany(users_group, { as: 'users_groups', foreignKey: 'gid' })
-  // resources_applications.belongsTo(resources, {
-  //   as: 'rid_resource',
-  //   foreignKey: 'rid',
-  // })
-  // resources.hasMany(resources_applications, {
-  //   as: 'resources_applications',
-  //   foreignKey: 'rid',
-  // })
-  // role_rights.belongsTo(rights, { as: 'right', foreignKey: 'rightsId' })
-  // rights.hasMany(role_rights, { as: 'role_rights', foreignKey: 'rightsId' })
-  // users_role.belongsTo(role, { as: 'role', foreignKey: 'roleId' })
-  // role.hasMany(users_role, { as: 'users_roles', foreignKey: 'roleId' })
-  // resources.belongsTo(users, { as: 'uid_user', foreignKey: 'uid' })
-  // users.hasMany(resources, { as: 'resources', foreignKey: 'uid' })
-  // users_group.belongsTo(users, { as: 'uid_user', foreignKey: 'uid' })
-  // users.hasMany(users_group, { as: 'users_groups', foreignKey: 'uid' })
-
   // 节点与节点日志的对应关系
   nodes.hasMany(nodes_log, { sourceKey: 'machine', foreignKey: 'machine' })
   nodes.hasOne(groups_nodes, { sourceKey: 'machine', foreignKey: 'machine' })
@@ -101,6 +74,10 @@ function initModels(sequelize) {
   // 用户与角色的关系
   users.hasMany(users_role, { sourceKey: 'id', foreignKey: 'uid' })
   users_role.hasOne(role, { sourceKey: 'roleId', foreignKey: 'id' })
+
+  // 用户与应用的关系
+  users_app.hasOne(users, { sourceKey: 'username', foreignKey: 'username' })
+  users.hasMany(users_app, { sourceKey: 'username', foreignKey: 'username' })
 
   // 用户与组的对应关系
   users.hasMany(users_group, { sourceKey: 'id', foreignKey: 'uid' })

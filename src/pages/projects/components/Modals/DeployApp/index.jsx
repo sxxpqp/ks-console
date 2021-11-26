@@ -39,11 +39,11 @@ export default class DeployAppModal extends React.Component {
     //   '🚀 ~ file: index.jsx ~ line 37 ~ DeployAppModal ~ this.props',
     //   this.props
     // )
-    this.props.rootStore.saveClusters({
+    this.props.rootStore.myClusters = {
       namespace,
       workspace,
       cluster,
-    })
+    }
     onOk()
     routing.push({
       pathname: `/apps`,

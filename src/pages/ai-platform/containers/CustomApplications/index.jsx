@@ -13,6 +13,7 @@ import {
   Tag,
   Radio,
   Select,
+  TreeSelect,
   Modal,
 } from 'antd'
 
@@ -24,7 +25,7 @@ import {
 } from '@ant-design/icons'
 
 import { Button as KButton, Notify } from '@kube-design/components'
-// import { observer } from 'mobx-react'
+// import { inject } from 'mobx-react'
 import { Status } from 'components/Base'
 
 import OpAppStore from 'stores/openpitrix/application'
@@ -32,10 +33,12 @@ import CRDAppStore from 'stores/application/crd'
 import ApplicationStore from 'stores/ai-platform/application'
 import { withProjectList } from 'components/HOCs/withList'
 import { get } from 'lodash'
-import { getAppTags, removeApp, updateAppList } from 'api/platform'
+import { getAppTags, removeApp, updateAppList, updateApp } from 'api/platform'
 import dayjs from 'dayjs'
 import { TAGS_COLORS } from 'utils/constants'
+import GroupStore from 'stores/ai-platform/group'
 import styles from './index.scss'
+import EditModal from './editForm'
 
 const { Option } = Select
 
@@ -49,10 +52,15 @@ export default class CustomApplications extends React.Component {
     super(props)
     this.crdAppStore = new CRDAppStore()
     this.appStore = new ApplicationStore()
+    this.homeStore = this.props.homeStore
+    this.groupStore = new GroupStore()
     this.state = {
       tags: [],
+      show: false,
+      item: null,
     }
     this.form = React.createRef()
+    this.groupStore.getData()
     this.appStore.getData()
     this.ctrl = null
   }
@@ -85,110 +93,147 @@ export default class CustomApplications extends React.Component {
       const { namespace, workspace } = this.props.match.params
       await updateAppList({ namespace, workspace })
       await this.appStore.getData()
-    }, 60 * 1000)
+    }, 15 * 1000)
   }
 
   componentWillUnmount() {
     this.ctrl && clearInterval(this.ctrl)
   }
 
-  getColumns = () => [
-    {
-      title: '名称',
-      dataIndex: 'name',
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      // eslint-disable-next-line no-unused-vars
-      render: (status, record) => {
-        const label = status === 1 ? 'Running' : 'Warning'
-        return <Status type={label} name={t(label)} />
+  getColumns = () => {
+    const cols = [
+      {
+        title: '名称',
+        dataIndex: 'name',
+        width: '130px',
       },
-    },
-    {
-      title: '分类',
-      dataIndex: 'type',
-      render: type =>
-        type === 0 ? (
-          <Tag color="processing">模板</Tag>
-        ) : (
-          <Tag color="success">自制</Tag>
-        ),
-    },
-    {
-      title: '标签',
-      dataIndex: 'app_labels',
-      width: '20%',
-      render: _ =>
-        _.map(item => {
-          const { tags, lists } = this.state
-          if (lists && lists.length > 0) {
+      {
+        title: '状态',
+        dataIndex: 'status',
+        width: '120px',
+        // eslint-disable-next-line no-unused-vars
+        render: (status, record) => {
+          const label = status === 1 ? 'Running' : 'Warning'
+          return <Status type={label} name={t(label)} />
+        },
+      },
+      {
+        title: '分类',
+        dataIndex: 'type',
+        render: type =>
+          type === 0 ? (
+            <Tag color="processing">模板</Tag>
+          ) : (
+            <Tag color="success">自制</Tag>
+          ),
+      },
+      {
+        title: '标签',
+        dataIndex: 'app_labels',
+        width: '220px',
+        render: _ => {
+          return _.map(item => {
+            const { tags } = this.state
             const t =
               tags.findIndex(i => i.id === item.tagId) % TAGS_COLORS.length
             return <Tag color={TAGS_COLORS[t]}>{item.label.name}</Tag>
-          }
-          return null
-        }),
-    },
-    // {
-    //   title: '模板',
-    //   dataIndex: 'appId',
-    // },
-    {
-      title: '工作负载',
-      dataIndex: 'deployments',
-      align: 'center',
-    },
-    {
-      title: '服务',
-      dataIndex: 'services',
-      align: 'center',
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'created',
-      render: created => dayjs(created).format('YYYY-MM-DD HH:mm:ss'),
-    },
-    {
-      title: '操作',
-      dataIndex: 'more',
-      // eslint-disable-next-line no-unused-vars
-      render: (_, record) => (
-        <div className={styles.btns}>
-          <Button
-            type="text"
-            size="small"
-            // style={{ color: '#1890ff' }}
-            icon={<EyeOutlined />}
-            onClick={() => this.handleDetail(record)}
-          >
-            详情
-          </Button>
-          <Button
-            type="text"
-            size="small"
-            style={{ color: '#1890ff' }}
-            icon={<EditOutlined />}
-            // onClick={}
-          >
-            编辑
-          </Button>
-          {/* <Popover content="删除" title=""> */}
-          <Button
-            type="text"
-            size="small"
-            style={{ color: '#ff7875' }}
-            icon={<DeleteOutlined />}
-            onClick={() => this.handleDelete(record)}
-          >
-            删除
-          </Button>
-          {/* </Popover> */}
-        </div>
-      ),
-    },
-  ]
+          })
+        },
+      },
+      // {
+      //   title: '模板',
+      //   dataIndex: 'appId',
+      // },
+      {
+        title: '工作负载',
+        dataIndex: 'deployments',
+        width: '80px',
+        align: 'center',
+      },
+      {
+        title: '服务',
+        dataIndex: 'services',
+        align: 'center',
+      },
+      {
+        title: '创建时间',
+        dataIndex: 'created',
+        width: '210px',
+        render: created => dayjs(created).format('YYYY-MM-DD HH:mm:ss'),
+      },
+      {
+        title: '操作',
+        dataIndex: 'more',
+        fixed: 'right',
+        width: '210px',
+        // eslint-disable-next-line no-unused-vars
+        render: (_, record) => (
+          <div className={styles.btns}>
+            <Button
+              type="text"
+              size="small"
+              // style={{ color: '#1890ff' }}
+              icon={<EyeOutlined />}
+              onClick={() => this.handleDetail(record)}
+            >
+              详情
+            </Button>
+            <Button
+              type="text"
+              size="small"
+              style={{ color: '#1890ff' }}
+              icon={<EditOutlined />}
+              onClick={() => this.handleEdit(record)}
+            >
+              编辑
+            </Button>
+            {/* <Popover content="删除" title=""> */}
+            <Button
+              type="text"
+              size="small"
+              style={{ color: '#ff7875' }}
+              icon={<DeleteOutlined />}
+              onClick={() => this.handleDelete(record)}
+            >
+              删除
+            </Button>
+            {/* </Popover> */}
+          </div>
+        ),
+      },
+    ]
+    if (this.homeStore.isAdmin) {
+      cols.unshift(
+        ...[
+          {
+            title: '用户',
+            dataIndex: 'user',
+            width: '140px',
+            ellipsis: true,
+            render: val => val?.name || '',
+          },
+          {
+            title: '组织',
+            dataIndex: 'user',
+            width: '140px',
+            render: val => {
+              const groups = get(val, 'users_groups')
+              return groups
+                ? groups.map(i => (
+                    <Tag color="processing">{get(i, 'group.name')}</Tag>
+                  ))
+                : ''
+            },
+          },
+        ]
+      )
+    }
+    return cols
+  }
+
+  handleEdit(record) {
+    this.setState({ show: true, item: record })
+  }
 
   // 查看应用详情
   handleDetail = record => {
@@ -234,12 +279,12 @@ export default class CustomApplications extends React.Component {
   }
 
   // 分页
-  handlePaginationChange(value) {
-    const { pagination } = this.appStore
-    const newPaging = { ...pagination, current: value }
-    this.appStore.pagination = newPaging
-    this.appStore.getData(newPaging)
-  }
+  // handlePaginationChange(value) {
+  //   const { pagination } = this.appStore
+  //   const newPaging = { ...pagination, current: value }
+  //   this.appStore.pagination = newPaging
+  //   this.appStore.getData(newPaging)
+  // }
 
   // updateList = () => {
   //   const { pagination } = this.state
@@ -277,7 +322,7 @@ export default class CustomApplications extends React.Component {
 
   render() {
     // const { templates } = this.store
-    const { tags } = this.state
+    const { tags, show, item } = this.state
     const { lists, pagination } = this.appStore
 
     const onSearch = () => {
@@ -287,12 +332,14 @@ export default class CustomApplications extends React.Component {
         ...values,
       })
     }
+
     const onReset = () => {
       this.form.current.setFieldsValue({
         status: '',
         type: '',
         name: '',
         tagId: [],
+        pid: '',
       })
       const newPaging = {
         ...pagination,
@@ -301,6 +348,34 @@ export default class CustomApplications extends React.Component {
       }
       // this.appStore.pagination = newPaging
       this.appStore.getData(newPaging)
+    }
+
+    const onCancel = () => {
+      this.setState({ show: false })
+    }
+
+    // 创建和编辑的回调
+    const onSubmit = async res => {
+      const { code } = await updateApp(res)
+      // const { code } = await this.store.editData(res)
+      code === 200 ? Notify.success('更新成功') : Notify.error('更新失败')
+      this.setState({ show: false })
+      this.appStore.getData()
+    }
+
+    const getNewData = () => {
+      return [
+        {
+          key: '-1',
+          id: -1,
+          name: '无',
+        },
+        ...this.groupStore.treeData,
+      ]
+    }
+
+    const onTreeChange = val => {
+      this.appStore.pagination.pid = val
     }
 
     return (
@@ -348,6 +423,33 @@ export default class CustomApplications extends React.Component {
             </Row>
             <Row justify="space-between">
               <Row>
+                {this.homeStore.isAdmin && (
+                  <Col>
+                    <Form.Item label="上级部门" name="pid">
+                      <TreeSelect
+                        treeLine={{ showLeafIcon: false }}
+                        // showSearch
+                        style={{
+                          width: '220px',
+                          border: '1px solid #d9d9d9',
+                          height: '32px',
+                          marginRight: '10px',
+                          overflow: 'hidden',
+                        }}
+                        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+                        placeholder="请选择部门"
+                        allowClear
+                        treeDefaultExpandAll
+                        // initialValues={-1}
+                        onChange={onTreeChange}
+                        fieldNames={{ label: 'name', value: 'id', key: 'id' }}
+                        treeData={getNewData()}
+                      >
+                        {/* <TreeNode value="-1" title="无"></TreeNode> */}
+                      </TreeSelect>
+                    </Form.Item>
+                  </Col>
+                )}
                 <Col>
                   <Form.Item
                     label="应用名称"
@@ -395,10 +497,18 @@ export default class CustomApplications extends React.Component {
           </Form>
         </div>
         <Table
+          scroll={{ x: 1400 }}
           columns={this.getColumns()}
           dataSource={lists}
           pagination={pagination}
         />
+        <EditModal
+          show={show}
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+          lists={tags}
+          item={item}
+        ></EditModal>
       </>
     )
   }

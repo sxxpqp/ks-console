@@ -24,6 +24,18 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: true,
         comment: 'meta信息',
       },
+      workspace: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        primaryKey: true,
+        comment: '名称',
+      },
+      namespace: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        primaryKey: true,
+        comment: '名称',
+      },
     },
     {
       sequelize,

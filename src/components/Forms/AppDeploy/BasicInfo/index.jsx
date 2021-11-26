@@ -87,7 +87,7 @@ export default class BasicInfo extends React.Component {
     //   formData
     // )
     // 自动唯一标识
-    const tempName = `${turnName(value)}-${genName(6)}`
+    const tempName = `${turnName(value)}-${genName(6)}`.toLowerCase()
     set(formData, 'name', tempName)
     set(formData, 'description', value)
 

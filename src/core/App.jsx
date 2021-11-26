@@ -7,6 +7,8 @@ import { renderRoutes } from 'utils/router.config'
 import { lazy } from 'utils'
 
 import RootStore from 'stores/root'
+// 自定义的全局store
+import HomeStore from 'stores/ai-platform/home'
 import { ConfigProvider } from 'antd'
 
 import '@kube-design/components/esm/styles/index.scss'
@@ -25,6 +27,8 @@ class App extends Component {
     super(props)
 
     this.rootStore = new RootStore()
+    // 自定义的全局store
+    this.homeStore = new HomeStore()
     this.history = syncHistoryWithStore(
       createBrowserHistory(),
       this.rootStore.routing
@@ -39,7 +43,7 @@ class App extends Component {
 
   render() {
     return (
-      <Provider rootStore={this.rootStore}>
+      <Provider rootStore={this.rootStore} homeStore={this.homeStore}>
         <ConfigProvider locale={zhCN}>
           <Router history={this.history}>{renderRoutes(routes)}</Router>
         </ConfigProvider>

@@ -1,3 +1,4 @@
+import AlertPolicyDetail from 'projects/containers/Alerting/Policies/Detail'
 import DeploymentDetail from '../containers/Deployments/Detail'
 import StatefulSetDetail from '../containers/StatefulSets/Detail'
 import DaemonSetDetail from '../containers/DaemonSets/Detail'
@@ -16,7 +17,6 @@ import CRDAppDetail from '../containers/Applications/CRDAppDetail'
 import OPAppDetail from '../containers/Applications/OPAppDetail'
 import RoleDetail from '../containers/Roles/Detail'
 import ImageBuilderDetail from '../containers/ImageBuilder/Detail'
-// import AlertPoliciesDetail from '../containers/Alerting/Policies/Detail'
 
 export default PATH => [
   {
@@ -91,5 +91,10 @@ export default PATH => [
   {
     path: `${PATH}/s2ibuilders/:name`,
     component: ImageBuilderDetail,
+  },
+  // 告警策略详情
+  {
+    path: `${PATH}/alert-rules/:name`,
+    component: AlertPolicyDetail,
   },
 ]

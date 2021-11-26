@@ -6,7 +6,7 @@ import {
   Columns,
   Column,
   Loading,
-  // Notify,
+  Notify,
 } from '@kube-design/components'
 
 import VersionStore from 'stores/openpitrix/version'
@@ -133,7 +133,7 @@ export default class App extends React.Component {
           .deploy(rest, { cluster, namespace, workspace })
           .then(() => {
             // updateAppList({ namespace, workspace })
-            // Notify.success('创建中，创建成功后自动刷新列表，请等待')
+            Notify.success('创建中，创建成功后自动刷新列表，请等待')
             // this.applicationStore.updateList({ namespace, workspace })
             setTimeout(() => {
               this.routing.push(

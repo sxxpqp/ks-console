@@ -62,6 +62,8 @@ export const getK8sAppList = async ({ workspace, namespace }) => {
             type: get(app, 'kind'),
             name: get(app, 'metadata.name'),
             meta: JSON.stringify(releaseInfo[j]),
+            namespace,
+            workspace,
           })
         }
       }
@@ -112,6 +114,8 @@ export const getK8sAppList = async ({ workspace, namespace }) => {
             type: get(app, 'kind'),
             name: get(app, 'name'),
             meta: JSON.stringify(app),
+            namespace,
+            workspace,
           })
         }
       }
@@ -132,6 +136,8 @@ export const getK8sAppList = async ({ workspace, namespace }) => {
     // 删除不存在列表中的应用
     await users_app.destroy({
       where: {
+        workspace,
+        namespace,
         appId: {
           [Op.notIn]: appIds,
         },
@@ -145,6 +151,8 @@ export const getK8sAppList = async ({ workspace, namespace }) => {
     // 删除不存在列表中的应用
     await app_detail.destroy({
       where: {
+        workspace,
+        namespace,
         app: {
           [Op.notIn]: appIds,
         },

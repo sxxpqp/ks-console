@@ -61,13 +61,17 @@ export default class DropdownContent extends React.Component {
 
   get secretsOptions() {
     const { imageRegistries } = this.props
+    // console.log(
+    //   '🚀 ~ file: DropdownContent.jsx ~ line 64 ~ DropdownContent ~ getsecretsOptions ~ imageRegistries',
+    //   imageRegistries
+    // )
 
     const options = imageRegistries.map(item => ({
-      label: `${item.url} (${item.value})`,
+      label: item.alias || `${item.url} (${item.value})`,
       value: item.value,
       url: item.url,
     }))
-    return [{ label: `DockerHub`, value: '', url: '' }, ...options]
+    return [{ label: `公共镜像库`, value: '', url: '' }, ...options]
   }
 
   componentDidMount() {

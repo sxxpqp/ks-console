@@ -45,6 +45,7 @@ server:
     url: http://test.bontor.cn:30002
     private: 192.168.4.31:30002
     project: library
+    pid: 1
 
   auth_key: 9c6bb53c-be1b-4a78-63f6-5e225a954c97:fx
 
@@ -204,6 +205,13 @@ client:
                 icon: vnas,
                 clusterModule: devops,
               }
+            - {
+                name: image-manage,
+                title: ImageManage,
+                icon: vnas,
+                clusterModule: devops,
+              }
+
         - name: config
           title: Configuration Center
           icon: ToolOutlined

@@ -133,7 +133,13 @@ export const getSpaceRoleUpdateTemplate = ({
 }
 
 // 获取配置密钥template
-export const getSecretTemplate = ({ username, harborPass, harborUrl }) => {
+// flag false-私有 true-公有
+export const getSecretTemplate = ({
+  username,
+  harborPass,
+  harborUrl,
+  flag = false,
+}) => {
   const auth = base64(`${username}:${harborPass}`)
   return {
     apiVersion: 'v1',
@@ -143,7 +149,7 @@ export const getSecretTemplate = ({ username, harborPass, harborUrl }) => {
       labels: {},
       name: 'harbor-private',
       annotations: {
-        'kubesphere.io/alias-name': '私有仓库',
+        'kubesphere.io/alias-name': flag ? '公有仓库' : '私有仓库',
         'kubesphere.io/creator': username,
       },
     },

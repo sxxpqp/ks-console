@@ -395,13 +395,14 @@ export const removeDevopsProject = async (workspace, devops) => {
 }
 
 // 创建密钥
-export const createSecretConfig = async (username, password) => {
+export const createSecretConfig = async (username, password, flag = false) => {
   const { harbor } = global.server
   // /api/v1/namespaces/liwei1/secrets
   const params = getSecretTemplate({
     username,
     harborPass: password,
     harborUrl: harbor.private,
+    flag,
   })
   const result = await request.post(
     `/api/v1/namespaces/${username}/secrets`,

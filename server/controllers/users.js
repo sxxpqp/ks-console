@@ -296,6 +296,46 @@ export const getUsers = async ctx => {
   }
 }
 
+// 获取用户信息 - 与上面的方法有一定的重复，这个是获取当前用户
+export const getUserInfo = async ctx => {
+  const { users, users_group, users_role, groups, role } = global.models
+  if (ctx.user) {
+    const res = await users.findAll({
+      attributes: Object.keys(omit(users.rawAttributes, 'password')),
+      where: {
+        id: parseInt(ctx.user.id, 10),
+      },
+      include: [
+        {
+          model: users_group,
+          include: [
+            {
+              model: groups,
+            },
+          ],
+        },
+        {
+          model: users_role,
+          include: [
+            {
+              model: role,
+            },
+          ],
+        },
+      ],
+    })
+    ctx.body = {
+      code: 200,
+      data: res,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+      msg: '用户不存在或者参数非法',
+    }
+  }
+}
+
 // 添加用户
 export const addUsers = async ctx => {
   const { body } = ctx.request
@@ -358,7 +398,12 @@ export const addUsers = async ctx => {
   if (repo.status === 200 && repo.data && repo.data.length > 0) {
     const data = repo.data[0]
     const projectId = data.project_id
+    // 添加用户到对应的Project下
     await addUserToRepo(projectId, username)
+    // todo 获取harbor配置，添加到library公共项目中，分配拉取推送权限，无法删除
+    const { harbor } = global.server
+    await addUserToRepo(harbor.pid, username, 2)
+    // 添加用户到公共的Project下
     body.harborPid = projectId
   }
   // 添加私有仓库密钥
@@ -434,7 +479,7 @@ export const editUser = async ctx => {
 
 // 删除用户
 export const removeUser = async ctx => {
-  const { users } = global.models
+  const { users, users_app, users_role, users_group } = global.models
   const { id } = ctx.params
   const user = await users.findAll({
     where: {
@@ -470,6 +515,22 @@ export const removeUser = async ctx => {
     const res = await users.destroy({
       where: {
         id: parseInt(id, 10),
+      },
+    })
+    // 删除的应用
+    await users_app.destroy({
+      where: {
+        username,
+      },
+    })
+    await users_role.destroy({
+      where: {
+        uid: parseInt(id, 10),
+      },
+    })
+    await users_group.destroy({
+      where: {
+        uid: parseInt(id, 10),
       },
     })
     ctx.body = {

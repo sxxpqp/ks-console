@@ -8,6 +8,9 @@ export const editNodes = params => request.post('/edit-nodes', params)
 // 获取应用列表
 export const getAppList = params => request.post('/app-list', params)
 
+// 更新应用
+export const updateApp = params => request.post('/update-app', params)
+
 // 更新应用列表
 export const updateAppList = params => request.post('/update-app-list', params)
 

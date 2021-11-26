@@ -38,6 +38,7 @@ const {
   saveDocker,
   copyApp,
   handlerTransfer,
+  getImages,
 } = require('./controllers/platform')
 
 // resources
@@ -74,11 +75,13 @@ const {
   addGroups,
   editGroups,
   removeGroups,
+  getUserInfo,
 } = require('./controllers/users')
 
 // applications
 const {
   getAppList,
+  updateApp,
   removeApp,
   updateAppList,
   getAppTags,
@@ -167,11 +170,14 @@ router
   .post('/upload', upload) // 上传文件
   .post('/saveDocker', saveDocker) // 容器固化
   .post('/copyApp', copyApp) // 容器固化
+
   // 用户信息CRUD
   .get('/users', getUsers)
   .post('/users', addUsers)
   .post('/edit-users', editUser)
   .delete('/users/:id', removeUser)
+  .get('/user-info', getUserInfo) // 获取用户信息
+
   // 角色信息CRUD
   .get('/roles', getRoles)
   .post('/roles', addRole)
@@ -190,6 +196,7 @@ router
 
   // 应用相关
   .post('/app-list', getAppList)
+  .post('/update-app', updateApp)
   .delete('/remove-app/:id', removeApp)
   .post('/update-app-list', updateAppList)
   // 通过应用名称 获取 应用标签
@@ -207,6 +214,8 @@ router
   .post('/add-app-labels', updateAppTags)
   .post('/reset-app-labels', resetAppTags)
   .post('/batch-app-labels', batchSetAppTags)
+  // harbar镜像数据相关
+  .get('/harbor-images', getImages)
 
 // page entry
 router.all('*', renderView)

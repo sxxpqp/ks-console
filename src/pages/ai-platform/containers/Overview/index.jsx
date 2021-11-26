@@ -1,75 +1,71 @@
 import React from 'react'
 import { observer, inject } from 'mobx-react'
-import { Columns, Column, Button as KButton } from '@kube-design/components'
+import { Columns, Column } from '@kube-design/components'
 import { get } from 'lodash'
 import { Panel } from 'components/Base'
-// import BaseInfo from './BaseInfo'
-import { Statistic, Row, Col, Button } from 'antd'
-// import { toJS } from 'mobx'
+import { Statistic, Row, Col } from 'antd'
 import {
-  // CloudServerOutlined,
   AlertOutlined,
-  // FundProjectionScreenOutlined,
-  // ApiOutlined,
   DesktopOutlined,
   DashboardOutlined,
-  CloudServerOutlined,
-  AppstoreOutlined,
-  ApartmentOutlined,
-  DatabaseOutlined,
-  AppstoreAddOutlined,
-  BarsOutlined,
-  ChromeOutlined,
-  // ExclamationCircleOutlined,
-  // AreaChartOutlined,
 } from '@ant-design/icons'
-
+import GroupStore from 'stores/ai-platform/group'
 import OverviewStore from 'stores/overview'
 import ProjectMonitorStore from 'stores/monitoring/project'
-
-// import ApplicationsList from './ApplicationsList'
-// import Applications from './Applications'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-} from 'recharts'
+import ReviewStore from 'stores/ai-platform/review'
+import ApplicationStore from 'stores/ai-platform/application'
 import ResourceUsage from './ResourceUsage'
 import UsageRanking from './UsageRanking'
+import MyApps from './MyApps'
+import NodesOverview from './Nodes'
+import ShortCut from './ShortCut'
+import GroupResource from './GroupResource'
+import UserResources from './UserResources'
+import Alert from './Alert'
 
-// import Help from './Help'
-// import Quota from './Quota'
-// import LimitRange from './LimitRange'
+// import styles from './index.scss'
 
-import styles from './index.scss'
-
-@inject('rootStore', 'projectStore')
+@inject('rootStore', 'projectStore', 'homeStore')
 @observer
 export default class Overview extends React.Component {
   constructor(props) {
     super(props)
-
     this.overviewStore = new OverviewStore()
     this.appResourceMonitorStore = new ProjectMonitorStore()
+    this.reviewStore = new ReviewStore()
+    this.groupStore = new GroupStore()
+    this.appStore = new ApplicationStore()
 
-    // this.state = {
-    //   apps: '',
-    //   pods: '',
-    //   warn: '',
-    // }
+    this.state = {
+      groupRes: [],
+    }
 
     this.fetchData(this.props.match.params)
+    this.getDetail()
+    this.appStore.getData({
+      current: 1,
+      pageSize: 999999,
+    })
   }
 
   fetchData = params => {
     this.overviewStore.fetchResourceStatus(params)
+  }
+
+  get user() {
+    return this.props.homeStore.user
+  }
+
+  get groups() {
+    return this.props.homeStore.groups
+  }
+
+  get groupName() {
+    return get(this.groups, '[0].group.name')
+  }
+
+  get isAdmin() {
+    return this.groups.map(i => i.isAdmin).includes(1)
   }
 
   get routing() {
@@ -92,6 +88,26 @@ export default class Overview extends React.Component {
     })
   }
 
+  async getDetail() {
+    if (this.isAdmin) {
+      // 说明是组织用户
+      this.groupStore.getNodesData()
+      const gres = await this.reviewStore.getGroupResTotal({
+        id: this.groups.map(i => i.gid).join(','),
+      })
+      this.setState({
+        groupRes: gres.code === 200 ? gres.data : [],
+      })
+    } else {
+      // 说明是单个用户
+      // 查询资源申请信息
+      this.reviewStore.getResTotal()
+      this.reviewStore.params = { pageSize: 999999, current: 1, status: -1 }
+      // 查询资源申请历史
+      this.reviewStore.getApplyHis()
+    }
+  }
+
   handleClick = item => {
     const { workspace, namespace, cluster } = this.props.match.params
     this.routing.push(
@@ -106,155 +122,49 @@ export default class Overview extends React.Component {
 
   componentDidMount() {
     // 保存clusters信息
-    this.props.rootStore.saveClusters(this.props.match.params)
+    this.props.rootStore.myClusters = this.props.match.params
+    // todo 定时1分钟更新
   }
 
-  chartsRender() {
-    const data = [
-      {
-        name: '节点1',
-        cpu: 4000,
-        mem: 2400,
-        disk: 2400,
-        gpu: 2400,
-      },
-      {
-        name: '节点2',
-        cpu: 3000,
-        mem: 1398,
-        disk: 2210,
-        gpu: 2321,
-      },
-      {
-        name: '节点3',
-        cpu: 2000,
-        mem: 9800,
-        disk: 2210,
-        gpu: 2321,
-      },
-      {
-        name: '节点4',
-        cpu: 2000,
-        mem: 9800,
-        disk: 2210,
-        gpu: 2321,
-      },
-      {
-        name: '节点5',
-        cpu: 2000,
-        mem: 9800,
-        disk: 2210,
-        gpu: 2321,
-      },
-    ]
-
-    return (
-      <ResponsiveContainer width="100%" height={260}>
-        <BarChart
-          width={500}
-          // height={300}
-          data={data}
-          margin={{
-            top: 5,
-            right: 5,
-            left: 5,
-            bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="cpu" fill="#5272cd" name="cpu" />
-          <Bar dataKey="mem" fill="#faad14" name="内存" />
-          <Bar dataKey="disk" fill="#82ca9d" name="磁盘" />
-          <Bar dataKey="gpu" fill="#f26e68" />
-        </BarChart>
-      </ResponsiveContainer>
-    )
-  }
-
-  pieChartsRender() {
-    const data = [
-      { name: 'Group A', value: 400 },
-      { name: 'Group B', value: 300 },
-    ]
-
-    // const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042']
-
-    return (
-      <PieChart width={250} height={250}>
-        <Pie
-          data={data}
-          dataKey="value"
-          cx="50%"
-          cy="50%"
-          outerRadius={60}
-          fill="#8884d8"
-        />
-      </PieChart>
-    )
-  }
-
+  // 顶部的资源统计
   renderResource() {
-    return (
-      <Panel title="资源情况">
-        <Row>
-          <Col span={6}>
-            <Statistic
-              title="CPU"
-              value={'12 vCore'}
-              valueStyle={{ color: '#333' }}
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic
-              title="内存"
-              value={'128 GiB'}
-              valueStyle={{ color: '#333' }}
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic
-              title="磁盘"
-              value={'48 GiB'}
-              valueStyle={{ color: '#333' }}
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic
-              title="GPU"
-              value={'4 vCore'}
-              valueStyle={{ color: '#333' }}
-            />
-          </Col>
-        </Row>
-        <Row justify="end">
-          <KButton type={'control'} onClick={() => this.handleClick('apply')}>
-            快速申请
-          </KButton>
-        </Row>
-      </Panel>
-    )
+    if (this.isAdmin) {
+      return <GroupResource groupRes={this.state.groupRes} />
+    }
+    const { countRes } = this.reviewStore
+    return <UserResources countRes={countRes} />
   }
 
   renderPlatform() {
+    const { nodesTotal, nodesFail = 0 } = this.groupStore
+    const { total, totalFail } = this.appStore
+    const { allHis } = this.reviewStore
     return (
       <Panel title="平台总览">
         <Row>
           <Col span={8}>
-            <Statistic
-              title="节点总数/正常"
-              value={'12/3'}
-              valueStyle={{ color: '#333' }}
-              prefix={<DesktopOutlined />}
-            />
+            {this.isAdmin ? (
+              <Statistic
+                title="节点总数/正常"
+                value={`${nodesTotal}/${nodesTotal - nodesFail}`}
+                valueStyle={{ color: '#333' }}
+                prefix={<DesktopOutlined />}
+              />
+            ) : (
+              <Statistic
+                title="申请总数/审批中"
+                value={`${allHis.length}/${
+                  allHis.filter(i => i.status === 0).length
+                }`}
+                valueStyle={{ color: '#333' }}
+                prefix={<DesktopOutlined />}
+              />
+            )}
           </Col>
           <Col span={8}>
             <Statistic
               title="运行容器/异常容器"
-              value={'48/2'}
+              value={`${total}/${totalFail}`}
               valueStyle={{ color: '#333' }}
               prefix={<DashboardOutlined />}
             />
@@ -262,84 +172,10 @@ export default class Overview extends React.Component {
           <Col span={8}>
             <Statistic
               title="告警统计/已读"
-              value={'4/0'}
+              value={'0/0'}
               valueStyle={{ color: '#333' }}
               prefix={<AlertOutlined />}
             />
-          </Col>
-        </Row>
-      </Panel>
-    )
-  }
-
-  renderAlert() {
-    return (
-      <Panel title="告警信息">
-        123
-        <Row justify="end">
-          <Button type="link" onClick={() => this.handleClick('more')}>
-            查看更多
-          </Button>
-        </Row>
-      </Panel>
-    )
-  }
-
-  renderQuick() {
-    return (
-      <Panel title="快捷访问">
-        <Row className="margin-b12">
-          <Col span={6}>
-            <div className={styles.icon}>
-              <div>
-                <CloudServerOutlined style={{ fontSize: '24px' }} />
-              </div>
-              <span>申请资源</span>
-            </div>
-          </Col>
-          <Col span={6}>
-            <div className={styles.icon}>
-              <BarsOutlined style={{ fontSize: '24px' }} />
-              <span>申请历史</span>
-            </div>
-          </Col>
-          <Col span={6}>
-            <div className={styles.icon}>
-              <AppstoreAddOutlined style={{ fontSize: '24px' }} />
-              <span>创建应用</span>
-            </div>
-          </Col>
-          <Col span={6}>
-            <div className={styles.icon}>
-              <AppstoreOutlined style={{ fontSize: '24px' }} />
-              <span>应用管理</span>
-            </div>
-          </Col>
-        </Row>
-        <Row className="margin-b12">
-          <Col span={6}>
-            <div className={styles.icon}>
-              <AlertOutlined style={{ fontSize: '24px' }} />
-              <span>告警信息</span>
-            </div>
-          </Col>
-          <Col span={6}>
-            <div className={styles.icon}>
-              <DatabaseOutlined style={{ fontSize: '24px' }} />
-              <span>资源详情</span>
-            </div>
-          </Col>
-          <Col span={6}>
-            <div className={styles.icon}>
-              <ApartmentOutlined style={{ fontSize: '24px' }} />
-              <span>节点管理</span>
-            </div>
-          </Col>
-          <Col span={6}>
-            <div className={styles.icon}>
-              <ChromeOutlined style={{ fontSize: '24px' }} />
-              <span>镜像管理</span>
-            </div>
           </Col>
         </Row>
       </Panel>
@@ -354,40 +190,20 @@ export default class Overview extends React.Component {
 
     return (
       <div>
-        <div className="h3 margin-b12">你好！{globals.user.username}</div>
+        <div className="h3 margin-b12">
+          你好！{this.groupName} - {this.user.name}
+        </div>
         <Columns>
           <Column className="is-8">
             {this.renderResource()}
             {this.renderPlatform()}
-            <Panel title="节点资源统计">
-              <div>{this.chartsRender()}</div>
-              <Row justify="end">
-                <Button type="link" onClick={() => this.handleClick('more')}>
-                  查看更多
-                </Button>
-              </Row>
-            </Panel>
-            <Panel title="运行容器统计">
-              <Row>
-                <Col span={8}>{this.pieChartsRender()}</Col>
-                <Col span={16}>
-                  123
-                  <Row justify="end">
-                    <Button
-                      type="link"
-                      onClick={() => this.handleClick('more')}
-                    >
-                      查看更多
-                    </Button>
-                  </Row>
-                </Col>
-              </Row>
-            </Panel>
-            {this.renderAlert()}
+            {this.isAdmin && <NodesOverview groupStore={this.groupStore} />}
+            <MyApps lists={this.appStore.lists} store={this.appStore} />
+            <Alert />
           </Column>
           <Column className="is-4">
-            {this.renderQuick()}
-            <UsageRanking match={this.props.match} />
+            <ShortCut isAdmin={this.isAdmin} />
+            <UsageRanking match={this.props.match} appStore={this.appStore} />
             <ResourceUsage match={this.props.match} />
           </Column>
         </Columns>

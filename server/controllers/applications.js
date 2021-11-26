@@ -2,17 +2,66 @@ import { omit } from 'lodash'
 import { Op, fn, col } from 'sequelize'
 import { getK8sAppList } from '../services/platform'
 import request from '../libs/axios'
-
+import { getAllChildIds } from '../libs/utils'
 // 获取应用列表
 export const getAppList = async ctx => {
-  const { current, pageSize, name, tagId, status, type } = ctx.request.body
-  const { users_app, app_labels, labels } = global.models
+  const { current, pageSize, name, tagId, status, type, pid } = ctx.request.body
+  const {
+    users_app,
+    app_labels,
+    labels,
+    users_group,
+    users,
+    groups,
+  } = global.models
   const conditions = {
     order: [['created', 'DESC']],
     limit: parseInt(pageSize, 10) || 10,
     offset: (parseInt(current || 1, 10) - 1) * (parseInt(pageSize, 10) || 10),
   }
-  let where = {}
+  // 获取所有组信息
+  let appGroupWhere = {}
+  if (pid) {
+    const allGroups = await groups.findAll({})
+    const arrIds = [pid]
+    arrIds.push(getAllChildIds(allGroups, pid))
+    const workspaces = allGroups
+      .filter(i => arrIds.includes(i.id))
+      .map(i => i.code)
+    appGroupWhere = {
+      workspace: {
+        [Op.in]: workspaces,
+      },
+    }
+  }
+
+  // 判断是否是组管理员
+  const tmpGroups = await users_group.findAll({
+    where: {
+      uid: ctx.user.id,
+    },
+  })
+  let groupWhere = {}
+  tmpGroups.forEach(i => {
+    if (i.isAdmin) {
+      groupWhere = {
+        ...groupWhere,
+        [Op.or]: {
+          workspace: i.workspace,
+        },
+      }
+    } else {
+      groupWhere = {
+        ...groupWhere,
+        [Op.or]: {
+          namespace: i.namespace,
+        },
+      }
+    }
+  })
+
+  // 非组管理员，只能看到自己的应用
+  let where = { ...groupWhere, ...appGroupWhere }
   if (name) {
     where = {
       ...where,
@@ -67,7 +116,22 @@ export const getAppList = async ctx => {
   const res = await users_app.findAndCountAll({
     attributes: Object.keys(omit(users_app.rawAttributes, ['meta'])),
     where,
-    include,
+    include: [
+      ...include,
+      {
+        model: users,
+        include: [
+          {
+            model: users_group,
+            include: [
+              {
+                model: groups,
+              },
+            ],
+          },
+        ],
+      },
+    ],
     ...conditions,
   })
   if (res && res.rows) {
@@ -81,6 +145,35 @@ export const getAppList = async ctx => {
       code: 500,
       msg: '请求应用列表失败',
     }
+  }
+}
+
+// 更新应用
+export const updateApp = async ctx => {
+  const { appId, name, tagId } = ctx.request.body
+  const { users_app, app_labels } = global.models
+  const updateRes = await users_app.update(
+    {
+      name,
+    },
+    {
+      where: {
+        appId,
+      },
+    }
+  )
+  await app_labels.destroy({
+    where: { appId },
+  })
+  const arr = tagId.map(i => ({
+    appId,
+    tagId: i,
+  }))
+  const result = await app_labels.bulkCreate(arr)
+  ctx.body = {
+    code: 200,
+    data: result,
+    update: updateRes,
   }
 }
 

@@ -559,4 +559,5 @@ module.exports = {
   PodManage: '运行容器管理',
   TemplateApp:
     '用户可以基于自有的镜像或者代码进行创建应用，或者使用平台已有的应用模板来创建容器应用',
+  ImageManage: '镜像管理',
 }
