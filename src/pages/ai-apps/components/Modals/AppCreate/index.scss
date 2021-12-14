@@ -5,8 +5,8 @@
 }
 
 .header {
-  margin-bottom: 38px;
-  height: 180px;
+  margin-bottom: 30px;
+  height: 100px;
   background-color: $card-bg-color;
 
   img {
@@ -17,7 +17,7 @@
   }
 
   .title {
-    padding: 46px 0 12px;
+    padding: 20px 20px 15px;
     line-height: 28px;
     font-size: 20px;
     color: $head-color;
@@ -25,6 +25,7 @@
   }
 
   .description {
+    padding-left: 20px;
     margin-right: 32px;
     line-height: 20px;
     font-size: 12px;
