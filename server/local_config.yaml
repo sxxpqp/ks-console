@@ -35,6 +35,12 @@ server:
     password: "1"
     port: 33022
 
+  ssh:
+    host: test.bontor.cn
+    port: 33033
+    username: root
+    password: Xl123456..
+
   kpiAdmin:
     username: admin
     password: P@88w0rd
@@ -43,7 +49,7 @@ server:
     username: admin
     password: Harbor12345
     url: http://test.bontor.cn:30002
-    private: 192.168.4.31:30002
+    private: http://192.168.4.31:30002
     project: library
     pid: 1
 
@@ -65,6 +71,8 @@ server:
 
   # backend service gateway server
   apiServer:
+    clientID: kubesphere
+    clientSecret: kubesphere
     # url: http://192.168.4.35:30881
     # wsUrl: ws://192.168.4.35:30881
     url: http://test.bontor.cn:30881
@@ -91,8 +99,8 @@ client:
   reposUrl: https://github.com/kubesphere/kubesphere
   slackUrl: https://kubesphere.slack.com
   documents:
-    url: https://v3-1.docs.kubesphere.io/docs
-    api: https://v3-1.docs.kubesphere.io/docs/reference/api-docs/
+    url: https://kubesphere.com.cn/docs
+    api: https://kubesphere.com.cn/docs/reference/api-docs/
 
   # current support lanaguages
   supportLangs:
@@ -141,7 +149,7 @@ client:
     - cate: "project"
       items:
         - {
-            name: overview,
+            name: home,
             title: Overview,
             icon: HomeOutlined,
             authKey: "services",
@@ -193,7 +201,7 @@ client:
               }
             - {
                 # 这里的name对应路由的路径
-                name: devops/ks-consolekkwfw,
+                name: devops,
                 title: DevOps Projects,
                 icon: strategy-group,
                 ksModule: devops,
@@ -224,12 +232,17 @@ client:
           title: Monitoring & Alerting
           icon: DashboardOutlined
           children:
-            - {
-                name: monitor-cluster,
-                title: Cluster Status,
-                icon: linechart,
-                authKey: monitoring,
-              }
+            - name: monitor-cluster
+              title: Cluster Status
+              icon: linechart
+              authKey: monitoring
+              tabs:
+                - { name: overview1, title: Overview }
+                - { name: resource, title: Resource }
+                - { name: etcd, title: Etcd }
+                - { name: api-server, title: ApiServer }
+                - { name: scheduler, title: Scheduler }
+                - { name: ranking, title: Ranking }
             - {
                 name: monitor-resource,
                 title: Application Resources,

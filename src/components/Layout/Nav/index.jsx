@@ -61,9 +61,9 @@ class Nav extends React.Component {
       collapse: false,
     }
 
-    const { navs } = this.props
-    const navData = navs.length > 0 ? navs[0].items : []
-    navData.forEach(nav => {
+    // const { navs } = this.props
+    // const navData = navs.length > 0 ? navs[0].items : []
+    this.navData.forEach(nav => {
       this.state.names = {
         ...this.state.names,
         [nav.name]:
@@ -72,6 +72,7 @@ class Nav extends React.Component {
             : nav.name,
       }
     })
+    // this.setState({ navData })
   }
 
   toggleCollapsed = () => {
@@ -84,25 +85,37 @@ class Nav extends React.Component {
     this.unsubscribe = this.routing.history.subscribe(location => {
       const { state } = location
       // debugger
-      if (state) {
-        // eslint-disable-next-line no-console
-        this.setState({
-          selectedKeys: [state.name],
-          openKeys: this.getOpenedNav(state.name),
-        })
-        this.props.rootStore.saveSelectNavKey(state.name)
-      } else {
-        const name = this.props.rootStore.selectNavKey
-        this.setState({
-          selectedKeys: [name],
-          openKeys: this.getOpenedNav(name),
-        })
+      // if (state) {
+      // eslint-disable-next-line no-console
+      let name = state?.name || this.getCurrentPath(location.pathname)
+      if (name.indexOf('/') !== -1) {
+        name = name.split('/')[0]
       }
+      this.setState({
+        selectedKeys: this.getNavName(name),
+        openKeys: this.getOpenedNav(name),
+      })
+      //   this.props.rootStore.saveSelectNavKey(name)
+      // } else {
+      //   const name = this.props.rootStore.selectNavKey
+      //   this.setState({
+      //     selectedKeys: [name],
+      //     openKeys: this.getOpenedNav(name),
+      //   })
+      // }
     })
   }
 
   componentWillUnmount() {
     this.unsubscribe && this.unsubscribe()
+  }
+
+  getCurrentPath(path) {
+    const {
+      match: { url },
+    } = this.props
+    const length = trimEnd(url, '/').length
+    return path.slice(length + 1) || 'home'
   }
 
   get currentPath() {
@@ -112,39 +125,72 @@ class Nav extends React.Component {
     } = this.props
 
     const length = trimEnd(url, '/').length
-    return pathname.slice(length + 1)
+    return pathname.slice(length + 1) || 'home'
+  }
+
+  get navData() {
+    const { navs } = this.props
+    return navs.length > 0 ? navs[0].items : []
   }
 
   getNavName(path) {
-    // debugger
     let name = ''
-    const { match } = this.props
-    const { names } = this.state
-    const prefix = trimEnd(match.url, '/')
-    Object.keys(names).forEach(key => {
-      if (names[key] instanceof Array) {
-        name = names[key].filter(
-          p => path.indexOf(`${prefix}/${p.name}`) !== -1
-        )[0]
-      } else if (path.indexOf(names[key]) !== -1) {
-        name = names[key]
+    for (let t = 0; t < this.navData.length; t++) {
+      const nav = this.navData[t]
+      if (nav.name === path) {
+        name = nav.name
+        break
       }
-    })
-    return name
+      if (nav.children && nav.children.length) {
+        for (let j = 0; j < nav.children.length; j++) {
+          const item = nav.children[j]
+          if (item.name === path) {
+            name = item.name
+            break
+          }
+          if (item.tabs && item.tabs.length) {
+            for (let i = 0; i < item.tabs.length; i++) {
+              const tab = item.tabs[i]
+              if (tab.name === path) {
+                name = item.name
+                break
+              }
+            }
+          }
+        }
+      }
+    }
+    return [name]
   }
 
   getOpenedNav(path) {
     let results = []
-    const { names } = this.state
-    Object.keys(names).forEach(key => {
-      if (
-        names[key] instanceof Array
-          ? names[key].some(p => p === path)
-          : path === names[key]
-      ) {
-        results = [key]
+    for (let t = 0; t < this.navData.length; t++) {
+      const nav = this.navData[t]
+      const name = nav.name
+      if (name === path) {
+        results = [name]
+        break
       }
-    })
+      if (nav.children && nav.children.length) {
+        for (let j = 0; j < nav.children.length; j++) {
+          const item = nav.children[j]
+          if (item.name === path) {
+            results = [nav.name]
+            break
+          }
+          if (item.tabs && item.tabs.length) {
+            for (let i = 0; i < item.tabs.length; i++) {
+              const tab = item.tabs[i]
+              if (tab.name === path) {
+                results = [nav.name]
+                break
+              }
+            }
+          }
+        }
+      }
+    }
     return results
   }
 
@@ -211,7 +257,7 @@ class Nav extends React.Component {
                     }}
                     link={item.link}
                     name={t(item.title)}
-                    indent={!!item.link}
+                    indent={(!!item.link).toString()}
                   >
                     {t(item.title)}
                   </Link>
