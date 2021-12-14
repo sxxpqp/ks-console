@@ -34,7 +34,7 @@ export default class AppCreate extends Component {
         {...rest}
       >
         <div className={classnames(styles.header, 'clearfix')}>
-          <img src="/assets/application.svg" alt="" />
+          {/* <img src="/assets/application.svg" alt="" /> */}
           <div className={styles.title}> {'创建容器应用模板'}</div>
           <div className={styles.description}>
             {
