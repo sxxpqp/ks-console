@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 import React from 'react'
 import Banner from 'components/Cards/Banner'
-import { Modal } from 'components/Base'
+// import { Modal } from 'components/Base'
 import { withProjectList, ListPage } from 'components/HOCs/withList'
 import {
   Level,
@@ -10,19 +10,37 @@ import {
   LevelLeft,
   LevelRight,
   Button as KButton,
-  InputSearch,
   Pagination,
   Notify,
 } from '@kube-design/components'
-import { Table, Switch, Button, Tag } from 'antd'
+import {
+  Table,
+  Switch,
+  Button,
+  Tag,
+  Modal,
+  Row,
+  Col,
+  Form,
+  Radio,
+  Input,
+} from 'antd'
 import MenuModal from 'components/Modals/MenuCreate'
 
 import UserStore from 'stores/user'
 import RoleStore from 'stores/role'
 import * as Icons from '@ant-design/icons'
-import { getMenus, addMenu, removeMenu, editMenu } from 'api/users'
+import {
+  getMenus,
+  addMenu,
+  removeMenu,
+  editMenu,
+  batchRemoveMenu,
+} from 'api/users'
 import { getTreeData } from 'utils/menu'
 import DeleteModal from 'components/Modals/Delete'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import CreateAndEditModal from './form'
 import styles from './index.scss'
 
 @withProjectList({
@@ -40,20 +58,40 @@ export default class Members extends React.Component {
     this.state = {
       checkStrictly: false,
       data: [],
+      show: false,
+      isEdit: false,
+      item: null,
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
+        name: '',
+        status: '',
+        onChange: this.handlePaginationChange.bind(this),
+      },
+      selectedRowKeys: [],
+      selectedRows: [],
     }
+    this.form = React.createRef()
   }
 
   async getData() {
-    const { status, data } = await getMenus()
-    if (status === 200) {
+    const { code, data } = await getMenus(this.state.pagination)
+    if (code === 200) {
+      const tree = getTreeData(data, -1)
       this.setState({
-        data: getTreeData(data.data, null),
+        data: tree || [],
+        total: tree.length || 0,
       })
     }
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.getData()
+    this.form &&
+      this.form.current.setFieldsValue({
+        status: '',
+      })
   }
 
   // get tips() {
@@ -121,7 +159,8 @@ export default class Members extends React.Component {
         render: (status, record) => {
           return (
             <Switch
-              defaultChecked={status === 0}
+              defaultChecked={status === 1}
+              checked={status === 1}
               onClick={() => this.setMenuStatus(record)}
             />
           )
@@ -129,8 +168,9 @@ export default class Members extends React.Component {
       },
       {
         title: '操作菜单',
+        width: '20%',
         render: (text, record) => (
-          <>
+          <div className={styles.btns}>
             <Button
               type="text"
               size="small"
@@ -149,80 +189,46 @@ export default class Members extends React.Component {
               <Icons.ExportOutlined />
               删除
             </Button>
-          </>
+          </div>
         ),
       },
     ]
   }
 
-  handleEdit(record) {
-    let { data: treeData } = this.state
-    treeData = this.formatData(treeData)
-    const modal = Modal.open({
-      onOk: async data => {
-        try {
-          const { status, data: resData } = await editMenu(data)
-          if (status === 200) {
-            this.getData()
-            Modal.close(modal)
-            Notify.success({ content: `更新菜单成功` })
-          } else {
-            Notify.error({ content: `更新失败，请重新提交` })
-          }
-        } catch (error) {
-          Modal.close(modal)
-          Notify.error({ content: `服务请求异常')}` })
-        }
-      },
-      title: '编辑菜单',
-      modal: MenuModal,
-      formTemplate: { ...record },
-      module,
-      treeData,
-    })
-  }
-
-  handleRemove(item) {
-    const modal = Modal.open({
-      onOk: async () => {
-        // store.delete(detail).then(() => {
-        const res = await removeMenu({
-          id: item.id,
-        })
-        if (res.status === 200) {
-          Notify.success({ content: `删除成功` })
-          this.getData()
-        } else {
-          Notify.error({ content: `删除失败` })
-        }
-        Modal.close(modal)
-        // success && success()
-        // })
-      },
-      modal: DeleteModal,
-      title: '确定删除？',
-      desc: `确定删除 ${t(item.name) || item.name} 的菜单吗？`,
-      resource: item.name,
-      // resource: ``,
-      // ...props,
-    })
+  handlePaginationChange = value => {
+    this.state.pagination = { ...this.state.pagination, current: value }
+    this.getData()
   }
 
   setMenuStatus(record) {
-    editMenu({
-      id: record.id,
-      status: record.status === 0 ? 1 : 0,
+    const msg =
+      record.status === 0
+        ? `确定禁用"${record.name}"菜单吗？`
+        : `确定启用"${record.name}"菜单吗？`
+    Modal.confirm({
+      title: msg,
+      icon: <ExclamationCircleOutlined />,
+      centered: true,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        editMenu({
+          id: record.id,
+          status: record.status === 0 ? 1 : 0,
+        })
+          .then(res => {
+            if (res.code === 200) {
+              Notify.success({ content: `更新菜单成功` })
+            } else {
+              Notify.error({ content: `更新失败，请重试` })
+            }
+            this.getData()
+          })
+          .catch(err => {
+            Notify.error({ content: `服务端错误，接口请求失败` })
+          })
+      },
     })
-      .then(res => {
-        if (res.status === 200) {
-          Notify.success({ content: `更新菜单成功` })
-        } else {
-          Notify.error({ content: `更新失败，请重试` })
-        }
-      })
-      .catch(err => {
-        Notify.error({ content: `服务端错误，接口请求失败` })
-      })
   }
 
   formatData(arr) {
@@ -240,128 +246,272 @@ export default class Members extends React.Component {
     return arr
   }
 
-  handleCreateMenu() {
-    let { data: treeData } = this.state
-    treeData = this.formatData(treeData)
-    const modal = Modal.open({
-      onOk: async data => {
-        try {
-          const { status, data: resData } = await addMenu(data)
-          if (status === 200 && resData.data.id) {
+  handleCreate() {
+    this.setState({ isEdit: false, show: true })
+  }
+
+  handleEdit(record) {
+    this.setState({ isEdit: true, show: true, item: record })
+  }
+
+  handleRemove(item) {
+    Modal.confirm({
+      title: `确定删除 ${t(item.name) || item.name} 的菜单吗？`,
+      icon: <ExclamationCircleOutlined />,
+      centered: true,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        removeMenu({
+          id: item.id,
+        }).then(res => {
+          if (res.code === 200) {
+            Notify.success('删除成功')
+            // this.selectNode(null)
             this.getData()
-            Modal.close(modal)
-            Notify.success({ content: `${t('Created Successfully')}` })
           } else {
-            Notify.error({ content: `创建失败，请重新提交` })
+            Notify.success('删除失败，请重试')
           }
-        } catch (error) {
-          Modal.close(modal)
-          Notify.error({ content: `服务请求异常')}` })
-        }
+        })
       },
-      title: '创建菜单',
-      modal: MenuModal,
-      formTemplate: {},
-      module,
-      treeData,
     })
   }
 
-  renderNormalTitle() {
-    const { hideCustom, columns } = this.props
-    const { hideColumns } = this.state
-
-    return (
-      <div className={styles['table-title']}>
-        <Level>
-          <LevelItem>
-            <InputSearch
-              className={styles.search}
-              // value={filters[searchType]}
-              onSearch={this.handleSearch}
-              placeholder="请输入名称搜索"
-            />
-          </LevelItem>
-          <LevelRight>
-            <div>
-              <KButton
-                type="flat"
-                icon="refresh"
-                onClick={this.handleRefresh}
-                data-test="table-refresh"
-              />
-            </div>
-            <KButton type="control" onClick={this.handleCreateMenu.bind(this)}>
-              创建菜单
-            </KButton>
-          </LevelRight>
-        </Level>
-      </div>
-    )
+  handleBatchDelete() {
+    // const menuName = this.state.selectedRows.map(i => i.name).join(',')
+    Modal.confirm({
+      title: `确定删除所选的菜单吗？`,
+      icon: <ExclamationCircleOutlined />,
+      centered: true,
+      okText: '确认',
+      cancelText: '取消',
+      onOk: () => {
+        this.setState({
+          selectedRowKeys: [],
+          selectedRows: [],
+        })
+        batchRemoveMenu({
+          ids: this.state.selectedRowKeys,
+        }).then(res => {
+          if (res.code === 200) {
+            Notify.success('删除成功')
+            // this.selectNode(null)
+            this.getData()
+          } else {
+            Notify.success('删除失败，请重试')
+          }
+        })
+      },
+    })
   }
 
-  renderTableFooter = () => {
-    const total = 10
-    const page = 1
-    const limit = 10
+  handleInputChange(val) {
+    if (!val) {
+      this.setState(
+        {
+          pagination: {
+            ...this.state.pagination,
+            name: '',
+          },
+        },
+        () => {
+          this.getData()
+        }
+      )
+    }
+  }
 
-    return (
-      <div className={styles['table-footer']}>
-        <Level>
-          <LevelLeft>{t('TOTAL_ITEMS', { num: total })}</LevelLeft>
-          <LevelRight>
-            <Pagination
-              page={page}
-              total={total}
-              limit={limit}
-              onChange={this.handlePagination}
-            />
-          </LevelRight>
-        </Level>
-      </div>
+  handleRadioChange(val) {
+    this.setState(
+      {
+        pagination: {
+          ...this.state.pagination,
+          status: val,
+        },
+      },
+      () => {
+        this.getData()
+      }
     )
   }
 
   render() {
-    const { bannerProps } = this.props
-    const { checkStrictly, data } = this.state
+    const { checkStrictly, data, item, show, isEdit, pagination } = this.state
 
     const rowSelection = {
+      selectedRowKeys: this.state.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(
-          `selectedRowKeys: ${selectedRowKeys}`,
-          'selectedRows: ',
-          selectedRows
-        )
+        this.setState({
+          selectedRowKeys,
+          selectedRows,
+        })
       },
-      onSelect: (record, selected, selectedRows) => {
-        console.log(record, selected, selectedRows)
-      },
-      onSelectAll: (selected, selectedRows, changeRows) => {
-        console.log(selected, selectedRows, changeRows)
-      },
+      // onSelect: (record, selected, selectedRows) => {
+      //   console.log(record, selected, selectedRows)
+      // },
+      // onSelectAll: (selected, selectedRows, changeRows) => {
+      //   console.log(selected, selectedRows, changeRows)
+      // },
+    }
+
+    const onCancel = () => {
+      this.setState({ show: false })
+    }
+
+    // 创建和编辑的回调
+    const onSubmit = async res => {
+      if (!isEdit) {
+        const { code } = await addMenu(res)
+        // const { code } = await this.store.addData(res)
+        code === 200 ? Notify.success('添加成功') : Notify.error('添加失败')
+      } else {
+        const { code } = await editMenu(res)
+        code === 200 ? Notify.success('更新成功') : Notify.error('更新失败')
+      }
+      this.setState({ show: false })
+      this.getData()
+    }
+
+    // 清空
+    const onReset = () => {
+      this.form &&
+        this.form.current.setFieldsValue({
+          status: '',
+          name: '',
+        })
+      this.setState(
+        {
+          pagination: {
+            ...this.state.pagination,
+            current: 1,
+            pageSize: 10,
+            total: 0,
+            name: '',
+            status: '',
+          },
+        },
+        () => {
+          this.getData()
+        }
+      )
+    }
+
+    const onSearch = () => {
+      const params = this.form.current.getFieldsValue()
+      this.setState(
+        {
+          pagination: {
+            ...this.state.pagination,
+            ...params,
+          },
+        },
+        () => {
+          this.getData()
+        }
+      )
     }
 
     return (
-      <ListPage {...this.props} className={styles.wrapper}>
-        <Banner
-          // {...bannerProps}
-          // tips={this.tips}
-          title="平台菜单"
-          description="用于管理平台的菜单与层级结构"
-        />
+      <div className={styles.wrapper}>
+        <Banner title="平台菜单" description="用于管理平台的菜单与层级结构" />
         <div className={styles.table}>
-          {this.renderNormalTitle()}
+          <div className="table-title">
+            <Form ref={this.form}>
+              <Row
+                justify="space-between"
+                align="middle"
+                className="margin-b12"
+              >
+                <Row justify="space-around" gutter={15}>
+                  <Col>
+                    <Form.Item label="是否启用" name="status">
+                      <Radio.Group
+                        onChange={e => this.handleRadioChange(e.target.value)}
+                      >
+                        <Radio value={''}>全部</Radio>
+                        <Radio value={1}>启用</Radio>
+                        <Radio value={0}>禁用</Radio>
+                      </Radio.Group>
+                    </Form.Item>
+                  </Col>
+                  <Col>
+                    <Row justify="space-between">
+                      <Col>
+                        <Form.Item
+                          label="菜单名称"
+                          name="name"
+                          style={{ width: '280px', marginRight: '10px' }}
+                        >
+                          <Input
+                            placeholder="请输入筛选的菜单名称"
+                            allowClear
+                            onChange={e =>
+                              this.handleInputChange(e.target.value)
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item>
+                          <KButton type="control" onClick={onSearch}>
+                            搜索
+                          </KButton>
+                          <KButton type="default" onClick={onReset}>
+                            清空
+                          </KButton>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+                <Col>
+                  <Form.Item>
+                    <KButton
+                      type="control"
+                      onClick={this.handleCreate.bind(this)}
+                    >
+                      新增菜单
+                    </KButton>
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+            {this.state.selectedRowKeys.length > 0 && (
+              <Row className="margin-b12">
+                <Col>
+                  {/* <KButton
+                    type="control"
+                    onClick={() => this.handleBatchEdit()}
+                  >
+                    批量设置
+                  </KButton> */}
+                  <KButton
+                    type="danger"
+                    onClick={() => this.handleBatchDelete()}
+                  >
+                    批量删除
+                  </KButton>
+                </Col>
+              </Row>
+            )}
+          </div>
           <Table
             rowKey="id"
             columns={this.tableColumns}
             rowSelection={{ ...rowSelection, checkStrictly }}
             dataSource={data}
-            pagination={false}
+            pagination={pagination}
           />
-          {this.renderTableFooter()}
         </div>
-      </ListPage>
+        <CreateAndEditModal
+          show={show}
+          isEdit={isEdit}
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+          treeData={data}
+          item={item}
+        ></CreateAndEditModal>
+      </div>
     )
   }
 }

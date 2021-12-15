@@ -1,5 +1,5 @@
 import { observable, action, computed } from 'mobx'
-import { getUserInfo, getImages } from 'api/users'
+import { getUserInfo, getImages, getImageTags } from 'api/users'
 
 export default class HomeStore {
   constructor() {
@@ -27,6 +27,19 @@ export default class HomeStore {
     total: 0,
     type: 1,
     name: '',
+    onChange: this.handlePaginationChange,
+  }
+
+  @observable
+  loading = false
+
+  @observable
+  tagPagination = {
+    pageSize: 10,
+    current: 1,
+    total: 0,
+    name: '',
+    onChange: this.handleTabsPaginationChange,
   }
 
   @observable
@@ -34,6 +47,9 @@ export default class HomeStore {
 
   @observable
   imageList = []
+
+  @observable
+  tagsList = []
 
   @action
   getUser() {
@@ -48,14 +64,47 @@ export default class HomeStore {
 
   @action
   getUserImages() {
-    getImages(this.pagination).then(res => {
+    this.loading = true
+    getImages(this.pagination)
+      .then(res => {
+        if (res.code === 200) {
+          this.imageList = res.data
+          this.pagination = {
+            ...this.pagination,
+            total: res.total || 0,
+          }
+        }
+      })
+      .finally(() => {
+        this.loading = false
+      })
+  }
+
+  @action
+  handlePaginationChange = value => {
+    this.pagination = { ...this.pagination, current: value }
+    this.getUserImages()
+  }
+
+  @action
+  getUserImagesTags() {
+    getImageTags(this.tagPagination).then(res => {
       if (res.code === 200) {
-        this.imageList = res.data
-        this.pagination = {
-          ...this.pagination,
+        this.tagsList = res.data
+        this.tagPagination = {
+          ...this.tagPagination,
           total: res.total || 0,
         }
       }
     })
+  }
+
+  @action
+  handleTabsPaginationChange = value => {
+    this.tagPagination = {
+      ...this.tagPagination,
+      current: value,
+    }
+    this.getUserImagesTags()
   }
 }

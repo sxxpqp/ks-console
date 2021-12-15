@@ -72,24 +72,24 @@ export default class AppBanner extends Component {
     })
   }
 
-  get tips() {
-    return [
-      {
-        title: t('Pipeline'),
-        description: t('PIPELINE_DESC'),
-      },
-      {
-        title: t('Credentials'),
-        description: t('CREDENTIALS_DESC'),
-        // operation: this.canDeployComposingApp ? (
-        //   <Button onClick={this.showDeploySampleApp}>
-        //     {t('Deploy Sample App')}
-        //   </Button>
-        // ) : null,
-        // closable: false,
-      },
-    ]
-  }
+  // get tips() {
+  //   return [
+  //     {
+  //       title: t('Pipeline'),
+  //       description: t('PIPELINE_DESC'),
+  //     },
+  //     {
+  //       title: t('Credentials'),
+  //       description: t('CREDENTIALS_DESC'),
+  //       // operation: this.canDeployComposingApp ? (
+  //       //   <Button onClick={this.showDeploySampleApp}>
+  //       //     {t('Deploy Sample App')}
+  //       //   </Button>
+  //       // ) : null,
+  //       // closable: false,
+  //     },
+  //   ]
+  // }
 
   render() {
     // 调整说明内容
@@ -99,7 +99,7 @@ export default class AppBanner extends Component {
         {...this.props}
         description={t('DEVOPS_DESCRIPTION')}
         tabs={!globals.app.hasKSModule('openpitrix') ? undefined : this.tabs}
-        tips={this.tips}
+        // tips={this.tips}
       />
     )
   }

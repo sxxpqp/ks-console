@@ -68,10 +68,15 @@ export default [
       ...monitorRoutes,
       // 部署应用相关
       getIndexRoute({
-        path: `${PATH}/devops/:devops`,
-        to: `${PATH}/devops/:devops/pipelines`,
+        path: `${PATH}/devops`,
+        to: `${PATH}/devops/pipelines`,
         exact: true,
       }),
+      // getIndexRoute({
+      //   path: `${PATH}/devops/:devops`,
+      //   to: `${PATH}/devops/:devops/pipelines`,
+      //   exact: true,
+      // }),
       // 审核相关路由
       {
         // 申请
@@ -116,7 +121,8 @@ export default [
         exact: true,
       },
       {
-        path: `${PATH}/devops/:devops/pipelines`,
+        // path: `${PATH}/devops/:devops/pipelines`,
+        path: `${PATH}/devops/pipelines`,
         component: PipelinesList,
         exact: true,
       },
@@ -126,8 +132,9 @@ export default [
         exact: true,
       },
       {
-        path: `${PATH}/overview`,
+        path: `${PATH}/home`,
         component: Overview,
+        name: 'overview',
         exact: true,
       },
       {
@@ -136,7 +143,8 @@ export default [
         exact: true,
       },
       {
-        path: `${PATH}/applications/template`,
+        path: `${PATH}/applications`,
+        // path: `${PATH}/applications/template`,
         // component: OPApps,
         component: CustomApplications,
         exact: true,
@@ -239,7 +247,7 @@ export default [
         to: `${PATH}/applications/${getDefaultAppType()}`,
         exact: true,
       }),
-      getIndexRoute({ path: PATH, to: `${PATH}/overview`, exact: true }),
+      getIndexRoute({ path: PATH, to: `${PATH}/home`, exact: true }),
       // 测试重定向
       // {
       //   path: `${PATH}/devops1`,

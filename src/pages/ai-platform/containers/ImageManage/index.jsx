@@ -16,24 +16,31 @@ import {
 } from 'antd'
 
 import {
+  Notify,
+  Button as KButton,
+  // Notify
+} from '@kube-design/components'
+
+import {
   EyeOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
 } from '@ant-design/icons'
 
-import {
-  Button as KButton,
-  // Notify
-} from '@kube-design/components'
-import { observer, inject } from 'mobx-react'
-
+import { withProjectList } from 'components/HOCs/withList'
+// import { toJS } from 'mobx'
 import dayjs from 'dayjs'
+import { copyToClipboard } from 'utils/dom'
+import S2IBuilderStore from 'stores/s2i/builder'
 import styles from './index.scss'
-
 // const { Option } = Select
+import ImageTagsDetail from './detail'
 
-@inject('homeStore')
-@observer
+@withProjectList({
+  store: new S2IBuilderStore('s2ibuilders'),
+  module: 's2ibuilders',
+  name: 'Image Builder',
+})
 export default class CustomApplications extends React.Component {
   constructor(props) {
     super(props)
@@ -41,6 +48,10 @@ export default class CustomApplications extends React.Component {
     this.ctrl = null
     this.store = this.props.homeStore
     this.props.homeStore.getUserImages()
+    this.state = {
+      show: false,
+      imageName: '',
+    }
   }
 
   get namespace() {
@@ -60,10 +71,51 @@ export default class CustomApplications extends React.Component {
     return globals.user.username
   }
 
+  get loading() {
+    return this.props.homeStore.loading || false
+  }
+
+  componentWillUnmount() {
+    this.store.pagination = {
+      ...this.store.pagination,
+      pageSize: 10,
+      current: 1,
+      total: 0,
+      type: 1,
+      name: '',
+    }
+    this.store.tagPagination = {
+      ...this.store.tagPagination,
+      pageSize: 10,
+      current: 1,
+      total: 0,
+      name: '',
+    }
+    this.store.imageList = []
+    this.store.tagsList = []
+  }
+
+  handleCopy = val => {
+    copyToClipboard(val)
+    Notify.success({ content: `镜像名${val}复制成功` })
+  }
+
   getColumns = () => [
     {
       title: '名称',
       dataIndex: 'name',
+      render: val => (
+        <>
+          {val}
+          <Button
+            type="link"
+            size="small"
+            onClick={this.handleCopy.bind(this, val)}
+          >
+            复制
+          </Button>
+        </>
+      ),
       // render: val => val.replace(new RegExp(`${this.username}/`, 'g'), ''),
     },
     {
@@ -120,15 +172,22 @@ export default class CustomApplications extends React.Component {
   ]
 
   // 查看应用详情
-  handleDetail = record => {
-    const { history } = this.props
-    const type = record.type ? 'composing' : 'template'
-    history.push({
-      pathname: `${this.prefix}${type}/${record.appId}`,
-      state: {
-        prevPath: location.pathname,
-      },
-    })
+  handleDetail = async record => {
+    const { name } = record
+    // name = name.split('/')[1]
+    if (name) {
+      const { tagPagination } = this.store
+      const newPaging = {
+        ...tagPagination,
+        name,
+      }
+      this.store.tagPagination = newPaging
+      await this.store.getUserImagesTags()
+      this.setState({
+        show: true,
+        imageName: record.name,
+      })
+    }
   }
 
   // 删除应用
@@ -177,6 +236,16 @@ export default class CustomApplications extends React.Component {
     // this.appStore.getData(newPaging)
   }
 
+  showCreate = () => {
+    const { match, module, projectStore } = this.props
+    return this.props.trigger('imagebuilder.create', {
+      module,
+      projectDetail: projectStore.detail,
+      namespace: match.params.namespace,
+      cluster: match.params.cluster,
+    })
+  }
+
   render() {
     // const { templates } = this.store
     const { imageList: lists, pagination } = this.props.homeStore
@@ -206,6 +275,11 @@ export default class CustomApplications extends React.Component {
       }
       this.store.pagination = newPaging
       this.store.getUserImages(newPaging)
+    }
+
+    const onCancel = () => {
+      this.setState({ show: false })
+      this.store.tagsList = []
     }
 
     return (
@@ -249,21 +323,28 @@ export default class CustomApplications extends React.Component {
                   </Form.Item>
                 </Col>
               </Row>
-              {/* <Col>
+              <Col>
                 <Form.Item>
-                  <KButton type="control" onClick={this.showDeploy}>
+                  <KButton type="control" onClick={this.showCreate}>
                     自制镜像
                   </KButton>
                 </Form.Item>
-              </Col> */}
+              </Col>
             </Row>
           </Form>
         </div>
         <Table
+          loading={this.loading}
           columns={this.getColumns()}
           dataSource={lists}
           pagination={pagination}
         />
+        <ImageTagsDetail
+          data={this.store.tagsList}
+          show={this.state.show}
+          name={this.state.imageName}
+          onCancel={onCancel}
+        ></ImageTagsDetail>
       </>
     )
   }

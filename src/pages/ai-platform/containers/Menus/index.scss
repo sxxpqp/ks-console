@@ -58,3 +58,16 @@
   width: 100%;
   margin-right: 12px;
 }
+
+.modal {
+  :global(.ant-select) {
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+  }
+}
+
+.btns {
+  :global(.ant-btn) {
+    font-size: 12px;
+  }
+}

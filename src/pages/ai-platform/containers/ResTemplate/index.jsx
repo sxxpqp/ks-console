@@ -26,7 +26,9 @@ export default class Members extends React.Component {
       isEdit: false,
       show: false,
       item: null,
+      loading: false,
     }
+    this.form = React.createRef()
   }
 
   getColumns = () => [
@@ -100,6 +102,7 @@ export default class Members extends React.Component {
     this.setState({
       isEdit: false,
       show: true,
+      item: null,
     })
   }
 
@@ -122,7 +125,7 @@ export default class Members extends React.Component {
         this.store.removeTemplates(item.id).then(res => {
           if (res.code === 200) {
             Notify.success('删除成功')
-            this.getData()
+            this.store.getTemplates()
           } else {
             Notify.success('删除失败，请重试')
           }
@@ -133,7 +136,7 @@ export default class Members extends React.Component {
 
   render() {
     const { templates } = this.store
-    const { isEdit, show, item } = this.state
+    const { isEdit, show, item, loading } = this.state
     const onCancel = () => {
       this.setState({ show: false })
     }
@@ -149,6 +152,37 @@ export default class Members extends React.Component {
       }
       this.setState({ show: false })
     }
+
+    const handleSearch = () => {
+      // this.store.getApplyHisAll()
+      const form = this.form.current.getFieldsValue()
+      this.store.templateParams = {
+        ...this.store.params,
+        ...form,
+      }
+      this.store.getTemplates()
+    }
+
+    const handleReset = () => {
+      this.setState({
+        loading: true,
+      })
+      this.form.current.resetFields()
+      // this.store.getApplyHisAll()
+      this.store.templateParams = {
+        ...this.store.templateParams,
+        pageSize: 10,
+        current: 1,
+        total: 0,
+        name: '',
+      }
+      this.store.getTemplates().finally(() => {
+        this.setState({
+          loading: false,
+        })
+      })
+    }
+
     return (
       <>
         <Banner
@@ -156,18 +190,22 @@ export default class Members extends React.Component {
           description="用户申请资源时，推荐的应用资源模板管理"
         />
         <div className="table-title">
-          <Form>
+          <Form ref={this.form}>
             <Row justify="space-between" align="middle">
               <Row justify="space-around" gutter={15}>
                 <Col>
-                  <Form.Item label="名称" name="username">
+                  <Form.Item label="名称" name="name">
                     <Input />
                   </Form.Item>
                 </Col>
                 <Col>
                   <Form.Item>
-                    <KButton type="control">搜索</KButton>
-                    <KButton type="default">清空</KButton>
+                    <KButton type="control" onClick={handleSearch}>
+                      搜索
+                    </KButton>
+                    <KButton type="default" onClick={handleReset}>
+                      清空
+                    </KButton>
                   </Form.Item>
                 </Col>
               </Row>
@@ -181,7 +219,12 @@ export default class Members extends React.Component {
             </Row>
           </Form>
         </div>
-        <Table columns={this.getColumns()} dataSource={templates} />
+        <Table
+          key="id"
+          loading={loading}
+          columns={this.getColumns()}
+          dataSource={templates}
+        />
         <CreateAndEditModal
           show={show}
           isEdit={isEdit}

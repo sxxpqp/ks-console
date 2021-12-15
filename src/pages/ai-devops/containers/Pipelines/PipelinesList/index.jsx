@@ -25,7 +25,6 @@ export default class PipelinesList extends React.Component {
 
   constructor(props) {
     super(props)
-
     this.formTemplate = {
       devopsName: this.devopsName,
       cluster: this.cluster,
@@ -39,7 +38,7 @@ export default class PipelinesList extends React.Component {
   componentDidMount() {
     const tmp = {
       ...omit(this.props.match.params, 'namespace'),
-      devops: 'ks-consolekkwfw',
+      devops: this.devops,
     }
     this.props.rootStore.getRules(tmp)
   }
@@ -90,7 +89,8 @@ export default class PipelinesList extends React.Component {
   }
 
   get devops() {
-    return this.props.match.params.devops
+    return globals.user.ai.devops
+    // return this.props.match.params.devops
   }
 
   get devopsName() {
@@ -222,7 +222,7 @@ export default class PipelinesList extends React.Component {
     } else {
       await this.props.store.runBranch({
         cluster: params.cluster,
-        devops: params.devops,
+        devops: this.devops,
         name: record.name,
       })
 
@@ -459,6 +459,10 @@ export default class PipelinesList extends React.Component {
 
   render() {
     const { bannerProps, match } = this.props
+    match.params = {
+      ...match.params,
+      devops: this.devops,
+    }
 
     return (
       <ListPage getData={this.getData} {...this.props}>

@@ -23,10 +23,10 @@ export default class NodesOverview extends Component {
       rotate: 0,
       formatter({ seriesName, value }) {
         const targetMap = {
-          cpu_used: 'C',
-          mem_used: 'Gi',
-          disk_used: 'G',
-          gpu_used: 'C',
+          CPU: 'C',
+          内存: 'Gi',
+          磁盘: 'G',
+          GPU: 'C',
         }
         return `${value}${targetMap[seriesName]}`
       },
@@ -57,7 +57,19 @@ export default class NodesOverview extends Component {
       },
     ]
 
-    const keys = ['cpu_used', 'mem_used', 'disk_used', 'gpu_used']
+    const keys = ['CPU', '内存', '磁盘', 'GPU']
+    const targetMap = {
+      CPU: 'cpu_used',
+      内存: 'mem_used',
+      磁盘: 'disk_used',
+      GPU: 'gpu_used',
+    }
+    // const targetMap = {
+    //   cpu_used: 'CPU',
+    //   mem_used: '内存',
+    //   disk_used: '磁盘',
+    //   gpu_used: 'GPU',
+    // }
 
     const series = keys.map(key => ({
       name: key,
@@ -66,27 +78,25 @@ export default class NodesOverview extends Component {
       emphasis: {
         focus: 'series',
       },
-      data: tmp.map(i => parseFloat(i[key], 10)),
+      data: tmp.map(i => parseFloat(i[targetMap[key]], 10)),
     }))
-
     return {
       tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'shadow',
         },
+        // formatter(items) {
+        //   return items
+        //     .map(i => `${targetMap[i.seriesName]}: ${i.value}`)
+        //     .join('<br />')
+        // },
       },
       legend: {
         data: keys,
-        formatter(name) {
-          const targetMap = {
-            cpu_used: 'CPU',
-            mem_used: '内存',
-            disk_used: '磁盘',
-            gpu_used: 'GPU',
-          }
-          return targetMap[name]
-        },
+        // formatter(name) {
+        //   return targetMap[name]
+        // },
       },
       toolbox: {
         show: true,

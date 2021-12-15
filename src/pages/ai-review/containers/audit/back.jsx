@@ -211,7 +211,7 @@ export default class ApplyDefault extends React.Component {
       title: '创建时间',
       dataIndex: 'created',
       width: '15%',
-      render: time => dayjs(time).format('YYYY-MM-DD hh:mm:ss'),
+      render: time => dayjs(time).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '事由',

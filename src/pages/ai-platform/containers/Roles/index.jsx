@@ -273,7 +273,7 @@ export default class Roles extends React.Component {
             <Row justify="space-between" align="middle">
               <Row justify="space-around" gutter={15}>
                 <Col>
-                  <Form.Item label="角色名" name="desc">
+                  <Form.Item label="角色名称" name="desc">
                     <Input />
                   </Form.Item>
                 </Col>

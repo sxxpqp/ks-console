@@ -18,6 +18,13 @@ export default class AiGroup {
   }
 
   @observable
+  tmpItem = {
+    key: '-1',
+    pid: -1,
+    type: 1,
+  }
+
+  @observable
   nodes = []
 
   @observable

@@ -1,0 +1,16 @@
+@import '~scss/variables';
+
+.active {
+  background-color: #1890ff;
+  color: #fff;
+  border-radius: 6px;
+}
+
+.icons {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  span {
+    padding: 4px;
+  }
+}

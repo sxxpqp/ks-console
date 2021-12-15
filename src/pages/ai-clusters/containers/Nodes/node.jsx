@@ -42,11 +42,11 @@ export default class Nodes extends React.Component {
 
   componentDidMount() {
     this.store.fetchCount(this.props.match.params)
-    this.props.rootStore.saveClusters({
+    this.props.rootStore.myClusters = {
       cluster: this.cluster,
       workspace: this.workspace,
       namespace: this.namespace,
-    })
+    }
   }
 
   get cluster() {

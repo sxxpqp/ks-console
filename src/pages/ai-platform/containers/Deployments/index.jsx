@@ -16,7 +16,7 @@ import { WORKLOAD_STATUS, ICON_TYPES } from 'utils/constants'
 
 import WorkloadStore from 'stores/workload'
 import { Button } from 'antd'
-import { omit } from 'lodash'
+import { omit, get, set } from 'lodash'
 
 import {
   CaretRightOutlined,
@@ -219,6 +219,10 @@ export default class Deployments extends React.Component {
     const { store } = this.props
     let yaml = {}
     store.fetchDetail(item).then(data => {
+      const { serviceAccount, serviceAccountName } = get(
+        data._originData,
+        'spec.template.spec'
+      )
       yaml = JSON.stringify(data._originData).replace(
         new RegExp(item.name, 'g'),
         `${item.name.split('-')[0]}-${Math.random()
@@ -226,6 +230,12 @@ export default class Deployments extends React.Component {
           .substr(-6)}`
       )
       yaml = JSON.parse(yaml)
+      const spec = get(data._originData, 'spec.template.spec')
+      set(yaml, 'spec.template.spec', {
+        ...spec,
+        serviceAccount,
+        serviceAccountName,
+      })
       const { cluster, namespace, name } = item
       const modal = Modal.open({
         onOk: template => {

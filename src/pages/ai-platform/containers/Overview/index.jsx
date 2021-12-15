@@ -171,7 +171,7 @@ export default class Overview extends React.Component {
           </Col>
           <Col span={8}>
             <Statistic
-              title="告警统计/已读"
+              title="告警统计/未读"
               value={'0/0'}
               valueStyle={{ color: '#333' }}
               prefix={<AlertOutlined />}

@@ -65,8 +65,20 @@ export const upload = async ctx => {
 
 // 菜单列表
 export const getMenus = async ctx => {
+  const { name, status } = ctx.query
   const { menus } = global.models
-  const res = await menus.findAll({})
+  let where = {}
+  if (name) {
+    const nameCond = { name: { [Op.like]: `%${name}%` } }
+    where = { ...where, ...nameCond }
+  }
+  if (status || status === '0') {
+    const statusCond = { status: { [Op.eq]: parseInt(status, 10) } }
+    where = { ...where, ...statusCond }
+  }
+  const res = await menus.findAll({
+    where,
+  })
   ctx.body = {
     code: 200,
     data: res,
@@ -116,6 +128,23 @@ export const removeMenu = async ctx => {
           pid: body.id,
         },
       ],
+    },
+  })
+  ctx.body = {
+    code: 200,
+    data: res,
+  }
+}
+
+// 批量删除
+export const batchRemoveMenu = async ctx => {
+  const { menus } = global.models
+  const { body } = ctx.request
+  const res = await menus.destroy({
+    where: {
+      id: {
+        [Op.in]: body.ids,
+      },
     },
   })
   ctx.body = {

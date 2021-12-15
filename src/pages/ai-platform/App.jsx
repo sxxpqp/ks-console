@@ -16,7 +16,6 @@ import routes from './routes'
 class ProjectLayout extends Component {
   constructor(props) {
     super(props)
-
     this.store = new ProjectStore()
     this.clusterStore = new ClusterStore()
     // 加入store
@@ -58,6 +57,26 @@ class ProjectLayout extends Component {
         workspace: params.workspace,
       }),
     ])
+
+    if (globals.user && globals.user.ai) {
+      const user = globals.user.ai
+      const { namespace, workspace, cluster } = user
+      // 用户进入到了非自己的项目
+      if (
+        params.workspace !== workspace ||
+        params.cluster !== cluster ||
+        params.namespace !== namespace
+      ) {
+        return this.props.rootStore.routing.push(
+          `/${workspace}/clusters/${cluster}/projects/${namespace}/overview`
+        )
+      }
+    }
+
+    // 如果用户的参数为空则跳转至login
+    if (params.namespace === 'undefined' || params.workspace === 'undefined') {
+      return this.props.rootStore.routing.push('/login')
+    }
 
     if (!this.store.detail.name) {
       return this.props.rootStore.routing.push('/404')

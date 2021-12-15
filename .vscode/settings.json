@@ -33,5 +33,7 @@
     "isActive": true,
     "enforceHeader": true,
     "include": ["javascript", "javascriptreact"]
-  }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

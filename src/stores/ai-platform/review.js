@@ -102,6 +102,17 @@ export default class ReviewStore {
     current: 1,
     status: 0,
     total: 0,
+    name: '',
+    onChange: this.handlePaginationChange,
+  }
+
+  @observable
+  templateParams = {
+    pageSize: 10,
+    current: 1,
+    total: 0,
+    name: '',
+    onChange: this.handlePaginationChange,
   }
 
   @computed
@@ -146,7 +157,10 @@ export default class ReviewStore {
   getApplyHis() {
     getApply(this.params).then(res => {
       this.allHis = res.data
-      this.params.total = res.total || 0
+      this.params = {
+        ...this.params,
+        total: res.total || 0,
+      }
     })
   }
 
@@ -155,8 +169,17 @@ export default class ReviewStore {
   getApplyHisAll() {
     getApplyHisAll(this.params).then(res => {
       this.allAdminHis = res.data
-      this.params.total = res.total || 0
+      this.params = {
+        ...this.params,
+        total: res.total || 0,
+      }
     })
+  }
+
+  @action
+  handlePaginationChange = value => {
+    this.params = { ...this.params, current: value }
+    this.getApplyHis()
   }
 
   @action
@@ -178,9 +201,13 @@ export default class ReviewStore {
 
   // 获取资源模板列表
   @action
-  getTemplates(params) {
-    getResourceTemplate(params).then(res => {
+  getTemplates() {
+    return getResourceTemplate(this.templateParams).then(res => {
       this.templates = res.data
+      this.templateParams = {
+        ...this.templateParams,
+        total: res.total || 0,
+      }
     })
   }
 

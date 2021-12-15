@@ -39,6 +39,7 @@ export default class ApplicationStore {
 
   @action
   getData = pagination => {
+    // console.log(this.pagination)
     getAppList(pagination || this.pagination).then(res => {
       const { code, data, total } = res
       if (code === 200) {

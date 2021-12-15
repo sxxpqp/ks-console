@@ -52,7 +52,7 @@ export default class Detail extends Component {
           width={600}
         >
           <Form
-            name="form"
+            // name="form"
             ref={this.form}
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 20 }}

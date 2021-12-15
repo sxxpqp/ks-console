@@ -106,7 +106,7 @@ export default class MyApps extends Component {
   render() {
     const { lists } = this.props
     const { namespace, workspace, cluster } = this.props.rootStore.myClusters
-    const url = `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/template`
+    const url = `/${workspace}/clusters/${cluster}/projects/${namespace}/applications`
     return (
       <Panel title="运行容器统计">
         {lists ? (

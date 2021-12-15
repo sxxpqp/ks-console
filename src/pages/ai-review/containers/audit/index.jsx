@@ -67,7 +67,7 @@ export default class ApplyHistory extends React.Component {
 
   getColumns = () => [
     {
-      title: 'cpu',
+      title: 'CPU',
       dataIndex: 'cpu',
       render: item => `${item} Core`,
     },
@@ -89,16 +89,31 @@ export default class ApplyHistory extends React.Component {
     {
       title: '创建时间',
       dataIndex: 'created',
-      render: time => dayjs(time).format('YYYY-MM-DD hh:mm:ss'),
+      render: time => dayjs(time).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '申请人',
       dataIndex: 'user',
-      render: user => user.name,
+      render: user => user?.name || '',
+    },
+    {
+      title: '组织',
+      dataIndex: 'user',
+      render: val => {
+        const groups = get(val, 'users_groups')
+        return groups
+          ? groups.map(i => (
+              <Tag key={i.id} color="processing">
+                {get(i, 'group.name')}
+              </Tag>
+            ))
+          : ''
+      },
     },
     {
       title: '事由',
       dataIndex: 'reason',
+      ellipsis: true,
     },
     {
       title: '审核状态',
@@ -191,18 +206,22 @@ export default class ApplyHistory extends React.Component {
 
   radioChange(e) {
     const { value } = e.target
+    const { params } = this.store
     // eslint-disable-next-line no-console
-    this.store.setParams({
+    this.store.params = {
+      ...params,
       current: 1,
       status: value,
-    })
+    }
     this.store.getApplyHisAll()
   }
 
   onTreeChange(e) {
-    this.store.setParams({
+    const { params } = this.store
+    this.store.params = {
+      ...params,
       gid: e,
-    })
+    }
     // eslint-disable-next-line no-console
     // this.store.setParams({
     //   current: 1,
@@ -213,9 +232,11 @@ export default class ApplyHistory extends React.Component {
 
   handleInput(e) {
     const { value } = e.target
-    this.store.setParams({
+    const { params } = this.store
+    this.store.params = {
+      ...params,
       name: value,
-    })
+    }
   }
 
   handleSearch() {
@@ -226,15 +247,17 @@ export default class ApplyHistory extends React.Component {
     if (this.form.current) {
       this.form.current.resetFields()
       this.setState({
-        status: -1,
+        status: 0,
       })
-      this.store.setParams({
+      const { params } = this.store
+      this.store.params = {
+        ...params,
         current: 1,
-        status: -1,
+        status: 0,
         reason: '',
         name: '',
         gid: null,
-      })
+      }
       setTimeout(() => {
         this.store.getApplyHisAll()
       }, 0)
@@ -280,9 +303,14 @@ export default class ApplyHistory extends React.Component {
     this.store.getApplyHisAll()
   }
 
+  onChange(value) {
+    this.store.params = { ...this.store.params, current: value }
+    this.store.getApplyHisAll()
+  }
+
   render() {
     const { allAdminHis, params } = this.store
-    const { status, value, show, item, user, groupRes, userRes } = this.state
+    const { value, show, item, user, groupRes, userRes } = this.state
 
     return (
       <>
@@ -291,14 +319,14 @@ export default class ApplyHistory extends React.Component {
           description="人工智能平台用户申请的资源清单，查看资源详情，对资源申请进行审批。"
         />
         <div className="table-title">
-          <Form ref={this.form}>
+          <Form ref={this.form} initialValues={{ status: 0 }}>
             <Row justify="space-between" align="middle" className="margin-b12">
               <Row justify="space-around" gutter={15}>
                 <Col>
                   <Form.Item label="审核状态" name="status">
                     <Radio.Group
                       onChange={this.radioChange.bind(this)}
-                      defaultValue={status}
+                      // defaultValue={status}
                     >
                       <Radio value={-1}>全部</Radio>
                       <Radio value={0}>未审核</Radio>
@@ -334,7 +362,7 @@ export default class ApplyHistory extends React.Component {
                 </Form.Item>
               </Col>
               <Col>
-                <Form.Item label="用户名" name="name">
+                <Form.Item label="申请人" name="name">
                   <Input
                     placeholder="请输入搜索的用户"
                     value={value}
@@ -356,9 +384,10 @@ export default class ApplyHistory extends React.Component {
           </Form>
         </div>
         <Table
+          key="id"
           columns={this.getColumns()}
           dataSource={allAdminHis}
-          pagination={{ params }}
+          pagination={{ ...params, onChange: this.onChange.bind(this) }}
         />
         <Detail
           show={show}

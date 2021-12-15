@@ -1,6 +1,6 @@
 import { sortBy } from 'lodash'
 
-export const getTreeData = (data, pid) => {
+export const getTreeData = (data, pid = -1) => {
   const arr = []
   data.forEach(item => {
     if (item.pid === pid) {

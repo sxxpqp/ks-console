@@ -108,6 +108,7 @@ export default class GroupsForm extends Component {
           </Form.Item>
           <Form.Item label="上级部门" name="pid">
             <TreeSelect
+              key="id"
               treeLine={{ showLeafIcon: false }}
               // showSearch
               style={{ width: '100%' }}

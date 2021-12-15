@@ -17,7 +17,7 @@ const locale = require('./components/locale')
 const logging = require('./components/logging')
 const wsProxy = require('./components/wsProxy')
 const errorProcess = require('./components/errorProcess')
-const routes = require('./routes')
+const routes = require('./routes/index').default
 
 const { sequelize } = require('./services/sequelize')
 const { initModels } = require('./models/init-models')
@@ -99,7 +99,7 @@ app
   //     },
   //   })
   // )
-  .use(routes.routes())
+  .use(routes())
 
 app.server = app.listen(global.PORT, err => {
   if (err) {

@@ -61,10 +61,16 @@ export default class ResTemplateForm extends Component {
     }
   }
 
+  // componentWillUmount() {
+  //   this.form.current.resetFields()
+  // }
+
   componentDidUpdate() {
     const { item, isEdit } = this.props
     if (this.form.current && isEdit && item) {
       this.form.current.setFieldsValue(item)
+    } else {
+      this.form.current && this.form.current.resetFields()
     }
   }
 
@@ -111,7 +117,7 @@ export default class ResTemplateForm extends Component {
             <Input />
           </Form.Item>
           <Form.Item
-            label="名称"
+            label="模板名称"
             name="name"
             rules={[{ required: true, message: '请输入模板名称' }]}
           >
@@ -120,7 +126,7 @@ export default class ResTemplateForm extends Component {
           <Form.Item
             label="描述"
             name="desc"
-            rules={[{ required: true, message: '请输入模板描述' }]}
+            rules={[{ required: true, message: '请输入描述' }]}
           >
             <TextArea row={4} allowClear />
           </Form.Item>

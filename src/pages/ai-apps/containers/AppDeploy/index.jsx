@@ -116,7 +116,7 @@ export default class App extends React.Component {
           .deploy(rest, { cluster, namespace, workspace })
           .then(() => {
             this.routing.push(
-              `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/template`
+              `/${workspace}/clusters/${cluster}/projects/${namespace}/applications`
             )
           })
       })

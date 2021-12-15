@@ -110,7 +110,11 @@ class UsageRanking extends React.Component {
                   default:
                     label = option.label
                 }
-                return <Radio value={option.value}>{label}</Radio>
+                return (
+                  <Radio key={option.value} value={option.value}>
+                    {label}
+                  </Radio>
+                )
               })}
             </Radio.Group>
           </div>
