@@ -61,7 +61,6 @@ export default class CustomApplications extends React.Component {
     }
     this.form = React.createRef()
     this.groupStore.getData()
-    this.appStore.getData()
     this.ctrl = null
   }
 
@@ -81,6 +80,7 @@ export default class CustomApplications extends React.Component {
   componentDidMount() {
     // const { pagination } = this.state
     // this.getData(pagination)
+    const { namespace, workspace } = this.props.match.params
     getAppTags().then(res => {
       const { code, data } = res
       if (code === 200) {
@@ -89,8 +89,9 @@ export default class CustomApplications extends React.Component {
         })
       }
     })
+    updateAppList({ namespace, workspace })
+    this.appStore.getData()
     this.ctrl = setInterval(async () => {
-      const { namespace, workspace } = this.props.match.params
       await updateAppList({ namespace, workspace })
       await this.appStore.getData()
     }, 15 * 1000)
@@ -136,7 +137,11 @@ export default class CustomApplications extends React.Component {
             const { tags } = this.state
             const t =
               tags.findIndex(i => i.id === item.tagId) % TAGS_COLORS.length
-            return <Tag color={TAGS_COLORS[t]}>{item.label.name}</Tag>
+            return (
+              <Tag key={item.tagId} color={TAGS_COLORS[t]}>
+                {item.label.name}
+              </Tag>
+            )
           })
         },
       },
@@ -219,9 +224,10 @@ export default class CustomApplications extends React.Component {
             render: val => {
               const groups = get(val, 'users_groups')
               return groups
-                ? groups.map(i => (
-                    <Tag color="processing">{get(i, 'group.name')}</Tag>
-                  ))
+                ? groups.map(i => {
+                    const name = get(i, 'group.name')
+                    return name ? <Tag color="processing">{name}</Tag> : '-'
+                  })
                 : ''
             },
           },
@@ -259,8 +265,15 @@ export default class CustomApplications extends React.Component {
         removeApp(record.appId).then(res => {
           const { code } = res
           if (code === 200) {
-            const { pagination } = this.appStore
-            this.appStore.getData(pagination)
+            const { pagination, lists } = this.appStore
+            const { current } = pagination
+            if (lists.length && lists.length === 1) {
+              this.appStore.pagination = {
+                ...pagination,
+                current: current - 1 < 1 ? 1 : current - 1,
+              }
+            }
+            this.appStore.getData()
             Notify.success('删除成功')
           } else {
             Notify.success('删除失败，请重试')
@@ -311,12 +324,15 @@ export default class CustomApplications extends React.Component {
 
   // 应用状态变化
   radioChange(type, e) {
+    const formValues = this.form.current.getFieldsValue()
     const { value } = e.target
     const { pagination } = this.appStore
     const newPaging = {
       ...pagination,
+      ...formValues,
       [type]: value,
     }
+    this.appStore.pagination = newPaging
     this.appStore.getData(newPaging)
   }
 
@@ -327,10 +343,12 @@ export default class CustomApplications extends React.Component {
 
     const onSearch = () => {
       const values = this.form.current.getFieldsValue()
-      this.appStore.getData({
+      const newPaging = {
         ...pagination,
         ...values,
-      })
+      }
+      this.appStore.pagination = newPaging
+      this.appStore.getData(newPaging)
     }
 
     const onReset = () => {
@@ -339,14 +357,20 @@ export default class CustomApplications extends React.Component {
         type: '',
         name: '',
         tagId: [],
-        pid: '',
+        pid: null,
       })
       const newPaging = {
         ...pagination,
         current: 1,
+        type: '',
+        status: '',
+        name: '',
         pageSize: 10,
+        total: 0,
+        tagId: '',
+        pid: null,
       }
-      // this.appStore.pagination = newPaging
+      this.appStore.pagination = newPaging
       this.appStore.getData(newPaging)
     }
 
@@ -363,19 +387,30 @@ export default class CustomApplications extends React.Component {
       this.appStore.getData()
     }
 
-    const getNewData = () => {
-      return [
-        {
-          key: '-1',
-          id: -1,
-          name: '无',
-        },
-        ...this.groupStore.treeData,
-      ]
-    }
+    // const getNewData = () => {
+    //   return [
+    //     {
+    //       key: '-1',
+    //       id: -1,
+    //       name: '无',
+    //     },
+    //     ...this.groupStore.treeData,
+    //   ]
+    // }
 
     const onTreeChange = val => {
       this.appStore.pagination.pid = val
+    }
+
+    // 标签变化
+    const handleChange = val => {
+      if (!val || val.length === 0) {
+        this.appStore.pagination = {
+          ...this.appStore.pagination,
+          tagId: '',
+        }
+        this.appStore.getData()
+      }
     }
 
     return (
@@ -395,13 +430,13 @@ export default class CustomApplications extends React.Component {
                       onChange={this.radioChange.bind(this, 'status')}
                     >
                       <Radio value={''}>全部</Radio>
-                      <Radio value={1}>正常</Radio>
+                      <Radio value={1}>运行中</Radio>
                       <Radio value={0}>异常</Radio>
                     </Radio.Group>
                   </Form.Item>
                 </Col>
                 <Col>
-                  <Form.Item label="应用分类" name="type">
+                  <Form.Item label="分类" name="type">
                     <Radio.Group
                       defaultValue={''}
                       onChange={this.radioChange.bind(this, 'type')}
@@ -443,7 +478,7 @@ export default class CustomApplications extends React.Component {
                         // initialValues={-1}
                         onChange={onTreeChange}
                         fieldNames={{ label: 'name', value: 'id', key: 'id' }}
-                        treeData={getNewData()}
+                        treeData={this.groupStore.treeData}
                       >
                         {/* <TreeNode value="-1" title="无"></TreeNode> */}
                       </TreeSelect>
@@ -452,7 +487,7 @@ export default class CustomApplications extends React.Component {
                 )}
                 <Col>
                   <Form.Item
-                    label="应用名称"
+                    label="名称"
                     name="name"
                     style={{ width: '280px', marginRight: '10px' }}
                   >
@@ -460,7 +495,7 @@ export default class CustomApplications extends React.Component {
                   </Form.Item>
                 </Col>
                 <Col style={{ marginRight: '15px' }}>
-                  <Form.Item label="应用标签" name="tagId">
+                  <Form.Item label="标签" name="tagId">
                     <Select
                       mode="multiple"
                       style={{
@@ -470,7 +505,7 @@ export default class CustomApplications extends React.Component {
                       }}
                       placeholder="请选择筛选的标签"
                       // defaultValue={['a10', 'c12']}
-                      // onChange={handleChange}
+                      onChange={handleChange}
                     >
                       {tags &&
                         tags.length > 0 &&
@@ -497,6 +532,7 @@ export default class CustomApplications extends React.Component {
           </Form>
         </div>
         <Table
+          key="appId"
           scroll={{ x: 1400 }}
           columns={this.getColumns()}
           dataSource={lists}

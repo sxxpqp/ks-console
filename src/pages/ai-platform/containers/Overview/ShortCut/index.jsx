@@ -27,7 +27,10 @@ export default class ShortCut extends Component {
         {!this.props.isAdmin ? (
           <Row className="margin-b12">
             <Col span={6}>
-              <Link className={styles.icon} to={`${url}/apply`}>
+              <Link
+                className={styles.icon}
+                to={{ pathname: `${url}/apply`, state: { name: 'apply' } }}
+              >
                 <div>
                   <CloudServerOutlined style={{ fontSize: '24px' }} />
                 </div>
@@ -41,7 +44,7 @@ export default class ShortCut extends Component {
               </Link>
             </Col>
             <Col span={6}>
-              <Link className={styles.icon} to={`${url}/applications/template`}>
+              <Link className={styles.icon} to={`${url}/applications`}>
                 <AppstoreOutlined style={{ fontSize: '24px' }} />
                 <span>应用管理</span>
               </Link>
@@ -50,25 +53,40 @@ export default class ShortCut extends Component {
         ) : (
           <Row className="margin-b12">
             <Col span={6}>
-              <Link className={styles.icon} to={`${url}/applications/template`}>
+              <Link
+                className={styles.icon}
+                to={{ pathname: `${url}/audit`, state: { name: 'audit' } }}
+              >
                 <AppstoreAddOutlined style={{ fontSize: '24px' }} />
                 <span>应用审批</span>
               </Link>
             </Col>
             <Col span={6}>
-              <Link className={styles.icon} to={`${url}/alerts`}>
+              <Link
+                className={styles.icon}
+                to={{ pathname: `${url}/alerts`, state: { name: 'alerts' } }}
+              >
                 <AlertOutlined style={{ fontSize: '24px' }} />
                 <span>告警信息</span>
               </Link>
             </Col>
             <Col span={6}>
-              <Link className={styles.icon} to={`${url}/nodes`}>
+              <Link
+                className={styles.icon}
+                to={{ pathname: `${url}/nodes`, state: { name: 'nodes' } }}
+              >
                 <ApartmentOutlined style={{ fontSize: '24px' }} />
                 <span>节点管理</span>
               </Link>
             </Col>
             <Col span={6}>
-              <Link className={styles.icon} to={`${url}/image-manage`}>
+              <Link
+                className={styles.icon}
+                to={{
+                  pathname: `${url}/image-manage`,
+                  state: { name: 'image-manage' },
+                }}
+              >
                 <ChromeOutlined style={{ fontSize: '24px' }} />
                 <span>镜像管理</span>
               </Link>

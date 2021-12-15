@@ -137,7 +137,7 @@ export default class App extends React.Component {
             // this.applicationStore.updateList({ namespace, workspace })
             setTimeout(() => {
               this.routing.push(
-                `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/template`
+                `/${workspace}/clusters/${cluster}/projects/${namespace}/applications`
               )
             }, 1000)
           })

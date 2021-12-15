@@ -20,6 +20,7 @@ export default class GroupsForm extends Component {
     if (this.form.current) {
       if (!isEdit) {
         this.form.current.setFieldsValue({
+          name: '',
           pid: item.id || -1,
           type: 1,
           code: generateId(),

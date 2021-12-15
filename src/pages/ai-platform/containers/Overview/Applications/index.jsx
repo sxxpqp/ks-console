@@ -52,7 +52,7 @@ export default class Applications extends React.Component {
     return (
       <Link
         className={styles.more}
-        to={`/${workspace}/clusters/${cluster}/projects/${namespace}/applications/template`}
+        to={`/${workspace}/clusters/${cluster}/projects/${namespace}/applications`}
       >
         {t('View All')}
       </Link>

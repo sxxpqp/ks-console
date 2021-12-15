@@ -31,9 +31,21 @@ class Dashboard extends React.Component {
 
   componentDidMount() {
     const { namespace, workspace, cluster } = this.props.rootStore.myClusters
-    this.routing.push(
-      `${workspace}/clusters/${cluster}/projects/${namespace}/overview`
-    )
+    if (namespace && workspace && cluster) {
+      this.routing.push(
+        `${workspace}/clusters/${cluster}/projects/${namespace}/home`
+      )
+    } else {
+      const user = globals.user && globals.user.ai
+      this.routing.push(
+        `${user.workspace}/clusters/${user.cluster}/projects/${user.namespace}/home`
+      )
+      this.props.rootStore.myClusters = {
+        namespace: user.namespace,
+        workspace: user.workspace,
+        cluster: user.cluster,
+      }
+    }
   }
 
   get routing() {

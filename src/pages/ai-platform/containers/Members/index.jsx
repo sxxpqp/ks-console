@@ -138,8 +138,12 @@ export default class Members extends React.Component {
       dataIndex: 'users_groups',
       render: val => {
         let groups = []
-        groups = val.map(i => i.group.name)
-        return groups.map(i => <Tag color="processing">{i}</Tag>)
+        groups = val.map(i => (i.group && i.group.name) || '未设置')
+        return groups.map(i => (
+          <Tag color="processing" key={i.id}>
+            {i}
+          </Tag>
+        ))
       },
     },
     {

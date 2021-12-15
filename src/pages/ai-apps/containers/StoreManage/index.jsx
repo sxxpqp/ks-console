@@ -25,7 +25,7 @@ export default class Store extends React.Component {
   }
 
   componentDidMount() {
-    this.store.saveClusters(toJS(this.props.match.params))
+    this.store.myClusters = toJS(this.props.match.params)
   }
 
   get itemActions() {

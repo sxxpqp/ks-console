@@ -3,6 +3,11 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "allowJs": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "plugins": [
+      {
+        "name": "typescript-plugin-css-modules"
+      }
+    ]
   }
 }

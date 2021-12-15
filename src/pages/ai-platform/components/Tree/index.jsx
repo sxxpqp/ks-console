@@ -114,7 +114,7 @@ export default class TreeCustom extends Component {
   handleRemove() {
     const { selectedItem: item } = this.props.store
     Modal.confirm({
-      title: `确定删除组织${item.name}吗？`,
+      title: `确定删除组织"${item.name}"吗？`,
       icon: <ExclamationCircleOutlined />,
       centered: true,
       okText: '确认',
@@ -123,6 +123,9 @@ export default class TreeCustom extends Component {
         this.props.store.removeData(item.id).then(res => {
           if (res.code === 200) {
             Notify.success('删除成功')
+            this.setState({ show: false, selectedKeys: [] })
+            const { select } = this.props
+            select && select(null)
             this.getData()
           } else {
             Notify.success('删除失败，请重试')
@@ -147,10 +150,11 @@ export default class TreeCustom extends Component {
   render() {
     const { show, selectedKeys, expandedKeys } = this.state
     const { canEdit } = this.props
+    const flag = show && this.props.item
 
     return (
       <Card>
-        {show && (
+        {flag && (
           <Row style={{ marginBottom: '10px' }}>
             <Col span="24">
               <Alert

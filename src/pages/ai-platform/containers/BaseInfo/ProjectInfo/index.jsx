@@ -3,7 +3,7 @@ import { get, isEmpty } from 'lodash'
 import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 
-import { Button, Icon, Menu, Dropdown } from '@kube-design/components'
+import { Icon, Menu, Dropdown } from '@kube-design/components'
 import { getLocalTime, getDisplayName } from 'utils'
 import { Panel } from 'components/Base'
 
@@ -69,7 +69,8 @@ export default class ProjectInfo extends React.Component {
                 trigger="click"
                 placement="bottomRight"
               >
-                <Button>{t('Manage Project')}</Button>
+                {/* todo */}
+                {/* <Button>{t('Manage Project')}</Button> */}
               </Dropdown>
             </div>
           )}

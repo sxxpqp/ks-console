@@ -23,9 +23,9 @@ export const S2IJOBS_STATUS = [
 ]
 
 export const S2I_STATUS_DESC = {
-  Failed: 'Build image failed',
-  Running: 'Is building image',
-  Successful: 'Build image successfully',
+  Failed: '构建镜像失败',
+  Running: '构建镜像中',
+  Successful: '构建成功',
 }
 
 export const CRONJOB_STATUS = [

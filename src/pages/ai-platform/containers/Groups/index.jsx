@@ -39,6 +39,7 @@ export default class GroupsManage extends React.Component {
     }
     this.store = new GroupStore()
     this.store.getData()
+    this.tree = React.createRef()
   }
 
   // async componentDidMount() {
@@ -47,7 +48,7 @@ export default class GroupsManage extends React.Component {
 
   getColumns = () => [
     {
-      title: '名称',
+      title: '组织名称',
       dataIndex: 'name',
       width: '10%',
     },
@@ -106,13 +107,13 @@ export default class GroupsManage extends React.Component {
   }
 
   handleEditItem(item) {
-    this.store.setItem(item)
+    this.store.tmpItem = item
     this.handleEdit()
   }
 
   handleRemove(item) {
     Modal.confirm({
-      title: `确定删除组织${item.name}吗？`,
+      title: `确定删除组织"${item.name}"吗？`,
       icon: <ExclamationCircleOutlined />,
       centered: true,
       okText: '确认',
@@ -121,10 +122,8 @@ export default class GroupsManage extends React.Component {
         this.store.removeData(item.id).then(res => {
           if (res.code === 200) {
             Notify.success('删除成功')
-            this.setState({
-              item: null,
-            })
-            this.getData()
+            // this.selectNode(null)
+            this.store.getData()
           } else {
             Notify.success('删除失败，请重试')
           }
@@ -158,6 +157,7 @@ export default class GroupsManage extends React.Component {
         <Row>
           <Col span={6} style={{ paddingRight: '5px' }}>
             <Tree
+              item={item}
               canEdit
               store={this.store}
               select={this.selectNode.bind(this)}
@@ -197,7 +197,7 @@ export default class GroupsManage extends React.Component {
           onCancel={onCancel}
           onSubmit={onSubmit}
           treeData={this.store.treeData}
-          item={this.store.selectedItem}
+          item={isEdit ? this.store.tmpItem : this.store.selectedItem}
         ></CreateAndEditModal>
       </div>
     )

@@ -55,3 +55,6 @@ export const removeGroups = id => request.delete(`/remove-groups/${id}`)
 
 // ====================== harbor相关 ======================
 export const getImages = params => request.get('/harbor-images', params)
+
+// 获取镜像详情
+export const getImageTags = params => request.get('/harbor-images-tags', params)
