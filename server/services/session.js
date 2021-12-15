@@ -6,7 +6,9 @@ const jwtDecode = require('jwt-decode')
 
 const { send_gateway_request } = require('../libs/request')
 
-const { isAppsRoute, safeParseJSON } = require('../libs/utils')
+const { isAppsRoute, safeParseJSON, getServerConfig } = require('../libs/utils')
+
+const { server: serverConfig } = getServerConfig()
 
 const handleLoginResp = (resp = {}) => {
   if (!resp.access_token) {
@@ -33,6 +35,19 @@ const handleLoginResp = (resp = {}) => {
 }
 
 const login = async (data, headers) => {
+  let clientID = serverConfig.apiSe
+  if (!clientID) {
+    clientID = 'kubesphere'
+  }
+
+  let clientSecret = serverConfig.a
+  if (!clientSecret) {
+    clientSecret = 'kubesphere'
+  }
+
+  data.client_id = clientID
+  data.client_secret = clientSecret
+
   const resp = await send_gateway_request({
     method: 'POST',
     url: '/oauth/token',
@@ -53,16 +68,31 @@ const getNewToken = async ctx => {
   const refreshToken = ctx.cookies.get('refreshToken')
   let newToken = {}
 
+  const data = {
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken,
+  }
+
+  let clientID = serverConfig.apiServer.clientID
+  if (!clientID) {
+    clientID = 'kubesphere'
+  }
+
+  let clientSecret = serverConfig.apiServer.clientSecret
+  if (!clientSecret) {
+    clientSecret = 'kubesphere'
+  }
+
+  data.client_id = clientID
+  data.client_secret = clientSecret
+
   const resp = await send_gateway_request({
     method: 'POST',
     url: '/oauth/token',
     headers: {
       'content-type': 'application/x-www-form-urlencoded',
     },
-    params: {
-      grant_type: 'refresh_token',
-      refresh_token: refreshToken,
-    },
+    params: data,
     token: refreshToken,
   })
 

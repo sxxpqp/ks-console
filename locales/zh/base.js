@@ -276,7 +276,7 @@ module.exports = {
   'Duplicate keys': '无法添加重复的 key',
   'Empty keys': '无法添加空的 key',
 
-  'Log Out': '登出',
+  'Log Out': '退出',
   About: '关于',
   'User Settings': '个人设置',
   Language: '语言',

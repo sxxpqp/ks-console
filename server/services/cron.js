@@ -4,7 +4,7 @@ import { CronJob } from 'cron'
 import axios from 'axios'
 import qs from 'qs'
 import { getServerConfig } from '../libs/utils'
-import { getK8sNodes } from './platform'
+import { getK8sNodes, getGPUstatus } from './platform'
 
 // 获取token任务
 export const getAccessToken = async () => {
@@ -17,6 +17,8 @@ export const getAccessToken = async () => {
     qs.stringify({
       ...kpiAdmin,
       grant_type: 'password',
+      client_id: 'kubesphere',
+      client_secret: 'kubesphere',
     }),
     {
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -47,6 +49,7 @@ export const cronJob1 = new CronJob('0 */1 * * * *', async () => {
     // 每分钟获取节点信息
     console.log('update1')
     await getK8sNodes()
+    await getGPUstatus()
   } catch (error) {
     console.log(error)
   }

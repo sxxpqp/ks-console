@@ -11,6 +11,7 @@ import {
   getValueByUnit,
   getConditionsStatus,
 } from '../libs/nodes'
+import { sshcmd } from '../libs/platform'
 
 // 获取应用列表
 export const getK8sAppList = async ({ workspace, namespace }) => {
@@ -355,3 +356,36 @@ export const getK8sNodes = async () => {
 }
 
 // 获取harbar镜像信息
+
+// 获取gpu信息
+export const getGPUstatus = async () => {
+  const { ssh } = global.server
+  const res = await sshcmd('bash /root/gpu.sh', {
+    host: ssh.host,
+    port: ssh.port,
+    username: ssh.username,
+    password: ssh.password,
+  })
+  if (!res) return
+  const arr = res.stdout.split('\n').slice(1)
+  arr.forEach(async item => {
+    //  ['Node Available(GPUs) Used(GPUs)', 'master 0 0', 'node1 0 0', 'node2 1 2']
+    // 节点名称， 可用gpu数， 已用gpu数
+    const { nodes } = global.models
+    const nodeGPU = item.split(' ')
+    await nodes.update(
+      {
+        gpu: nodeGPU[1],
+        gpu_used:
+          parseFloat(nodeGPU[1], 10) < parseFloat(nodeGPU[2])
+            ? nodeGPU[1]
+            : nodeGPU[2],
+      },
+      {
+        where: {
+          node: nodeGPU[0],
+        },
+      }
+    )
+  })
+}

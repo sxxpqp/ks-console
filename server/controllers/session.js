@@ -122,12 +122,11 @@ const handleLogin = async ctx => {
     },
     raw: true,
   })
-  // console.log('🚀 ~ file: session.js ~ line 125 ~ res', res)
   let url = '/'
   if (res && res.length) {
     const tmp = res[0]
     const { namespace, workspace, cluster } = tmp
-    url = `/${workspace}/clusters/${cluster}/projects/${namespace}/overview`
+    url = `/${workspace}/clusters/${cluster}/projects/${namespace}/home`
   }
 
   ctx.redirect(isValidReferer(referer) ? referer : url)

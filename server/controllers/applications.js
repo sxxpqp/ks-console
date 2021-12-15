@@ -20,18 +20,30 @@ export const getAppList = async ctx => {
     offset: (parseInt(current || 1, 10) - 1) * (parseInt(pageSize, 10) || 10),
   }
   // 获取所有组信息
-  let appGroupWhere = {}
+  let apgidWhere = {}
+  let gidWhere = {}
+  let appGroup = []
   if (pid) {
     const allGroups = await groups.findAll({})
-    const arrIds = [pid]
-    arrIds.push(getAllChildIds(allGroups, pid))
+    appGroup = [pid]
+    appGroup.push(...getAllChildIds(allGroups, pid))
     const workspaces = allGroups
-      .filter(i => arrIds.includes(i.id))
+      .filter(i => appGroup.includes(i.id) && i.pid === -1)
       .map(i => i.code)
-    appGroupWhere = {
-      workspace: {
-        [Op.in]: workspaces,
-      },
+    if (workspaces && workspaces.length) {
+      apgidWhere = {
+        workspace: {
+          [Op.in]: workspaces,
+        },
+      }
+    } else {
+      gidWhere = {
+        where: {
+          gid: {
+            [Op.in]: appGroup,
+          },
+        },
+      }
     }
   }
 
@@ -61,7 +73,7 @@ export const getAppList = async ctx => {
   })
 
   // 非组管理员，只能看到自己的应用
-  let where = { ...groupWhere, ...appGroupWhere }
+  let where = { ...groupWhere, ...apgidWhere }
   if (name) {
     where = {
       ...where,
@@ -123,6 +135,7 @@ export const getAppList = async ctx => {
         include: [
           {
             model: users_group,
+            ...gidWhere,
             include: [
               {
                 model: groups,
@@ -134,11 +147,32 @@ export const getAppList = async ctx => {
     ],
     ...conditions,
   })
+  const res1 = await await users_app.findAll({
+    attributes: Object.keys(omit(users_app.rawAttributes, ['meta'])),
+    where,
+    include: [
+      ...include,
+      {
+        model: users,
+        include: [
+          {
+            model: users_group,
+            ...gidWhere,
+            include: [
+              {
+                model: groups,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  })
   if (res && res.rows) {
     ctx.body = {
       code: 200,
       data: res.rows,
-      total: res.count,
+      total: res.count > res1.length ? res1.length : res.count,
     }
   } else {
     ctx.body = {
@@ -194,7 +228,7 @@ export const updateAppList = async ctx => {
 // 删除应用
 export const removeApp = async ctx => {
   const { id } = ctx.params
-  const { users_app } = global.models
+  const { users_app, app_labels } = global.models
   const app = await users_app.findAll({
     where: {
       appId: id,
@@ -212,6 +246,12 @@ export const removeApp = async ctx => {
     }
   }
   const res = await users_app.destroy({
+    where: {
+      appId: id,
+    },
+  })
+  // 删除应用标签
+  await app_labels.destroy({
     where: {
       appId: id,
     },
@@ -431,7 +471,6 @@ export const getAppByTagsId = async ctx => {
     // 查询未分类应用
     const appIds = await app_labels.findAll({
       attributes: ['appId'],
-      distinct: true,
       raw: true,
     })
     if (appIds && appIds.length) {
@@ -454,18 +493,22 @@ export const getAppByTagsId = async ctx => {
       },
     ]
   }
-  const res = await users_app.findAndCountAll({
-    distinct: true,
+  const res = await users_app.findAll({
     ...conditions,
     where,
     attributes: Object.keys(omit(users_app.rawAttributes, ['meta'])),
     include,
   })
-  if (res && res.rows) {
+  const res1 = await users_app.findAll({
+    where,
+    attributes: Object.keys(omit(users_app.rawAttributes, ['meta'])),
+    include,
+  })
+  if (res) {
     ctx.body = {
       code: 200,
-      data: res.rows,
-      total: res.count,
+      data: res,
+      total: res1.length || 0,
     }
   }
 }

@@ -14,4 +14,14 @@ const instance = axios.create({
   },
 })
 
+instance.interceptors.request.use(
+  config => {
+    return config
+  },
+  err => {
+    global.logError.error(err)
+    return Promise.reject(err)
+  }
+)
+
 export default instance

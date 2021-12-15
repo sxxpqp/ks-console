@@ -6,7 +6,11 @@ import qs from 'qs'
 import { imageCommit, imagePush } from '../libs/platform'
 
 import { getServerConfig } from '@/libs/utils'
-import { getUserRepoInfo, getUserRepos } from '../libs/harbor'
+import {
+  getUserRepoInfo,
+  getUserRepos,
+  getImagesArtifacts,
+} from '../libs/harbor'
 
 // 获取节点列表
 // deperated
@@ -272,43 +276,79 @@ export const getImages = async ctx => {
   const { harborPid, username } = ctx.user
   const { name, pageSize, current, type } = ctx.query
   const result = {}
-  if (type === '1') {
-    const summary = await getUserRepoInfo(harborPid)
-    if (summary && summary.status === 200) {
-      result.summary = summary.data
+  try {
+    if (type === '1') {
+      const summary = await getUserRepoInfo(harborPid)
+      if (summary && summary.status === 200) {
+        result.summary = summary.data
+      }
+      const repos = await getUserRepos(
+        username,
+        parseInt(pageSize, 10) || 10,
+        parseInt(current, 10) || 1,
+        name
+      )
+      if (repos && repos.status === 200) {
+        result.data = repos.data
+        const { headers } = repos
+        result.total = headers['x-total-count']
+      }
+    } else if (type === '2') {
+      const { harbor } = global.server
+      const summary = await getUserRepoInfo(harbor.pid)
+      if (summary && summary.status === 200) {
+        result.summary = summary.data
+      }
+      const repos = await getUserRepos(
+        harbor.project,
+        parseInt(pageSize, 10) || 10,
+        parseInt(current, 10) || 1,
+        name
+      )
+      if (repos && repos.status === 200) {
+        result.data = repos.data
+        const { headers } = repos
+        result.total = headers['x-total-count']
+      }
     }
-    const repos = await getUserRepos(
-      username,
-      parseInt(pageSize, 10) || 10,
-      parseInt(current, 10) || 1,
-      name
-    )
-    if (repos && repos.status === 200) {
-      result.data = repos.data
-      const { headers } = repos
-      result.total = headers['x-total-count']
+    // 查询用户repo
+    ctx.body = {
+      code: 200,
+      ...result,
     }
-  } else if (type === '2') {
-    const { harbor } = global.server
-    const summary = await getUserRepoInfo(harbor.pid)
-    if (summary && summary.status === 200) {
-      result.summary = summary.data
-    }
-    const repos = await getUserRepos(
-      harbor.project,
-      parseInt(pageSize, 10) || 10,
-      parseInt(current, 10) || 1,
-      name
-    )
-    if (repos && repos.status === 200) {
-      result.data = repos.data
-      const { headers } = repos
-      result.total = headers['x-total-count']
+  } catch (error) {
+    ctx.body = {
+      code: 500,
+      msg: '请求异常，请重试',
     }
   }
-  // 查询用户repo
-  ctx.body = {
-    code: 200,
-    ...result,
+}
+
+// 获取镜像的tags详情
+export const getImagesDetail = async ctx => {
+  const { name, pageSize, current } = ctx.query
+  // const user = ctx.user
+  const [projects, repo] = name.split('/')
+  try {
+    const res = await getImagesArtifacts(projects, repo, pageSize, current)
+    if (res && res.status === 200) {
+      ctx.body = {
+        code: 200,
+        msg: '查询成功',
+        data: res.data,
+        total: res.headers['x-total-count'],
+      }
+    } else {
+      ctx.body = {
+        code: 500,
+        msg: 'harbor镜像服务异常',
+        data: [],
+      }
+    }
+  } catch (error) {
+    ctx.body = {
+      code: 500,
+      msg: '查询失败，请重试',
+    }
   }
 }

@@ -69,3 +69,14 @@ export const getPublicRepo = (flag = false, pageSize = 10, current = 1) =>
 // /api/v2.0/projects/${project}/repositories/${image} DELETE
 export const removeImages = (project, image) =>
   axios.delete(`/api/v2.0/projects/${project}/repositories/${image}`)
+
+// 获取镜像的版本详情
+export const getImagesArtifacts = (
+  username,
+  project,
+  pageSize = 10,
+  current = 1
+) =>
+  axios.get(
+    `/api/v2.0/projects/${username}/repositories/${project}/artifacts?with_tag=true&with_scan_overview=true&with_label=true&page_size=${pageSize}&page=${current}`
+  )

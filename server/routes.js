@@ -39,6 +39,7 @@ const {
   copyApp,
   handlerTransfer,
   getImages,
+  getImagesDetail,
 } = require('./controllers/platform')
 
 // resources
@@ -216,6 +217,7 @@ router
   .post('/batch-app-labels', batchSetAppTags)
   // harbar镜像数据相关
   .get('/harbor-images', getImages)
+  .get('/harbor-images-tags', getImagesDetail)
 
 // page entry
 router.all('*', renderView)

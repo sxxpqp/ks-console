@@ -479,7 +479,7 @@ export const editUser = async ctx => {
 
 // 删除用户
 export const removeUser = async ctx => {
-  const { users, users_app, users_role, users_group } = global.models
+  const { users, users_app, users_role, users_group, resources } = global.models
   const { id } = ctx.params
   const user = await users.findAll({
     where: {
@@ -490,6 +490,12 @@ export const removeUser = async ctx => {
   if (user && user.length > 0) {
     const temp = user[0]
     const { username, workspace, namespace, devops, harborId, harborPid } = temp
+    // 删除用户的resources申请
+    await resources.destroy({
+      where: {
+        uid: id,
+      },
+    })
     // 删除k8s用户
     await removeK8sUser(username)
     // 删除企业空间中的项目

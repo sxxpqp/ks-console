@@ -83,11 +83,16 @@ const handleApply = async (ctx, uid) => {
           {
             model: users_group,
             where: groupWhere,
+            include: [
+              {
+                model: groups,
+              },
+            ],
           },
         ],
       },
     ],
-    distinct: true,
+    // distinct: true,
   })
   if (res && res.rows) {
     ctx.body = {
