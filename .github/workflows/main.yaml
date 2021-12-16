@@ -5,19 +5,19 @@ on:
     # Publish `master` as Docker `latest` image.
     branches:
       - master
-      - dev
-      - release-*
+      # - dev
+      # - release-*
 
     # Publish `v1.2.3` tags as releases.
     tags:
       - v*
 
   # Run build for any PRs.
-  pull_request:
+  # pull_request:
 
 env:
-  IMAGE_NAME: ks-console
-  DOCKERHUB_REPO: kubespheredev
+  IMAGE_NAME: library/ks-console
+  DOCKERHUB_REPO: ${{ secrets.DOCKERHUB }}
 
 jobs:
   build-and-push:
@@ -28,36 +28,37 @@ jobs:
         node-version: [12.18.x]
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - name: Install Dependencies
-      run: yarn
+      - name: Install Dependencies
+        run: yarn
 
-    - name: Build
-      run: yarn build
+      - name: Build
+        run: yarn build
 
-    - name: Test
-      run: yarn test
+      # - name: Test
+      #   run: yarn test
 
-    - name: Build image
-      if: github.event_name == 'push'
-      run: docker build . --file Dockerfile --tag $IMAGE_NAME
+      - name: Build image
+        if: github.event_name == 'push'
+        run: docker build . --file Dockerfile --tag $IMAGE_NAME
 
-    - name: Docker login
-      if: github.event_name == 'push'
-      uses: azure/docker-login@v1
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Docker login
+        if: github.event_name == 'push'
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.DOCKERHUB }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: Push image
-      if: github.event_name == 'push'
-      run: |
+      - name: Push image
+        if: github.event_name == 'push'
+        run: |
           IMAGE_ID=$DOCKERHUB_REPO/$IMAGE_NAME
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
