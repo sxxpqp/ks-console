@@ -111,7 +111,13 @@ export default class BasicInfo extends React.Component {
               <Form.Item
                 label="名称"
                 desc="支持中英文名称，最长16个字符，汉字&字母打头"
-                rules={[{ required: true, message: '请输入名称' }]}
+                rules={[
+                  { required: true, message: '请输入名称' },
+                  {
+                    pattern: /^[\u4e00-\u9fa5_a-zA-Z].*$/,
+                    message: '必须使用中文或者字母打头',
+                  },
+                ]}
               >
                 <Input
                   autoFocus={true}

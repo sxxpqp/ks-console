@@ -297,7 +297,7 @@ export default class Roles extends React.Component {
                     type="control"
                     onClick={this.handleCreate.bind(this)}
                   >
-                    新增
+                    创建
                   </KButton>
                 </Form.Item>
               </Col>

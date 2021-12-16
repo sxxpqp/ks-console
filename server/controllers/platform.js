@@ -352,3 +352,94 @@ export const getImagesDetail = async ctx => {
     }
   }
 }
+
+// 获取告警消息
+export const getAlertMessage = async ctx => {
+  const {
+    msg,
+    status,
+    level,
+    read,
+    rule,
+    current,
+    pageSize,
+    nolimit = false,
+  } = ctx.query
+  const conditions = !nolimit
+    ? {
+        order: [['created', 'DESC']],
+        limit: parseInt(pageSize, 10) || 10,
+        offset:
+          (parseInt(current || 1, 10) - 1) * (parseInt(pageSize, 10) || 10),
+      }
+    : {
+        order: [['created', 'DESC']],
+      }
+  const user = ctx.user
+  const { alerts } = global.models
+  let where = {
+    namespace: user.namespace,
+  }
+  if (msg) {
+    const nameCond = { msg: { [Op.like]: `%${msg}%` } }
+    where = { ...where, ...nameCond }
+  }
+  if (rule) {
+    const ruleCond = { rule: { [Op.like]: `%${rule}%` } }
+    where = { ...where, ...ruleCond }
+  }
+  if (status) {
+    const statusCond = {
+      status,
+    }
+    where = { ...where, ...statusCond }
+  }
+  if (level) {
+    const levelCond = {
+      level,
+    }
+    where = { ...where, ...levelCond }
+  }
+  if (read) {
+    const readCond = {
+      read,
+    }
+    where = { ...where, ...readCond }
+  }
+  const res = await alerts.findAndCountAll({
+    where,
+    conditions,
+  })
+  if (res && res.rows) {
+    ctx.body = {
+      code: 200,
+      data: res.rows,
+      total: res.count,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+      msg: '查询失败',
+    }
+  }
+}
+
+// 设置告警消息已读
+export const updateAlertMessage = async ctx => {
+  const { body } = ctx.request
+  const { alerts } = global.models
+  const res = await alerts.update(
+    {
+      read: 1,
+    },
+    {
+      where: {
+        id: body.id,
+      },
+    }
+  )
+  ctx.body = {
+    code: 200,
+    data: res,
+  }
+}

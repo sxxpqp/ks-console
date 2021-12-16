@@ -4,7 +4,7 @@ import { CronJob } from 'cron'
 import axios from 'axios'
 import qs from 'qs'
 import { getServerConfig } from '../libs/utils'
-import { getK8sNodes, getGPUstatus } from './platform'
+import { getK8sNodes, getGPUstatus, getAlertsMsg } from './platform'
 
 // 获取token任务
 export const getAccessToken = async () => {
@@ -43,16 +43,23 @@ export const cronJob = new CronJob('0 */30 * * * *', async () => {
   }
 })
 
-export const cronJob1 = new CronJob('0 */1 * * * *', async () => {
+export const cronJob1 = new CronJob('0 */1 * * * *', () => {
   try {
     // const d = new Date()
     // 每分钟获取节点信息
-    console.log('update1')
-    await getK8sNodes()
-    await getGPUstatus()
+    getK8sNodes()
+    getGPUstatus()
+    getAlertsMsg()
   } catch (error) {
     console.log(error)
   }
 })
 
-// module.exports = { cronJob, getAccessToken, cronJob1, getNodeInfo }
+// 每10分钟获取告警信息
+// export const cronJob2 = new CronJob('0 */10 * * * *', async () => {
+//   try {
+//     await getK8sNodes()
+//   } catch (error) {
+//     console.log(error)
+//   }
+// })

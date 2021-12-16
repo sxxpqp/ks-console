@@ -451,7 +451,7 @@ export default class CustomApplications extends React.Component {
               <Col>
                 <Form.Item>
                   <KButton type="control" onClick={this.showDeploy}>
-                    新增应用
+                    创建
                   </KButton>
                 </Form.Item>
               </Col>

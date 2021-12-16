@@ -234,7 +234,7 @@ export default class ApplyHistory extends React.Component {
               <Col>
                 <Form.Item>
                   <KButton type="control" onClick={() => showApply()}>
-                    新增申请
+                    创建申请
                   </KButton>
                 </Form.Item>
               </Col>

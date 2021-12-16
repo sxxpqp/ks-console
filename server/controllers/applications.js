@@ -1,8 +1,10 @@
-import { omit } from 'lodash'
+import { omit, get } from 'lodash'
 import { Op, fn, col } from 'sequelize'
 import { getK8sAppList } from '../services/platform'
 import request from '../libs/axios'
 import { getAllChildIds } from '../libs/utils'
+// import { transfer } from '../libs/transfer'
+
 // 获取应用列表
 export const getAppList = async ctx => {
   const { current, pageSize, name, tagId, status, type, pid } = ctx.request.body
@@ -585,5 +587,128 @@ export const batchSetAppTags = async ctx => {
   ctx.body = {
     code: 200,
     data: res,
+  }
+}
+
+// 获取异常应用
+export const getAbnormalApp = async ctx => {
+  // const { pid } = ctx.request.body
+  const {
+    users_app,
+    app_labels,
+    labels,
+    users_group,
+    users,
+    groups,
+  } = global.models
+  const conditions = {
+    order: [['created', 'DESC']],
+  }
+  // 判断是否是组管理员
+  const tmpGroups = await users_group.findAll({
+    where: {
+      uid: ctx.user.id,
+    },
+  })
+  let groupWhere = {}
+  tmpGroups.forEach(i => {
+    if (i.isAdmin) {
+      groupWhere = {
+        ...groupWhere,
+        [Op.or]: {
+          workspace: i.workspace,
+        },
+      }
+    } else {
+      groupWhere = {
+        ...groupWhere,
+        [Op.or]: {
+          namespace: i.namespace,
+        },
+      }
+    }
+  })
+
+  // 非组管理员，只能看到自己的应用
+  let where = { ...groupWhere }
+  where = {
+    ...where,
+    status: {
+      [Op.eq]: 0,
+    },
+  }
+  const include = [
+    {
+      model: app_labels,
+      include: [
+        {
+          model: labels,
+        },
+      ],
+    },
+  ]
+  const res = await users_app.findAndCountAll({
+    // attributes: Object.keys(omit(users_app.rawAttributes, ['meta'])),
+    where,
+    include: [
+      ...include,
+      {
+        model: users,
+        include: [
+          {
+            model: users_group,
+            include: [
+              {
+                model: groups,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    ...conditions,
+  })
+  if (res && res.rows) {
+    const result = []
+    for (let i = 0; i < res.rows.length; i++) {
+      // 翻译并整合需要的信息
+      const item = res.rows[i].toJSON()
+      let { meta } = item
+      if (meta) {
+        meta = JSON.parse(meta)
+        const msg = get(meta, 'cluster.additional_info')
+        switch (msg) {
+          case 'exit status 1':
+            item._msg = '未启动成功，请检查配置'
+            break
+          case 'timed out waiting for resources to be ready':
+            item._msg = '准备超时，重启异常'
+            break
+          default:
+            item._msg = msg
+            break
+        }
+        // if (msg) {
+        //   try {
+        //     item.msg = await transfer(msg)
+        //   } catch (error) {
+        //     item.msg = msg
+        //   }
+        // }
+      }
+      result.push({
+        ...omit(item, ['meta']),
+      })
+    }
+    ctx.body = {
+      code: 200,
+      data: result,
+      total: res.count,
+    }
+  } else {
+    ctx.body = {
+      code: 500,
+      msg: '请求应用列表失败',
+    }
   }
 }

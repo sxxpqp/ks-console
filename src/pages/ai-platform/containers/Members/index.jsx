@@ -342,7 +342,7 @@ export default class Members extends React.Component {
                         type="control"
                         onClick={() => this.handleCreate()}
                       >
-                        新增
+                        创建
                       </KButton>
                     </Form.Item>
                   </Col>

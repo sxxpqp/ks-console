@@ -33,7 +33,7 @@ export default class Members extends React.Component {
 
   getColumns = () => [
     {
-      title: '资源模板名称',
+      title: '名称',
       dataIndex: 'name',
     },
     {
@@ -46,7 +46,7 @@ export default class Members extends React.Component {
     //   dataIndex: 'app',
     // },
     {
-      title: 'cpu',
+      title: 'CPU',
       dataIndex: 'cpu',
       render: item => `${item} Core`,
     },
@@ -61,7 +61,7 @@ export default class Members extends React.Component {
       render: item => `${item} GB`,
     },
     {
-      title: 'gpu',
+      title: 'GPU',
       dataIndex: 'gpu',
       render: item => `${item} Core`,
     },
@@ -212,7 +212,7 @@ export default class Members extends React.Component {
               <Col>
                 <Form.Item>
                   <KButton type="control" onClick={() => this.handleCreate()}>
-                    新增
+                    创建
                   </KButton>
                 </Form.Item>
               </Col>

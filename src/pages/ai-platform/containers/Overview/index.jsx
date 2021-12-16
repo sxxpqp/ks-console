@@ -46,6 +46,8 @@ export default class Overview extends React.Component {
       current: 1,
       pageSize: 999999,
     })
+    this.appStore.getErrorApps()
+    this.appStore.getAlertMsg()
   }
 
   fetchData = params => {
@@ -139,6 +141,8 @@ export default class Overview extends React.Component {
     const { nodesTotal, nodesFail = 0 } = this.groupStore
     const { total, totalFail } = this.appStore
     const { allHis } = this.reviewStore
+    const alertTotal = this.appStore.alertMsgs.length
+    const readTotal = this.appStore.alertMsgs.filter(i => i.read === 0).length
     return (
       <Panel title="平台总览">
         <Row>
@@ -172,7 +176,7 @@ export default class Overview extends React.Component {
           <Col span={8}>
             <Statistic
               title="告警统计/未读"
-              value={'0/0'}
+              value={`${alertTotal}/${readTotal}`}
               valueStyle={{ color: '#333' }}
               prefix={<AlertOutlined />}
             />
@@ -198,8 +202,8 @@ export default class Overview extends React.Component {
             {this.renderResource()}
             {this.renderPlatform()}
             {this.isAdmin && <NodesOverview groupStore={this.groupStore} />}
-            <MyApps lists={this.appStore.lists} store={this.appStore} />
-            <Alert />
+            <MyApps lists={this.appStore.abnormalApp} store={this.appStore} />
+            <Alert store={this.appStore} />
           </Column>
           <Column className="is-4">
             <ShortCut isAdmin={this.isAdmin} />

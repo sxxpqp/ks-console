@@ -1,6 +1,7 @@
-import { get } from 'lodash'
+import { get, omit } from 'lodash'
 import { Op } from 'sequelize'
 import dayjs from 'dayjs'
+import crypto from 'crypto'
 import axios from '../libs/axios'
 import {
   NodeMapper,
@@ -12,6 +13,13 @@ import {
   getConditionsStatus,
 } from '../libs/nodes'
 import { sshcmd } from '../libs/platform'
+
+export const md5 = text => {
+  return crypto
+    .createHash('md5')
+    .update(text)
+    .digest('hex')
+}
 
 // 获取应用列表
 export const getK8sAppList = async ({ workspace, namespace }) => {
@@ -388,4 +396,46 @@ export const getGPUstatus = async () => {
       }
     )
   })
+}
+
+// 获取平台的告警信息，并存储
+export const getAlertsMsg = async () => {
+  const { users, alerts } = global.models
+  const resInfo = await users.findAll({
+    attributes: ['username', 'cluster', 'workspace', 'namespace'],
+    raw: true,
+  })
+  const tmp = resInfo.filter(i => i.namespace !== null).map(i => i.namespace)
+  const alertArr = []
+  for (let i = 0; i < tmp.length; i++) {
+    const item = tmp[i]
+    const url = `/kapis/alerting.kubesphere.io/v2alpha1/namespaces/${item}/alerts?sortBy=createTime&limit=9999999`
+    const res = await axios.get(url)
+    const { total, items } = res
+    if (total) {
+      // 数据入库
+      const info = resInfo.find(o => o.namespace === item)
+      items.forEach(t => {
+        const str = JSON.stringify(t)
+        alertArr.push({
+          id: md5(str),
+          msg: get(t, 'annotations.summary'),
+          type: 0,
+          status: get(t, 'state'),
+          level: get(t, 'labels.severity'),
+          rule: get(t, 'annotations.aliasName') || t.ruleName,
+          created: t.activeAt,
+          read: 0,
+          ...info,
+          app: get(t, 'labels.workload'),
+          meta: str,
+        })
+      })
+    }
+  }
+  if (alertArr.length) {
+    await alerts.bulkCreate(alertArr, {
+      updateOnDuplicate: Object.keys(omit(alerts.rawAttributes, ['read'])),
+    })
+  }
 }

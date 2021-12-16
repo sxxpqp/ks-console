@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { Panel } from 'components/Base'
-import { Row, Col, Button, Table } from 'antd'
+import { Row, Col, Button, Table, Tag } from 'antd'
 import { observer, inject } from 'mobx-react'
 import { Icon } from '@kube-design/components'
 import ReactECharts from 'echarts-for-react'
 import { Link } from 'react-router-dom'
+import dayjs from 'dayjs'
+// import { EyeOutlined } from '@ant-design/icons'
 import styles from './index.scss'
 
 @observer
@@ -16,8 +18,29 @@ export default class MyApps extends Component {
     this.echartRef = React.createRef()
   }
 
+  get prefix() {
+    const { workspace, cluster, namespace } = globals.user.ai
+    return `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/`
+  }
+
+  get routing() {
+    return this.props.rootStore.routing
+  }
+
+  // 查看应用详情
+  handleDetail = record => {
+    const { history } = this.routing
+    const type = record.type ? 'composing' : 'template'
+    history.push({
+      pathname: `${this.prefix}${type}/${record.appId}`,
+      state: {
+        prevPath: location.pathname,
+      },
+    })
+  }
+
   handleClick = item => {
-    const { workspace, namespace, cluster } = this.props.match.params
+    const { workspace, namespace, cluster } = globals.user.ai
     this.routing.push(
       `/${workspace}/clusters/${cluster}/projects/${namespace}/${item}`
     )
@@ -31,30 +54,53 @@ export default class MyApps extends Component {
   getColumns() {
     return [
       {
-        title: '应用',
+        title: '名称',
         dataIndex: 'name',
         key: 'name',
+        render: (_, record) => (
+          <Button type="link" onClick={() => this.handleDetail(record)}>
+            {_}
+          </Button>
+        ),
       },
       {
-        title: '异常分类',
-        dataIndex: 'age',
-        key: 'age',
+        title: '分类',
+        dataIndex: 'type',
+        render: type =>
+          type === 0 ? (
+            <Tag color="processing">模板</Tag>
+          ) : (
+            <Tag color="success">自制</Tag>
+          ),
       },
       {
         title: '消息',
-        dataIndex: 'address',
-        key: 'address',
+        dataIndex: '_msg',
+        key: '_msg',
+        render: val => val || '已停止',
       },
       {
-        title: '时间',
-        dataIndex: 'address',
-        key: 'address',
+        title: '创建时间',
+        dataIndex: 'created',
+        width: '210px',
+        render: created => dayjs(created).format('YYYY-MM-DD HH:mm:ss'),
       },
-      {
-        title: '操作',
-        dataIndex: 'address',
-        key: 'address',
-      },
+      // {
+      //   title: '操作',
+      //   key: 'more',
+      //   render: (_, record) => (
+      //     <div className={styles.btns}>
+      //       <Button
+      //         type="text"
+      //         size="small"
+      //         icon={<EyeOutlined />}
+      //         onClick={() => this.handleDetail(record)}
+      //       >
+      //         详情
+      //       </Button>
+      //     </div>
+      //   ),
+      // },
     ]
   }
 
@@ -104,7 +150,7 @@ export default class MyApps extends Component {
   }
 
   render() {
-    const { lists } = this.props
+    const { lists, store } = this.props
     const { namespace, workspace, cluster } = this.props.rootStore.myClusters
     const url = `/${workspace}/clusters/${cluster}/projects/${namespace}/applications`
     return (
@@ -123,7 +169,17 @@ export default class MyApps extends Component {
             <Col span={16}>
               <Row>运行异常</Row>
               <div className="margin-b12">
-                <Table dataSource={[]} columns={this.getColumns()} />
+                <Table
+                  id="appId"
+                  dataSource={lists}
+                  columns={this.getColumns()}
+                  pagination={{
+                    defaultCurrent: 1,
+                    defaultPageSize: 5,
+                    total: store.abnormalAppTotal,
+                    simple: true,
+                  }}
+                />
               </div>
               <Row justify="end">
                 <Link to={url}>

@@ -7,6 +7,7 @@ import fs from 'fs'
 import path from 'path'
 import {
   createUserSpace,
+  removeUserSpace,
   createUser,
   addUserToSpace,
   createProject,
@@ -669,9 +670,14 @@ export const removeGroups = async ctx => {
         [Op.or]: [{ id }, { pid: id }],
       }
     : null
+  const tmp = await groups.findAll({
+    where: idCond,
+  })
   const res = await groups.destroy({
     where: idCond,
   })
+  // 删除企业空间
+  tmp && tmp.length && removeUserSpace(tmp[0].code)
   if (res && res > 0) {
     ctx.body = {
       code: 200,

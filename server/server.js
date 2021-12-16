@@ -26,8 +26,11 @@ const { ftpsInit } = require('./services/ftps')
 const { sshInit } = require('./services/ssh')
 const { cronJob, cronJob1 } = require('./services/cron')
 // const { sshcmd } = require('./libs/platform')
-// const { getK8sAppList } = require('./services/platform')
+// const { getAlertsMsg } = require('./services/platform')
 
+// setTimeout(async () => {
+//   getAlertsMsg()
+// }, 1100)
 // setTimeout(async () => {
 //   // await getK8sNodes()
 //   // await getK8sAppList({ workspace: 'test', namespace: 'test' })

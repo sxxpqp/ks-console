@@ -95,13 +95,13 @@ export default class Cates extends Component {
           this.props.renew && this.props.renew()
         })
       } else {
-        // 新增
+        // 创建
         addAppTags(data).then(res => {
           // 更新列表
           if (res.code === 200) {
-            Notify.success('新增成功')
+            Notify.success('创建成功')
           } else {
-            Notify.error('新增失败，请重试')
+            Notify.error('创建失败，请重试')
           }
           this.props.renew && this.props.renew()
         })

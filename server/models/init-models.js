@@ -18,6 +18,7 @@ const _users_app = require('./users_app')
 const _app_detail = require('./app_detail')
 const _app_labels = require('./app_labels')
 const _labels = require('./labels')
+const _alerts = require('./alerts')
 
 // 在Sequelize中建立关联关系，通过调用模型(源模型)的belongsTo、hasOne、hasMany、belongsToMany方法，再将要建立关系的模型(目标模型)做为参数传入即可。这些方法会按以下规则创建关联关系：
 
@@ -56,6 +57,7 @@ function initModels(sequelize) {
   const app_detail = _app_detail(sequelize, DataTypes)
   const app_labels = _app_labels(sequelize, DataTypes)
   const labels = _labels(sequelize, DataTypes)
+  const alerts = _alerts(sequelize, DataTypes)
 
   // 节点与节点日志的对应关系
   nodes.hasMany(nodes_log, { sourceKey: 'machine', foreignKey: 'machine' })
@@ -115,6 +117,7 @@ function initModels(sequelize) {
     app_detail,
     app_labels,
     labels,
+    alerts,
   }
 }
 module.exports = initModels

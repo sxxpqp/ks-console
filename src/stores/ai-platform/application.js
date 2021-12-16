@@ -1,5 +1,10 @@
 import { observable, action, computed } from 'mobx'
-import { getAppList, updateAppList } from 'api/platform'
+import {
+  getAppList,
+  updateAppList,
+  getAbnormalApp,
+  getAlertMessage,
+} from 'api/platform'
 import { Notify } from '@kube-design/components'
 
 export default class ApplicationStore {
@@ -7,7 +12,29 @@ export default class ApplicationStore {
   lists = []
 
   @observable
+  abnormalApp = []
+
+  @observable
+  alertMsgs = []
+
+  @observable
+  abnormalAppTotal = 0
+
+  @observable
   getDataFunc = null
+
+  @observable
+  alertPagination = {
+    msg: '',
+    status: '',
+    level: '',
+    read: '',
+    rule: '',
+    current: 1,
+    pageSize: 10,
+    total: 0,
+    onChange: this.handleAlertPaginationChange,
+  }
 
   @observable
   pagination = {
@@ -50,6 +77,15 @@ export default class ApplicationStore {
   }
 
   @action
+  handleAlertPaginationChange = value => {
+    this.alertPagination = {
+      ...this.alertPagination,
+      current: value,
+    }
+    this.getAlertMsg()
+  }
+
+  @action
   handlePaginationChange = value => {
     this.pagination = { ...this.pagination, current: value }
     this.getData(this.pagination)
@@ -69,5 +105,30 @@ export default class ApplicationStore {
         }
       })
       .catch(err => err)
+  }
+
+  @action
+  getErrorApps = () => {
+    getAbnormalApp().then(res => {
+      const { code, data, total } = res
+      if (code === 200) {
+        this.abnormalApp = data
+        this.abnormalAppTotal = total
+      }
+    })
+  }
+
+  @action
+  getAlertMsg = () => {
+    getAlertMessage(this.alertPagination).then(res => {
+      const { code, data, total } = res
+      if (code === 200) {
+        this.alertPagination = {
+          ...this.alertPagination,
+          total: total || 0,
+        }
+        this.alertMsgs = data
+      }
+    })
   }
 }

@@ -8,6 +8,18 @@ export const editNodes = params => request.post('/ai/v1/edit-nodes', params)
 // 获取应用列表
 export const getAppList = params => request.post('/ai/v1/app-list', params)
 
+// 获取异常数据
+export const getAbnormalApp = params =>
+  request.get('/ai/v1/abnormal-app', params)
+
+// 获取告警
+export const getAlertMessage = params =>
+  request.get('/ai/v1/alert-message', params)
+
+// 更新告警 - 设置已读
+export const updateAlertMessage = params =>
+  request.post('/ai/v1/alert-message', params)
+
 // 更新应用
 export const updateApp = params => request.post('/ai/v1/update-app', params)
 

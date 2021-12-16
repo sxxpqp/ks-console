@@ -9,6 +9,8 @@ import {
   copyApp,
   getImages,
   getImagesDetail,
+  getAlertMessage,
+  updateAlertMessage,
 } from '../controllers/platform'
 
 // resources
@@ -66,6 +68,7 @@ import {
   updateAppTags,
   resetAppTags,
   batchSetAppTags,
+  getAbnormalApp,
 } from '../controllers/applications'
 
 const router = new Router()
@@ -86,12 +89,13 @@ router
   .use(parseBody)
   .use(decodeToken)
   .prefix('/ai/v1/')
-  // ai-platform
+  // 申请审批资源
   .post('/apply', applyRes)
   .get('/apply', getApply) // 获取审批资源
   .get('/applyhis', getApplyHis) // 获取审批资源，用于管理员审核
   .put('/apply', updateApply) // 获取审批资源
 
+  // 节点&资源
   .get('/nodes', getNodes) // 获取节点资源
   .post('/edit-nodes', editNodes) // 编辑节点名称与节点组织，分配组织资源
   .get('/resource', getUsersResources) // 获取用户已申请资源
@@ -104,6 +108,7 @@ router
   .post('/edit-menu', editMenu) // 获取平台菜单
   .post('/remove-menu', removeMenu) // 获取平台菜单
   .post('/batch-remove-menu', batchRemoveMenu)
+
   // 上传文件
   .post('/upload', upload) // 上传文件
   .post('/saveDocker', saveDocker) // 容器固化
@@ -121,11 +126,13 @@ router
   .post('/roles', addRole)
   .post('/edit-role', editRole)
   .delete('/roles/:id', removeRole)
+
   // 组织信息
   .get('/groups', getGroups)
   .post('/groups', addGroups)
   .post('/edit-groups', editGroups)
   .delete('/remove-groups/:id', removeGroups)
+
   // 资源模板
   .get('/resources-template', getResourceTemplate)
   .post('/resources-template', addResourceTemplate)
@@ -137,23 +144,32 @@ router
   .post('/update-app', updateApp)
   .delete('/remove-app/:id', removeApp)
   .post('/update-app-list', updateAppList)
+  .get('/abnormal-app', getAbnormalApp)
+
   // 通过应用名称 获取 应用标签
   .get('/app-tags', getAppTagsById)
   .get('/app-tagsname', getAppByTagsName)
   // 通过标签ID 获取 应用
   .get('/app-tags-id', getAppByTagsId)
+
   // 标签
   .get('/app-labels', getAppTags)
   .get('/app-labels-sum', getAppTagsCountApp)
   .post('/app-labels', addAppTags)
   .post('/edit-labels', editAppTags)
   .delete('/app-labels/:id', removeAppTags)
+
   // 给应用添加标签
   .post('/add-app-labels', updateAppTags)
   .post('/reset-app-labels', resetAppTags)
   .post('/batch-app-labels', batchSetAppTags)
+
   // harbar镜像数据相关
   .get('/harbor-images', getImages)
   .get('/harbor-images-tags', getImagesDetail)
+
+  // 获取告警消息
+  .get('/alert-message', getAlertMessage)
+  .post('/alert-message', updateAlertMessage)
 
 export default router

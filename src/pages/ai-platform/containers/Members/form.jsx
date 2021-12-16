@@ -178,7 +178,9 @@ export default class MembersForm extends Component {
           >
             <Select bordered mode="multiple" allowClear>
               {this.props.roleData.map(i => (
-                <Option value={i.id}>{i.desc}</Option>
+                <Option value={i.id} key={i.id}>
+                  {i.desc}
+                </Option>
               ))}
             </Select>
           </Form.Item>

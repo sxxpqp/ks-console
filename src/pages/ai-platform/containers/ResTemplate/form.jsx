@@ -117,7 +117,7 @@ export default class ResTemplateForm extends Component {
             <Input />
           </Form.Item>
           <Form.Item
-            label="模板名称"
+            label="名称"
             name="name"
             rules={[{ required: true, message: '请输入模板名称' }]}
           >

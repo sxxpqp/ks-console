@@ -322,16 +322,16 @@ export default class ApplyDefault extends React.Component {
         onFilter: (value, record) => record.mem === value,
       },
       {
-        title: 'vGPU',
-        dataIndex: 'gpu',
-        render: item => `${item} vGPU`,
-        sorter: (a, b) => a.gpu - b.gpu,
-      },
-      {
         title: '磁盘',
         dataIndex: 'disk',
         render: item => `${item} GiB`,
         sorter: (a, b) => a.disk - b.disk,
+      },
+      {
+        title: 'vGPU',
+        dataIndex: 'gpu',
+        render: item => `${item} vGPU`,
+        sorter: (a, b) => a.gpu - b.gpu,
       },
       {
         title: '描述',

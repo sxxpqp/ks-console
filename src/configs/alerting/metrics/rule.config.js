@@ -19,6 +19,7 @@ const CONDITION_OPTIONS = [
 
 export const SEVERITY_LEVEL = [
   {
+    // type: 'error',
     type: 'critical',
     prefixIcon: 'information',
     color: {

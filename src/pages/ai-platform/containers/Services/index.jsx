@@ -128,7 +128,7 @@ export default class Services extends React.Component {
         {
           key: 'create',
           type: 'control',
-          text: '创建外部服务',
+          text: '创建',
           onClick: this.showCreate,
         },
       ],

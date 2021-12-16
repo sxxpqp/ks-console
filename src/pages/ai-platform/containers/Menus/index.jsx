@@ -355,7 +355,7 @@ export default class Members extends React.Component {
     }
 
     const onCancel = () => {
-      this.setState({ show: false })
+      this.setState({ show: false, item: null, isEdit: false })
     }
 
     // 创建和编辑的回调
@@ -470,7 +470,7 @@ export default class Members extends React.Component {
                       type="control"
                       onClick={this.handleCreate.bind(this)}
                     >
-                      新增菜单
+                      创建
                     </KButton>
                   </Form.Item>
                 </Col>
