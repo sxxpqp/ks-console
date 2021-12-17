@@ -118,11 +118,11 @@ export default class Members extends React.Component {
 
   getColumns = () => [
     {
-      title: '用户名',
+      title: '用户名称',
       dataIndex: 'name',
     },
     {
-      title: '登录名',
+      title: '登录账号',
       dataIndex: 'username',
     },
     {
@@ -134,7 +134,7 @@ export default class Members extends React.Component {
       },
     },
     {
-      title: '部门',
+      title: '上级部门',
       dataIndex: 'users_groups',
       render: val => {
         let groups = []

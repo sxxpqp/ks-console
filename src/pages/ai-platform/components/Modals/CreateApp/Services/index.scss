@@ -1,9 +1,9 @@
 @import '~scss/variables';
 @import '~scss/mixins';
 
-.wrapper {
-  width: 700px;
-}
+// .wrapper {
+//   width: 700px;
+// }
 
 .step {
   margin: 20px 0;
@@ -23,6 +23,7 @@
 }
 
 .components {
+  width: 420px;
   padding: 12px;
   border-radius: 4px;
   background-color: $light-color01;
