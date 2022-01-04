@@ -106,7 +106,7 @@ export default class ApplyDefault extends React.Component {
       modal: RefuseModal,
       title: '确定驳回吗？',
       desc: `确定驳回 ${item.uid_user.name} 的资源申请吗？`,
-      resource: `CPU:${item.cpu}vCPU, 内存:${item.mem}GiB, 磁盘:${item.disk}GiB, GPU:${item.gpu}vGPU`,
+      resource: `CPU:${item.cpu}Core, 内存:${item.mem}GiB, 磁盘:${item.disk}GiB, GPU:${item.gpu}Core`,
       reason: item.reason,
       // ...props,
     })
@@ -178,7 +178,7 @@ export default class ApplyDefault extends React.Component {
       dataIndex: 'cpu',
       width: '7%',
       isHideable: true,
-      render: val => `${val}vCPU`,
+      render: val => `${val}Core`,
     },
     {
       title: '内存',
@@ -199,7 +199,7 @@ export default class ApplyDefault extends React.Component {
       dataIndex: 'gpu',
       width: '7%',
       isHideable: true,
-      render: val => `${val}vGPU`,
+      render: val => `${val}Core`,
     },
     {
       title: '申请人',

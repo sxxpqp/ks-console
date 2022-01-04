@@ -40,15 +40,15 @@ export default class StatefulSets extends React.Component {
       options: [
         {
           value: 'deployments',
-          label: t('Deployments'),
+          label: '无状态',
         },
         {
           value: 'statefulsets',
-          label: t('StatefulSets'),
+          label: '有状态',
         },
         {
           value: 'daemonsets',
-          label: t('DaemonSets'),
+          label: '守护进程',
         },
       ],
     }
@@ -208,7 +208,8 @@ export default class StatefulSets extends React.Component {
         <Banner
           {...bannerProps}
           tabs={this.tabs}
-          description="工有状态副本集 (StatefulSet)，是为了解决有状态服务的问题，在运行过程中会保存数据或状态，例如 Mysql，它需要存储产生的新数据。"
+          title="有状态副本集"
+          description="有状态副本集 (StatefulSet)，是为了解决有状态服务的问题，在运行过程中会保存数据或状态，例如 Mysql，它需要存储产生的新数据。"
         />
         <Table
           {...tableProps}

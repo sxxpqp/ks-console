@@ -29,10 +29,16 @@ class BaseInfo extends React.Component {
   renderNav() {
     const { rootStore, breadcrumbs, noBread } = this.props
     const goBack = () => {
+      // debugger
       const prevPath = localStorage.getItem('prevPath')
       if (prevPath) {
-        rootStore.routing.push(prevPath)
-        localStorage.removeItem('prevPath')
+        const arr = prevPath.split('#')
+        rootStore.routing.push({ pathname: arr.splice(-1) })
+        if (arr.length > 0) {
+          localStorage.setItem('prevPath', arr.join('#'))
+        } else {
+          localStorage.removeItem('prevPath')
+        }
       } else {
         rootStore.routing.goBack()
       }

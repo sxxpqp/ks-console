@@ -560,4 +560,8 @@ module.exports = {
   TemplateApp:
     '用户可以基于自有的镜像或者代码进行创建应用，或者使用平台已有的应用模板来创建容器应用',
   ImageManage: '镜像管理',
+  ImageBuilderHistory: '镜像构建历史',
+  Deployments1: '无状态',
+  StatefulSets1: '有状态',
+  DaemonSets1: '守护进程',
 }

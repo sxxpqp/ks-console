@@ -150,10 +150,13 @@ export default class ImageBuilders extends React.Component {
   }
 
   render() {
-    const { bannerProps, tableProps } = this.props
+    const { tableProps } = this.props
     return (
       <ListPage {...this.props}>
-        <Banner {...bannerProps} description={t(`IMAGE_BUILDER_DESC`)} />
+        <Banner
+          title="镜像构建历史"
+          description={'镜像构建历史用于用户查看自制镜像的构建历史数据。'}
+        />
         <Table
           {...tableProps}
           itemActions={this.itemActions}

@@ -306,12 +306,13 @@ export default class ApplyDefault extends React.Component {
       },
 
       {
-        title: 'vCPU',
+        title: 'CPU',
         dataIndex: 'cpu',
-        render: item => `${item} vCPU`,
+        render: item => `${item} Core`,
         sorter: (a, b) => a.cpu - b.cpu,
         filters: cpuOptions.map(i => ({ text: `${i} Core`, value: i })),
         onFilter: (value, record) => record.cpu === value,
+        showSorterTooltip: false,
       },
       {
         title: '内存',
@@ -320,18 +321,21 @@ export default class ApplyDefault extends React.Component {
         sorter: (a, b) => a.mem - b.mem,
         filters: memOptions.map(i => ({ text: `${i} GiB`, value: i })),
         onFilter: (value, record) => record.mem === value,
+        showSorterTooltip: false,
       },
       {
         title: '磁盘',
         dataIndex: 'disk',
         render: item => `${item} GiB`,
         sorter: (a, b) => a.disk - b.disk,
+        showSorterTooltip: false,
       },
       {
-        title: 'vGPU',
+        title: 'GPU',
         dataIndex: 'gpu',
-        render: item => `${item} vGPU`,
+        render: item => `${item} Core`,
         sorter: (a, b) => a.gpu - b.gpu,
+        showSorterTooltip: false,
       },
       {
         title: '描述',
@@ -375,7 +379,7 @@ export default class ApplyDefault extends React.Component {
             <div>
               <span>CPU：</span>
               <Select
-                placeholder="选择 vCPU"
+                placeholder="选择 CPU"
                 style={{ width: 120 }}
                 allowClear
                 onChange={e => handleChange(e, 'cpu')}
@@ -384,7 +388,7 @@ export default class ApplyDefault extends React.Component {
                 {cpuOptions.map(item => {
                   return (
                     <Option value={item} key={item}>
-                      {item} vCPU
+                      {item} Core
                     </Option>
                   )
                 })}
@@ -420,7 +424,7 @@ export default class ApplyDefault extends React.Component {
                 {gpuOptions.map(item => {
                   return (
                     <Option key={item} value={item}>
-                      {item > 0 ? `${item}vGPU` : '不需要'}
+                      {item > 0 ? `${item}Core` : '不需要'}
                     </Option>
                   )
                 })}
@@ -463,7 +467,7 @@ export default class ApplyDefault extends React.Component {
           <Col span={6}>
             <Statistic
               title="CPU"
-              value={`${countRes.cpu} vCore`}
+              value={`${countRes.cpu} Core`}
               valueStyle={{ color: '#333' }}
             />
           </Col>
@@ -484,7 +488,7 @@ export default class ApplyDefault extends React.Component {
           <Col span={6}>
             <Statistic
               title="GPU"
-              value={`${countRes.gpu} vCore`}
+              value={`${countRes.gpu} Core`}
               valueStyle={{ color: '#333' }}
             />
           </Col>

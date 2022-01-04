@@ -96,19 +96,22 @@ export default class GroupsManage extends React.Component {
     this.setState({
       item,
     })
+    if (!item) {
+      this.store.tmpItem = null
+    }
   }
 
   handleCreate() {
     this.setState({ isEdit: false, show: true })
   }
 
-  handleEdit() {
-    this.setState({ isEdit: true, show: true })
-  }
+  // handleEdit() {
+  //   this.setState({ isEdit: true, show: true })
+  // }
 
   handleEditItem(item) {
     this.store.tmpItem = item
-    this.handleEdit()
+    this.setState({ isEdit: true, show: true })
   }
 
   handleRemove(item) {
@@ -161,7 +164,7 @@ export default class GroupsManage extends React.Component {
               canEdit
               store={this.store}
               select={this.selectNode.bind(this)}
-              onEdit={() => this.handleEdit()}
+              onEdit={() => this.handleEditItem(this.state.item)}
             ></Tree>
           </Col>
           <Col span={18} style={{ paddingLeft: '5px' }}>

@@ -57,9 +57,9 @@ module.exports = {
   TIME_D: '{num} 天',
   UTILIZATION: '使用率',
   RESOURCE_USAGE_TITLE: '资源使用情况',
-  MONITORING_CLUSTER_DESC: '监控集群的运行状态',
+  MONITORING_CLUSTER_DESC: '监控集群的运行状态。',
   MONITORING_PHYSICAL_DESC: '监控集群物理资源的运行状态',
-  MONITORING_APPLICATION_DESC: '监控集群应用资源的运行状态',
+  MONITORING_APPLICATION_DESC: '监控集群应用资源的运行状态。',
   TIMERANGE_SELECTOR_MSG: '结束时间需晚于开始时间',
   MONITORING_SELECT_LIMIT_MSG: '最多可以选择 10 个资源',
 

@@ -19,7 +19,7 @@ export default class UserResources extends Component {
           <Col span={6}>
             <Statistic
               title="CPU"
-              value={`${countRes?.cpu || 0} vCore`}
+              value={`${countRes?.cpu || 0} Core`}
               valueStyle={{ color: '#333' }}
             />
           </Col>
@@ -40,7 +40,7 @@ export default class UserResources extends Component {
           <Col span={6}>
             <Statistic
               title="GPU"
-              value={`${countRes?.gpu || 0} vCore`}
+              value={`${countRes?.gpu || 0} Core`}
               valueStyle={{ color: '#333' }}
             />
           </Col>

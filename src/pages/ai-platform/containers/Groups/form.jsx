@@ -17,6 +17,7 @@ export default class GroupsForm extends Component {
 
   componentDidUpdate() {
     const { item, isEdit } = this.props
+    // debugger
     if (this.form.current) {
       if (!isEdit) {
         this.form.current.setFieldsValue({
@@ -94,7 +95,7 @@ export default class GroupsForm extends Component {
           >
             <Input />
           </Form.Item>
-          <Form.Item label="组织别名" name="desc">
+          <Form.Item label="简称" name="desc">
             <Input />
           </Form.Item>
 

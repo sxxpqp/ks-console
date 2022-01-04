@@ -14,6 +14,8 @@ import 'antd/dist/antd.less'
 require('dayjs/locale/zh-cn')
 require('@babel/polyfill')
 
+window.note = Notify
+
 // request error handler
 window.onunhandledrejection = function(e) {
   if (e && (e.status === 'Failure' || e.status >= 400)) {

@@ -119,16 +119,22 @@ export default class ResTemplateForm extends Component {
           <Form.Item
             label="名称"
             name="name"
-            rules={[{ required: true, message: '请输入模板名称' }]}
+            rules={[
+              { required: true, message: '请输入名称' },
+              { max: 16, message: '最多输入16个字符' },
+            ]}
           >
-            <Input />
+            <Input placeholder="请输入名称" maxLength={16} />
           </Form.Item>
           <Form.Item
             label="描述"
             name="desc"
-            rules={[{ required: true, message: '请输入描述' }]}
+            rules={[
+              { required: true, message: '请输入描述' },
+              { max: 255, message: '最多输入255个字符' },
+            ]}
           >
-            <TextArea row={4} allowClear />
+            <TextArea row={4} allowClear maxLength={255} />
           </Form.Item>
 
           <Form.Item
@@ -136,11 +142,11 @@ export default class ResTemplateForm extends Component {
             name="cpu"
             rules={[{ required: true, message: '请选择需要的CPU资源' }]}
           >
-            <Select placeholder="选择 vCPU" allowClear>
+            <Select placeholder="选择 CPU" allowClear>
               {cpuOptions.map(item => {
                 return (
                   <Option value={item} key={item}>
-                    {item} vCore
+                    {item} Core
                   </Option>
                 )
               })}
@@ -166,14 +172,14 @@ export default class ResTemplateForm extends Component {
             name="disk"
             rules={[{ required: true, message: '请选择需要的磁盘资源' }]}
           >
-            <Input />
+            <Input placeholder="请选择需要的磁盘资源" />
           </Form.Item>
           <Form.Item label="GPU" name="gpu">
             <Select placeholder="选择GPU" allowClear>
               {gpuOptions.map(item => {
                 return (
                   <Option key={item} value={item}>
-                    {item > 0 ? `${item}vCore` : '不需要'}
+                    {item > 0 ? `${item}Core` : '不需要'}
                   </Option>
                 )
               })}

@@ -6,6 +6,7 @@ import { Icon } from '@kube-design/components'
 import { inject } from 'mobx-react'
 
 import EmptyList from 'components/Cards/EmptyList'
+import HomeStore from 'stores/ai-platform/home'
 import AdminDashboard from './Admin'
 
 import styles from './index.scss'
@@ -14,6 +15,8 @@ import styles from './index.scss'
 class Dashboard extends React.Component {
   constructor(props) {
     super(props)
+
+    this.homeStore = new HomeStore()
 
     if (!globals.app.isPlatformAdmin) {
       // if (globals.user.globalrole === 'users-manager') {
@@ -30,13 +33,7 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    const { namespace, workspace, cluster } = this.props.rootStore.myClusters
-    if (namespace && workspace && cluster) {
-      this.routing.push(
-        `${workspace}/clusters/${cluster}/projects/${namespace}/home`
-      )
-    } else {
-      const user = globals.user && globals.user.ai
+    const redirect = user => {
       this.routing.push(
         `${user.workspace}/clusters/${user.cluster}/projects/${user.namespace}/home`
       )
@@ -44,6 +41,26 @@ class Dashboard extends React.Component {
         namespace: user.namespace,
         workspace: user.workspace,
         cluster: user.cluster,
+      }
+    }
+    const { namespace, workspace, cluster } = this.props.rootStore.myClusters
+    if (namespace && workspace && cluster) {
+      this.routing.push(
+        `${workspace}/clusters/${cluster}/projects/${namespace}/home`
+      )
+    } else {
+      const user = globals.user && globals.user.ai
+      if (user) {
+        redirect(user)
+      } else {
+        this.homeStore.getUser().then(res => {
+          if (res.code === 200) {
+            const tmp = globals.user && globals.user.ai
+            redirect(tmp)
+          } else {
+            window.location.href = '/login'
+          }
+        })
       }
     }
   }
@@ -113,10 +130,10 @@ class Dashboard extends React.Component {
   render() {
     return (
       <div className={styles.dashboard}>
-        <div className={styles.wrapper}>
+        {/* <div className={styles.wrapper}>
           {this.renderHeader()}
           {this.renderContent()}
-        </div>
+        </div> */}
       </div>
     )
   }

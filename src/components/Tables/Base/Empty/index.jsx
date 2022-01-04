@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
-import { isUndefined } from 'lodash'
+// import { isUndefined } from 'lodash'
 
 import { Icon } from '@kube-design/components'
 
@@ -25,15 +25,16 @@ export default class EmptyTable extends React.PureComponent {
   }
 
   render() {
-    const { module, icon, title, name, desc, action, className } = this.props
-    const _desc = !isUndefined(desc)
-      ? desc
-      : t.html(
-          `${name
-            .split(' ')
-            .join('_')
-            .toUpperCase()}_CREATE_DESC`
-        )
+    const { module, icon, action, className } = this.props
+    // const { module, icon, title, name, desc, action, className } = this.props
+    // const _desc = !isUndefined(desc)
+    //   ? desc
+    //   : t.html(
+    //       `${name
+    //         .split(' ')
+    //         .join('_')
+    //         .toUpperCase()}_CREATE_DESC`
+    //     )
 
     const _icon = icon || ICON_TYPES[module] || 'appcenter'
 
@@ -43,9 +44,13 @@ export default class EmptyTable extends React.PureComponent {
           <Icon name={_icon} size={48} />
         </div>
         <div className={styles.title}>
-          {title || t('EMPTY_WRAPPER', { resource: t(name) })}
+          {/* {title || t('EMPTY_WRAPPER', { resource: t(name) })} */}
+          暂无数据
         </div>
-        <p className={styles.desc}>{_desc}</p>
+        {/* <p className={styles.desc}>{_desc}</p> */}
+        <p className={styles.desc}>
+          镜像构建历史用于展示用户自制镜像构建数据。
+        </p>
         {action && <div className={styles.actions}>{action}</div>}
       </div>
     )

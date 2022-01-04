@@ -46,18 +46,18 @@ export default class Deployments extends React.Component {
     this.props.routing.push(`${this.prefix}/${value}`)
   }
 
-  get tips() {
-    return [
-      {
-        title: '资源选择',
-        description: t('SERVICE_TYPES_A'),
-      },
-      {
-        title: '应用选择',
-        description: t('SCENARIOS_FOR_SERVICES_A'),
-      },
-    ]
-  }
+  // get tips() {
+  //   return [
+  //     {
+  //       title: '资源选择',
+  //       description: t('SERVICE_TYPES_A'),
+  //     },
+  //     {
+  //       title: '应用选择',
+  //       description: t('SCENARIOS_FOR_SERVICES_A'),
+  //     },
+  //   ]
+  // }
 
   get tabs() {
     return {
@@ -66,11 +66,11 @@ export default class Deployments extends React.Component {
       options: [
         {
           value: 'deployments',
-          label: '无状态负载',
+          label: '无状态',
         },
         {
           value: 'statefulsets',
-          label: '有状态负载',
+          label: '有状态',
         },
         {
           value: 'daemonsets',
@@ -270,7 +270,10 @@ export default class Deployments extends React.Component {
             iconSize={40}
             title={getDisplayName(record)}
             desc={this.getItemDesc(record)}
-            to={`${this.prefix}/${module}/${name}`}
+            to={{
+              pathname: `${this.prefix}/${module}/${name}`,
+              state: { prevPath: this.props.location.pathname },
+            }}
             isMultiCluster={record.isFedManaged}
           />
         ),
@@ -390,7 +393,7 @@ export default class Deployments extends React.Component {
           title="工作负载"
           description="工作负载为应用提供负载均衡支持，弹性扩容，对容器的整个生命周期（启停、删除、更新等）进行管理。"
           tabs={this.tabs}
-          tips={this.tips}
+          // tips={this.tips}
         />
         <Table
           {...tableProps}

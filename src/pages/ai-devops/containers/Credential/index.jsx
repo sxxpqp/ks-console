@@ -33,13 +33,18 @@ class Credential extends React.Component {
     this.formTemplate = {}
   }
 
+  get devops() {
+    return globals.user.ai.devops
+    // return this.props.match.params.devops
+  }
+
   componentDidMount() {
     this.unsubscribe = this.routing.history.subscribe(location => {
       const params = parse(location.search.slice(1))
-      const { devops, cluster } = this.props.match.params
+      const { cluster } = this.props.match.params
 
       this.store.fetchList({
-        devops,
+        devops: this.devops,
         cluster,
         ...params,
       })
@@ -66,9 +71,9 @@ class Credential extends React.Component {
     })
   }
 
-  get devops() {
-    return this.props.match.params.devops
-  }
+  // get devops() {
+  //   return this.props.match.params.devops
+  // }
 
   get cluster() {
     return this.props.match.params.cluster
@@ -79,11 +84,11 @@ class Credential extends React.Component {
   }
 
   getData() {
-    const { devops, cluster } = this.props.match.params
+    const { cluster } = this.props.match.params
     const query = parse(location.search.slice(1))
 
     this.store.fetchList({
-      devops,
+      devops: this.devops,
       cluster,
       ...query,
     })
@@ -113,9 +118,9 @@ class Credential extends React.Component {
   }
 
   handleCreate = () => {
-    const { devops, cluster } = this.props.match.params
+    const { cluster } = this.props.match.params
     this.trigger('devops.credential.create', {
-      devops,
+      devops: this.devops,
       cluster,
       success: () => {
         this.getData()
@@ -125,7 +130,8 @@ class Credential extends React.Component {
 
   getColumns = () => [
     {
-      title: t('Name'),
+      title: '凭证ID',
+      // title: t('Name'),
       dataIndex: 'name',
       width: '35%',
       render: id => {

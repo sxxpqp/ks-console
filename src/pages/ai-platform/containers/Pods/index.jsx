@@ -138,7 +138,10 @@ export default class Pods extends React.Component {
         <div>
           <Link
             className={styles.title}
-            to={`/${workspace}/clusters/${cluster}/projects/${namespace}/${module}/${name}`}
+            to={{
+              pathname: `/${workspace}/clusters/${cluster}/projects/${namespace}/${module}/${name}`,
+              state: { prevPath: this.props.location.pathname },
+            }}
           >
             {name}
           </Link>

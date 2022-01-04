@@ -12,8 +12,8 @@ export default class AppBanner extends Component {
   store = new CRDAppStore()
 
   handleTabChange = value => {
-    const { workspace, cluster, namespace, devops } = this.props.match.params
-    const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}/devops/${devops}`
+    const { workspace, cluster, namespace } = this.props.match.params
+    const PATH = `/${workspace}/clusters/${cluster}/projects/${namespace}/devops`
     // const { workspace, cluster, namespace } = this.props.match.params
     this.props.rootStore.routing.push(`${PATH}/${value}`)
   }

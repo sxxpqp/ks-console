@@ -32,7 +32,6 @@ export default class ServiceItem extends React.Component {
 
     const serviceMonitor = get(detail, 'monitor.name')
     const detailName = getDisplayName(detail)
-
     return (
       <div className={classnames(styles.item, className)}>
         <Text

@@ -26,7 +26,7 @@ export default class GroupResource extends Component {
           <Col span={6}>
             <Statistic
               title="CPU"
-              value={`${this.groupResourceTotal.cpu} vCore`}
+              value={`${this.groupResourceTotal.cpu} Core`}
               valueStyle={{
                 color: '#333',
                 fontSize: '18px',
@@ -56,7 +56,7 @@ export default class GroupResource extends Component {
           <Col span={6}>
             <Statistic
               title="GPU"
-              value={`${this.groupResourceTotal.gpu} vCore`}
+              value={`${this.groupResourceTotal.gpu} Core`}
               valueStyle={{
                 color: '#333',
                 fontSize: '18px',
@@ -69,7 +69,7 @@ export default class GroupResource extends Component {
           <Col span={6}>
             <Statistic
               title="CPU"
-              value={`${this.groupResourceUsedTotal.cpu_used.toFixed(2)} vCore`}
+              value={`${this.groupResourceUsedTotal.cpu_used.toFixed(2)} Core`}
               valueStyle={{
                 color: '#333',
                 fontSize: '18px',
@@ -99,7 +99,7 @@ export default class GroupResource extends Component {
           <Col span={6}>
             <Statistic
               title="GPU"
-              value={`${this.groupResourceUsedTotal.gpu_used.toFixed(2)} vCore`}
+              value={`${this.groupResourceUsedTotal.gpu_used.toFixed(2)} Core`}
               valueStyle={{
                 color: '#333',
                 fontSize: '18px',

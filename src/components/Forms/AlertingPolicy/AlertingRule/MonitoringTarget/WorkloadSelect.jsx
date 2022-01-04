@@ -86,7 +86,7 @@ export default class WorkloadSelect extends Component {
         </Form.Item>
         <Form.Item
           label={t('Monitoring Target')}
-          rules={[{ required: true, message: t('RESOURCE_WORKLOAD_FORM_TIP') }]}
+          rules={[{ required: true, message: '请选择监控目标' }]}
         >
           <Select
             name="resources"

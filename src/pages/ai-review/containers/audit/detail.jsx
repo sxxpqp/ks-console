@@ -125,7 +125,7 @@ export default class Detail extends Component {
                 <Col span={6}>
                   <Statistic
                     title="CPU"
-                    value={`${this.userResTotal.cpu} vCore`}
+                    value={`${this.userResTotal.cpu} Core`}
                     valueStyle={{
                       color: '#333',
                       fontSize: '18px',
@@ -155,7 +155,7 @@ export default class Detail extends Component {
                 <Col span={6}>
                   <Statistic
                     title="GPU"
-                    value={`${this.userResTotal.gpu} vCore`}
+                    value={`${this.userResTotal.gpu} Core`}
                     valueStyle={{
                       color: '#333',
                       fontSize: '18px',
@@ -170,7 +170,7 @@ export default class Detail extends Component {
                 <Col span={6}>
                   <Statistic
                     title="CPU"
-                    value={`${item.cpu} vCore`}
+                    value={`${item.cpu} Core`}
                     valueStyle={{
                       color: '#333',
                       fontSize: '18px',
@@ -200,7 +200,7 @@ export default class Detail extends Component {
                 <Col span={6}>
                   <Statistic
                     title="GPU"
-                    value={`${item.gpu} vCore`}
+                    value={`${item.gpu} Core`}
                     valueStyle={{
                       color: '#333',
                       fontSize: '18px',
@@ -220,7 +220,7 @@ export default class Detail extends Component {
                   <Col span={6}>
                     <Statistic
                       title="CPU"
-                      value={`${this.groupResourceTotal.cpu} vCore`}
+                      value={`${this.groupResourceTotal.cpu} Core`}
                       valueStyle={{
                         color: '#333',
                         fontSize: '18px',
@@ -250,7 +250,7 @@ export default class Detail extends Component {
                   <Col span={6}>
                     <Statistic
                       title="GPU"
-                      value={`${this.groupResourceTotal.gpu} vCore`}
+                      value={`${this.groupResourceTotal.gpu} Core`}
                       valueStyle={{
                         color: '#333',
                         fontSize: '18px',
@@ -265,7 +265,7 @@ export default class Detail extends Component {
                       title="CPU"
                       value={`${this.groupResourceUsedTotal.cpu_used.toFixed(
                         2
-                      )} vCore`}
+                      )} Core`}
                       valueStyle={{
                         color: '#333',
                         fontSize: '18px',
@@ -301,7 +301,7 @@ export default class Detail extends Component {
                       title="GPU"
                       value={`${this.groupResourceUsedTotal.gpu_used.toFixed(
                         2
-                      )} vCore`}
+                      )} Core`}
                       valueStyle={{
                         color: '#333',
                         fontSize: '18px',

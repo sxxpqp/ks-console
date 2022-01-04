@@ -1,6 +1,6 @@
 import React from 'react'
 import { get, isEmpty } from 'lodash'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 
 import { Icon, Menu, Dropdown } from '@kube-design/components'
@@ -47,7 +47,8 @@ export default class ProjectInfo extends React.Component {
           </div>
           <div className={styles.item}>
             <div>
-              <Link to={`/workspaces/${workspace}`}>{workspace}</Link>
+              {workspace}
+              {/* <Link to={`/workspaces/${workspace}`}>{workspace}</Link> */}
             </div>
             <p>{t('Workspace')}</p>
           </div>

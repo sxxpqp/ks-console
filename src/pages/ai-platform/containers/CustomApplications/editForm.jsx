@@ -71,9 +71,15 @@ export default class EditAppForm extends Component {
             <Input />
           </Form.Item>
           <Form.Item
-            label="应用名称"
+            label="名称"
             name="name"
-            rules={[{ required: true, message: '请输入应用名称' }]}
+            rules={[
+              { required: true, message: '请输入名称' },
+              {
+                pattern: /^[\u4e00-\u9fa5_a-zA-Z].*$/,
+                message: '必须使用中文或者字母打头',
+              },
+            ]}
           >
             <Input />
           </Form.Item>

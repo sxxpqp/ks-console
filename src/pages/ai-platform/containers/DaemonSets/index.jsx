@@ -40,15 +40,15 @@ export default class DaemonSets extends React.Component {
       options: [
         {
           value: 'deployments',
-          label: t('Deployments'),
+          label: '无状态',
         },
         {
           value: 'statefulsets',
-          label: t('StatefulSets'),
+          label: '有状态',
         },
         {
           value: 'daemonsets',
-          label: t('DaemonSets'),
+          label: '守护进程',
         },
       ],
     }
@@ -200,6 +200,7 @@ export default class DaemonSets extends React.Component {
         <Banner
           {...bannerProps}
           tabs={this.tabs}
+          title="守护进程集"
           description="守护进程集 (DaemonSet)，保证在每个 Node 上都运行一个容器副本，常用来部署一些集群的日志、监控或者其他系统管理应用。"
         />
         <Table

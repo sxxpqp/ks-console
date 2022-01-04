@@ -66,7 +66,7 @@ export default class AuditDetailModal extends React.Component {
   renderForm = items => {
     const columns = [
       {
-        title: 'vCPU',
+        title: 'CPU',
         dataIndex: 'cpu',
         render: item => `${item} Core`,
       },
@@ -76,7 +76,7 @@ export default class AuditDetailModal extends React.Component {
         render: item => `${item} GiB`,
       },
       {
-        title: 'vGPU',
+        title: 'GPU',
         dataIndex: 'gpu',
         render: item => `${item} Core`,
       },
@@ -150,9 +150,9 @@ export default class AuditDetailModal extends React.Component {
         dataIndex: 'node',
       },
       {
-        title: 'vCPU剩余',
+        title: 'CPU剩余',
         dataIndex: 'cpuRest',
-        render: item => `${item} vCPU`,
+        render: item => `${item} Core`,
       },
       {
         title: 'CPU %',
@@ -165,9 +165,9 @@ export default class AuditDetailModal extends React.Component {
         render: item => `${item} GiB`,
       },
       {
-        title: 'vGPU剩余',
+        title: 'GPU剩余',
         dataIndex: 'gpuRest',
-        render: item => `${item}`,
+        render: item => `${item} Core`,
       },
       {
         title: '磁盘剩余',
@@ -177,8 +177,8 @@ export default class AuditDetailModal extends React.Component {
     ]
 
     const { remain } = this.state
-    const msg = `选择后，资源剩余: CPU: ${remain.cpu} vCPU, 内存: ${remain.mem} GiB,
-            磁盘: ${remain.disk} GiB, GPU: ${remain.gpu} vGPU`
+    const msg = `选择后，资源剩余: CPU: ${remain.cpu} Core, 内存: ${remain.mem} GiB,
+            磁盘: ${remain.disk} GiB, GPU: ${remain.gpu} Core`
     return (
       <>
         <Table

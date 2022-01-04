@@ -78,7 +78,7 @@ export default class Detail extends Component {
                 <Col span={6}>
                   <Statistic
                     title="CPU"
-                    value={`${item.cpu} vCore`}
+                    value={`${item.cpu} Core`}
                     valueStyle={{ color: '#333' }}
                   />
                 </Col>
@@ -99,7 +99,7 @@ export default class Detail extends Component {
                 <Col span={6}>
                   <Statistic
                     title="GPU"
-                    value={`${item.gpu} vCore`}
+                    value={`${item.gpu} Core`}
                     valueStyle={{ color: '#333' }}
                   />
                 </Col>

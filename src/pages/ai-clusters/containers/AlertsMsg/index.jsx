@@ -12,6 +12,7 @@ import MessageStore from 'stores/alerting/message'
 import ApplicationStore from 'stores/ai-platform/application'
 import { MODULE_KIND_MAP } from 'utils/constants'
 import { updateAlertMessage } from 'api/platform'
+
 // import {
 //   EyeOutlined,
 //   EditOutlined,

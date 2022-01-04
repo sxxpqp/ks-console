@@ -373,7 +373,7 @@ export default class Nodes extends React.Component {
                       defaultValue={status}
                     >
                       <Radio value={-1}>全部</Radio>
-                      <Radio value={0}>正常</Radio>
+                      <Radio value={0}>运行中</Radio>
                       <Radio value={1}>异常</Radio>
                     </Radio.Group>
                   </Form.Item>
@@ -389,7 +389,7 @@ export default class Nodes extends React.Component {
                     搜索
                   </KButton>
                   <KButton type="default" onClick={this.resetForm}>
-                    重置刷新
+                    清空
                   </KButton>
                 </Form.Item>
               </Col>

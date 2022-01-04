@@ -127,7 +127,7 @@ export default [
         exact: true,
       },
       {
-        path: `${PATH}/devops/:devops/credentials`,
+        path: `${PATH}/devops/credentials`,
         component: Credential,
         exact: true,
       },

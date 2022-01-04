@@ -144,9 +144,12 @@ export default class MenuForm extends Component {
           <Form.Item
             label="菜单名称"
             name="name"
-            rules={[{ required: true, message: '请输入菜单名称' }]}
+            rules={[
+              { required: true, message: '请输入菜单名称' },
+              { max: 16, message: '菜单名称不能超过16个字符' },
+            ]}
           >
-            <Input />
+            <Input maxLength={16} />
           </Form.Item>
           <Form.Item
             label="菜单类型"
@@ -180,9 +183,12 @@ export default class MenuForm extends Component {
           <Form.Item
             label="路径"
             name="path"
-            rules={[{ required: true, message: '请输入路径' }]}
+            rules={[
+              { required: true, message: '请输入路径' },
+              { max: 128, message: '路径最长不能超过128个字符' },
+            ]}
           >
-            <Input placeholder="请输入路径" />
+            <Input placeholder="请输入路径" maxLength={128} />
           </Form.Item>
           <Form.Item
             label="菜单路由"

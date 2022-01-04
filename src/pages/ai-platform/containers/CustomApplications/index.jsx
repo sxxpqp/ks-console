@@ -442,8 +442,8 @@ export default class CustomApplications extends React.Component {
                       onChange={this.radioChange.bind(this, 'type')}
                     >
                       <Radio value={''}>全部</Radio>
-                      <Radio value={0}>模板应用</Radio>
-                      <Radio value={1}>自制应用</Radio>
+                      <Radio value={0}>模板</Radio>
+                      <Radio value={1}>自制</Radio>
                     </Radio.Group>
                   </Form.Item>
                 </Col>

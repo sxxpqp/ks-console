@@ -163,7 +163,10 @@ export default class Services extends React.Component {
             iconSize={40}
             title={getDisplayName(record)}
             desc={record.description || '-'}
-            to={`${this.props.match.url}/${name}`}
+            to={{
+              pathname: `${this.props.match.url}/${name}`,
+              state: { prevPath: this.props.location.pathname },
+            }}
             isMultiCluster={record.isFedManaged}
           />
         ),

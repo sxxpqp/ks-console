@@ -8,7 +8,7 @@ module.exports = {
   'Secret Settings': '密钥设置',
   'Private Key': '私钥',
   'Image Registry Secret': '镜像仓库密钥',
-  'Please input credential': '请输入凭证',
+  'Please input credential': '请输入凭证ID',
   'Please input private key': '请输入私钥',
   'Please input data': '请输入数据',
   Unverified: '镜像仓库密钥验证失败',

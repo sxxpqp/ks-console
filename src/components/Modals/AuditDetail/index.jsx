@@ -76,7 +76,7 @@ export default class AuditDetailModal extends React.Component {
       >
         <Form.Item
           label={'CPU'}
-          desc={'用户选择的vCPU核心数'}
+          desc={'用户选择的CPU核心数'}
           // rules={[
           //   { required: true, message: t('Please input name') },
           //   { pattern: PATTERN_NAME, message: t('PATTERN_NAME_INVALID_TIP') },

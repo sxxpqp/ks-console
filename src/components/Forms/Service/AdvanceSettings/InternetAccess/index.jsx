@@ -1,6 +1,6 @@
 import { get, set, unset } from 'lodash'
 import React from 'react'
-import { Form, Select } from '@kube-design/components'
+import { Form, Input } from '@kube-design/components'
 // import { Form, Select, Columns, Column, Input } from '@kube-design/components'
 import { PropertiesInput } from 'components/Inputs'
 import { updateFederatedAnnotations } from 'utils'
@@ -27,7 +27,8 @@ export default class InternetAccess extends React.Component {
   get accessModes() {
     return [
       {
-        label: 'NodePort',
+        label:
+          'NodePort：通过节点端口的方式访问，会随机在可用的端口池中进行选择，也可以通过配置文件指定',
         desc: t('ACCESS_NODEPORT_TIP'),
         value: 'NodePort',
       },
@@ -39,11 +40,11 @@ export default class InternetAccess extends React.Component {
     ]
   }
 
-  // componentDidMount() {
-  //   debugger
-  //   // 默认设置NodePort
-  //   this.handleAccessModeChange('NodePort')
-  // }
+  componentDidMount() {
+    // debugger
+    // 默认设置NodePort
+    this.handleAccessModeChange('NodePort')
+  }
 
   handleAccessModeChange = mode => {
     if (mode === 'LoadBalancer') {
@@ -96,13 +97,14 @@ export default class InternetAccess extends React.Component {
     return (
       <>
         <Form.Item label={t('Access Method')}>
-          <Select
+          <Input
+            disabled
             name={`Service.${this.fedPreifx}spec.type`}
-            options={this.accessModes}
+            // options={this.accessModes}
             // value={['NodePort']}
-            // defaultValue={['NodePort']}
-            onChange={this.handleAccessModeChange}
-            optionRenderer={this.optionRenderer}
+            defaultValue={'NodePort'}
+            // onChange={this.handleAccessModeChange}
+            // optionRenderer={this.optionRenderer}
           />
         </Form.Item>
 

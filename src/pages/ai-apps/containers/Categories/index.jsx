@@ -48,6 +48,7 @@ export default class AppCategories extends React.Component {
       pageSize: 10,
       total: 0,
       id: '',
+      pageSizeOptions: [10, 20, 50, 100],
       onChange: this.handlePaginationChange.bind(this),
     },
     apps: [],
@@ -56,6 +57,11 @@ export default class AppCategories extends React.Component {
     selectedRows: [],
     selectedRowKeys: [],
     isBatch: false,
+  }
+
+  get prefix() {
+    const { workspace, cluster, namespace } = this.props.match.params
+    return `/${workspace}/clusters/${cluster}/projects/${namespace}/applications/`
   }
 
   componentDidMount() {
@@ -90,15 +96,16 @@ export default class AppCategories extends React.Component {
   }
 
   // 分页
-  handlePaginationChange(value) {
+  handlePaginationChange(current, pageSize) {
     const { pagination, selectedId } = this.state
     this.setState({
       pagination: {
         ...pagination,
-        current: value,
+        current,
+        pageSize,
       },
     })
-    this.getAppData({ ...pagination, current: value }, selectedId)
+    this.getAppData({ ...pagination, current, pageSize }, selectedId)
   }
 
   // 左侧单选
@@ -122,6 +129,18 @@ export default class AppCategories extends React.Component {
       item: record,
       show: true,
       isBatch: false,
+    })
+  }
+
+  // 详情
+  handleDetail(record) {
+    const { history } = this.props
+    const type = record.type ? 'composing' : 'template'
+    history.push({
+      pathname: `${this.prefix}${type}/${record.appId}`,
+      state: {
+        prevPath: location.pathname,
+      },
     })
   }
 
@@ -158,7 +177,7 @@ export default class AppCategories extends React.Component {
             size="small"
             style={{ color: '#1890ff' }}
             icon={<EyeOutlined />}
-            // onClick={}
+            onClick={() => this.handleDetail(record)}
           >
             详情
           </Button>
@@ -284,7 +303,7 @@ export default class AppCategories extends React.Component {
         <Banner
           icon="tag"
           title={'应用分类标签管理'}
-          description={'对于创建的应用进行打分类标签，用于筛选'}
+          description={'对于创建的应用进行打分类标签，用于筛选。'}
         />
         <Columns className={styles.main}>
           <Column className="is-3">

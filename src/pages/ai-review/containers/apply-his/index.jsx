@@ -192,7 +192,7 @@ export default class ApplyHistory extends React.Component {
       <>
         <Banner
           title="资源申请历史"
-          description="用户申请资源历史，可以查看资源审批的状态与驳回理由"
+          description="用户申请资源历史，可以查看资源审批的状态与驳回理由。"
         />
         <div className="table-title">
           <Form ref={this.form} initialValues={{ status: 0 }}>
