@@ -213,10 +213,11 @@ export const getNodes = async ctx => {
 export const editNodes = async ctx => {
   const { body } = ctx.request
   const { name, gid, machine } = body
-  let arr = 0
+  let res1
+  let res2
   if (name) {
     const { nodes } = global.models
-    const res = await nodes.update(
+    res1 = await nodes.update(
       { name },
       {
         where: {
@@ -224,11 +225,10 @@ export const editNodes = async ctx => {
         },
       }
     )
-    arr += res[0]
   }
   if (gid) {
     const { groups_nodes } = global.models
-    const res = await groups_nodes
+    res2 = await groups_nodes
       .findAll({
         where: {
           machine,
@@ -252,15 +252,16 @@ export const editNodes = async ctx => {
           gid,
         })
       })
-    arr += res[0]
   }
-  if (arr > 0) {
+  if (res1 && res2) {
     ctx.body = {
       code: 200,
+      msg: '设置成功',
     }
   } else {
     ctx.body = {
       code: 500,
+      msg: `更新失败, res1${res1}`,
     }
   }
 }

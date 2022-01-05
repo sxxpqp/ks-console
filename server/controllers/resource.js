@@ -200,6 +200,7 @@ export const getGroupResources = async ctx => {
   if (tmpId.length) {
     tmpId.forEach(item => {
       ids.push(...getAllPids(groupData, parseInt(item, 10)))
+      ids.push(...getAllChildIds(groupData, parseInt(item, 10)))
     })
   }
   // 判断组织是否存在

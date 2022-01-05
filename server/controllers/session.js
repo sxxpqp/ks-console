@@ -111,7 +111,12 @@ const handleLogin = async ctx => {
   if (lastToken) {
     const { username } = jwtDecode(lastToken)
     if (username && username !== user.username) {
-      return ctx.redirect('/')
+      // 用户访问的非自己的账号，需要清除token
+      ctx.cookies.set('token', null)
+      ctx.cookies.set('expire', null)
+      ctx.cookies.set('refreshToken', null)
+      ctx.cookies.set('oAuthLoginInfo', null)
+      return ctx.redirect('/login')
     }
   }
 
