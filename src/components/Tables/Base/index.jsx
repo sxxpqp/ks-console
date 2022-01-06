@@ -13,10 +13,11 @@ import {
   LevelRight,
   Button,
   InputSearch,
-  Pagination,
+  // Pagination,
 } from '@kube-design/components'
+import { Pagination } from 'antd'
 import { safeParseJSON } from 'utils'
-import CustomColumns from './CustomColumns'
+// import CustomColumns from './CustomColumns'
 import FilterInput from './FilterInput'
 import Empty from './Empty'
 
@@ -67,7 +68,8 @@ export default class WorkloadTable extends React.Component {
 
   constructor(props) {
     super(props)
-
+    // 传递子组件事件
+    this.props.onRef && this.props.onRef(this)
     const hideColumns = get(
       safeParseJSON(localStorage.getItem('hide-columns'), {}),
       props.tableId,
@@ -132,6 +134,7 @@ export default class WorkloadTable extends React.Component {
 
   handleRefresh = () => {
     const { pagination } = this.props
+
     this.props.onFetch({
       limit: pagination.limit,
       page: pagination.page,
@@ -166,15 +169,20 @@ export default class WorkloadTable extends React.Component {
     }
   }
 
+  handleOutSearch = params => {
+    this.props.onFetch({ ...params }, true)
+  }
+
   handleSearch = text => {
     const { searchType } = this.props
     this.props.onFetch({ [searchType]: text }, true)
   }
 
+  // clear变清空，把搜索条件也清空
   clearFilter = () => {
     // you must update the filter in props.onFetch
-    const { searchType } = this.props
-
+    const { searchType, formRef } = this.props
+    formRef && formRef.current.resetFields()
     if (searchType) {
       this.handleSearch()
     }
@@ -299,36 +307,65 @@ export default class WorkloadTable extends React.Component {
   }
 
   renderNormalTitle() {
-    const { hideCustom, customFilter, columns } = this.props
-    const { hideColumns } = this.state
-
+    const { customFilter } = this.props
+    // const { hideCustom, customFilter, columns } = this.props
+    // const { hideColumns } = this.state
+    // running, updating, stopped
     return (
-      <Level>
-        {customFilter && <LevelLeft>{customFilter}</LevelLeft>}
-        <LevelItem>{this.renderSearch()}</LevelItem>
-        <LevelRight>
-          <div>
-            <Button
-              type="flat"
-              icon="refresh"
-              onClick={this.handleRefresh}
-              data-test="table-refresh"
-            />
-            {!hideCustom && (
-              <CustomColumns
-                className={styles.columnMenu}
-                title={t('Custom Columns')}
-                columns={columns}
-                value={hideColumns}
-                onChange={this.handleColumnsHide}
-              />
-            )}
-            {this.renderActions()}
-          </div>
-        </LevelRight>
-      </Level>
+      customFilter || (
+        <Level>
+          <LevelItem>{this.renderSearch()}</LevelItem>
+          <LevelRight>
+            <div>
+              <Button
+                type="default"
+                // icon="refresh"
+                onClick={this.clearFilter}
+                data-test="table-refresh"
+              >
+                清空
+              </Button>
+              {this.renderActions()}
+            </div>
+          </LevelRight>
+        </Level>
+      )
     )
   }
+  // renderNormalTitle() {
+  //   const { customFilter } = this.props
+  //   // const { hideCustom, customFilter, columns } = this.props
+  //   // const { hideColumns } = this.state
+  //   // running, updating, stopped
+  //   return (
+  //     <Level>
+  //       {customFilter && <LevelLeft>{customFilter}</LevelLeft>}
+  //       <LevelItem>{this.renderSearch()}</LevelItem>
+  //       <LevelRight>
+  //         <div>
+  //           <Button
+  //             type="default"
+  //             // icon="refresh"
+  //             onClick={this.clearFilter}
+  //             data-test="table-refresh"
+  //           >
+  //             清空
+  //           </Button>
+  //           {/* {!hideCustom && (
+  //             <CustomColumns
+  //               className={styles.columnMenu}
+  //               title={t('Custom Columns')}
+  //               columns={columns}
+  //               value={hideColumns}
+  //               onChange={this.handleColumnsHide}
+  //             />
+  //           )} */}
+  //           {this.renderActions()}
+  //         </div>
+  //       </LevelRight>
+  //     </Level>
+  //   )
+  // }
 
   renderTableTitle = () => {
     if (this.props.selectedRowKeys && this.props.selectedRowKeys.length > 0) {
@@ -395,9 +432,9 @@ export default class WorkloadTable extends React.Component {
         )}
         <LevelRight>
           <Pagination
-            page={page}
+            current={page}
             total={total}
-            limit={limit}
+            size={limit}
             onChange={this.handlePagination}
           />
         </LevelRight>
