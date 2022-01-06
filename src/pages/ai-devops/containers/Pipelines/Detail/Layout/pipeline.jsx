@@ -294,6 +294,7 @@ export default class PipelineDetailLayout extends React.Component {
 
     return (
       <DetailPage
+        noBread
         routes={this.props.route.routes}
         stores={stores}
         nav={this.renderNav()}

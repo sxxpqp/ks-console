@@ -4,8 +4,10 @@ import classNames from 'classnames'
 import { Link } from 'react-router-dom'
 import { Icon, Tooltip } from '@kube-design/components'
 
+import { inject } from 'mobx-react'
 import styles from './index.scss'
 
+@inject('rootStore')
 export default class Avatar extends React.Component {
   static propTypes = {
     avatar: PropTypes.string,
@@ -16,6 +18,15 @@ export default class Avatar extends React.Component {
 
   static defaultProps = {
     iconSize: 20,
+  }
+
+  // constructor(props) {
+  //   super(props)
+  //   console.log(this.props.rootStore)
+  // }
+
+  get location() {
+    return this.props.rootStore.routing.location
   }
 
   renderClusterTip() {
@@ -40,7 +51,13 @@ export default class Avatar extends React.Component {
       isMultiCluster,
     } = this.props
 
-    const titleComponent = to ? <Link to={to}>{title}</Link> : title
+    const titleComponent = to ? (
+      <Link to={{ pathname: to, state: { prevPath: this.location.pathname } }}>
+        {title}
+      </Link>
+    ) : (
+      title
+    )
 
     return (
       <div

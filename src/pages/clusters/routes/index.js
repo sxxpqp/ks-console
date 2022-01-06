@@ -26,7 +26,7 @@ import Pods from '../containers/Workload/Pods'
 import Services from '../containers/Workload/Services'
 import Routes from '../containers/Workload/Routes'
 import Secrets from '../containers/Secrets'
-import ConfigMaps from '../containers/ConfigMaps'
+// import ConfigMaps from '../containers/ConfigMaps'
 import ServiceAccounts from '../containers/ServiceAccounts'
 import ClusterMonitor from '../containers/Monitor/Cluster'
 import ResourceMonitor from '../containers/Monitor/Resource'
@@ -145,11 +145,11 @@ export default [
             component: Secrets,
             exact: true,
           },
-          {
-            path: `${PATH}/configmaps`,
-            component: ConfigMaps,
-            exact: true,
-          },
+          // {
+          //   path: `${PATH}/configmaps`,
+          //   component: ConfigMaps,
+          //   exact: true,
+          // },
           {
             path: `${PATH}/serviceaccounts`,
             component: ServiceAccounts,

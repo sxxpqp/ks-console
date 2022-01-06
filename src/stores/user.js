@@ -58,10 +58,11 @@ export default class UsersStore extends Base {
     return 'users'
   }
 
-  getResourceUrl = (params = {}) =>
-    `kapis/iam.kubesphere.io/v1alpha2${this.getPath(params)}/${this.getModule(
+  getResourceUrl = (params = {}) => {
+    return `kapis/iam.kubesphere.io/v1alpha2${this.getPath(
       params
-    )}`
+    )}/${this.getModule(params)}`
+  }
 
   getListUrl = this.getResourceUrl
 
@@ -76,13 +77,19 @@ export default class UsersStore extends Base {
       module = 'clusterroles'
     }
     const resp = await request.get(
-      `kapis/iam.kubesphere.io/v1alpha2${this.getPath(params)}/${this.getModule(
-        params
-      )}/${name}/${module}`,
+      `${this.getResourceUrl(params)}/${name}/${module}`,
       {},
       {},
       () => {}
     )
+    // const resp = await request.get(
+    //   `kapis/iam.kubesphere.io/v1alpha2${this.getPath(params)}/${this.getModule(
+    //     params
+    //   )}/${name}/${module}`,
+    //   {},
+    //   {},
+    //   () => {}
+    // )
 
     let rules = {}
     resp &&

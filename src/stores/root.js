@@ -34,7 +34,9 @@ export default class RootStore {
     this.routing = new RouterStore()
     this.routing.query = this.query
 
+    // 全局设置routing
     global.navigateTo = this.routing.push
+    global.routing = this.routing
   }
 
   register(name, store) {

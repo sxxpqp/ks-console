@@ -18,7 +18,7 @@ import Routes from '../containers/Routes'
 import Volumes from '../containers/Volumes'
 import VolumeSnapshots from '../containers/VolumeSnapshots'
 import BaseInfo from '../containers/BaseInfo'
-import ConfigMaps from '../containers/ConfigMaps'
+// import ConfigMaps from '../containers/ConfigMaps'
 import ServiceAccounts from '../containers/ServiceAccounts'
 import Secrets from '../containers/Secrets'
 import Roles from '../containers/Roles'
@@ -99,7 +99,7 @@ export default [
         component: NetworkPolicies,
         exact: true,
       },
-      { path: `${PATH}/configmaps`, component: ConfigMaps, exact: true },
+      // { path: `${PATH}/configmaps`, component: ConfigMaps, exact: true },
       {
         path: `${PATH}/serviceaccounts`,
         component: ServiceAccounts,

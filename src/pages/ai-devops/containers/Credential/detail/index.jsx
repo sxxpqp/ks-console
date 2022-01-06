@@ -187,6 +187,6 @@ export default class CredentialDetail extends React.Component {
       ],
     }
 
-    return <DetailPage routes={routes} {...sideProps} stores={stores} />
+    return <DetailPage noBread routes={routes} {...sideProps} stores={stores} />
   }
 }

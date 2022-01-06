@@ -53,12 +53,13 @@ export default class HomeStore {
 
   @action
   getUser() {
-    getUserInfo().then(res => {
+    return getUserInfo().then(res => {
       const { code, data } = res
       if (code === 200) {
         this.user = data.length ? data[0] : {}
         globals.user.ai = this.user
       }
+      return res
     })
   }
 
