@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Icon } from '@kube-design/components'
+import { Icon, Button as KButton } from '@kube-design/components'
 
 import { Indicator } from 'components/Base'
 import Banner from 'components/Cards/Banner'
@@ -12,6 +12,7 @@ import { getLocalTime } from 'utils'
 import { POD_STATUS, ICON_TYPES } from 'utils/constants'
 
 import PodStore from 'stores/pod'
+import { Form, Row, Col, Input } from 'antd'
 
 import styles from './index.scss'
 
@@ -21,6 +22,12 @@ import styles from './index.scss'
   name: 'Pod',
 })
 export default class Pods extends React.Component {
+  constructor(props) {
+    super(props)
+    this.table = React.createRef()
+    this.form = React.createRef()
+  }
+
   componentDidMount() {
     localStorage.setItem('pod-detail-referrer', location.pathname)
   }
@@ -166,16 +173,76 @@ export default class Pods extends React.Component {
     <Status type={podStatus.type} name={t(podStatus.type)} flicker />
   )
 
+  renderCustomFilter() {
+    const onReset = () => {
+      this.table && this.table.clearFilter()
+    }
+    const onSearch = () => {
+      const values = this.form.current.getFieldsValue()
+      this.table && this.table.handleOutSearch(values)
+    }
+
+    return (
+      <Form ref={this.form}>
+        <Row justify="space-between" align="middle" className="margin-b12">
+          <Row justify="space-between" gutter={15}>
+            <Col>
+              <Form.Item
+                label="名称"
+                name="name"
+                style={{ width: '280px', marginRight: '10px' }}
+              >
+                <Input placeholder="请输入名称" />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item
+                label="应用"
+                name="app"
+                style={{ width: '280px', marginRight: '10px' }}
+              >
+                <Input placeholder="请输入应用的名称" />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item>
+                <KButton type="control" onClick={onSearch}>
+                  搜索
+                </KButton>
+                <KButton type="default" onClick={onReset}>
+                  清空
+                </KButton>
+              </Form.Item>
+            </Col>
+          </Row>
+          {/* <Col>
+            <Form.Item>
+              <KButton type="control" onClick={this.showCreate}>
+                创建
+              </KButton>
+            </Form.Item>
+          </Col> */}
+        </Row>
+      </Form>
+    )
+  }
+
   render() {
     const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
         <Banner {...bannerProps} />
         <Table
+          onRef={node => {
+            this.table = node
+          }}
           {...tableProps}
+          hideSearch
+          customFilter={this.renderCustomFilter()}
           itemActions={this.itemActions}
           columns={this.getColumns()}
           onCreate={null}
+          formRef={this.form}
         />
       </ListPage>
     )

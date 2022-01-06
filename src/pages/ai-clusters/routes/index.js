@@ -1,8 +1,7 @@
 // import { getIndexRoute } from 'utils/router.config'
 
-// import AlertMessages from 'projects/containers/Alerting/Messages'
-import AlertPolicies from 'projects/containers/Alerting/Policies'
-import AlertMsg from '../containers/AlertsMsg'
+import AlertMessages from '../containers/Alerting/Messages'
+import AlertPolicies from '../containers/Alerting/Policies'
 
 import Nodes from '../containers/Nodes'
 import ClusterMonitor from '../containers/Monitor/Cluster'
@@ -26,7 +25,7 @@ export default [
   // 告警消息
   {
     path: `${PATH}/alerts`,
-    component: AlertMsg,
+    component: AlertMessages,
   },
   // 告警策略
   {

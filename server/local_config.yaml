@@ -37,7 +37,7 @@ server:
 
   ssh:
     host: test.bontor.cn
-    port: 33033
+    port: 8101
     username: root
     password: Xl123456..
 
@@ -48,8 +48,8 @@ server:
   harbor:
     username: admin
     password: Harbor12345
-    url: http://test.bontor.cn:30002
-    private: http://192.168.4.31:30002
+    url: http://192.168.4.35:30002
+    private: http://192.168.4.35:30002
     project: library
     pid: 1
 
@@ -73,10 +73,10 @@ server:
   apiServer:
     clientID: kubesphere
     clientSecret: kubesphere
-    # url: http://192.168.4.35:30881
-    # wsUrl: ws://192.168.4.35:30881
-    url: http://test.bontor.cn:30881
-    wsUrl: ws://test.bontor.cn:30881
+    url: http://test.bontor.cn:33881
+    wsUrl: ws://test.bontor.cn:33881
+    # url: http://ks-apiserver.kubesphere-system.svc
+    # wsUrl: ws://ks-apiserver.kubesphere-system.svc
 
   # docker image search default url
   dockerHubUrl: https://hub.docker.com
@@ -89,7 +89,7 @@ client:
     base: http://test.bontor.cn
     help: http://oa.bontor.cn:8080/help2/index.html
     gitlab: http://test.bontor.cn:30000
-    harbor: http://test.bontor.cn:30002
+    harbor: http://test.bontor.cn:33002
 
   version:
     kubesphere: 3.1.0
@@ -99,8 +99,12 @@ client:
   reposUrl: https://github.com/kubesphere/kubesphere
   slackUrl: https://kubesphere.slack.com
   documents:
-    url: https://kubesphere.com.cn/docs
-    api: https://kubesphere.com.cn/docs/reference/api-docs/
+    en:
+      url: https://kubesphere.io/docs
+      api: https://kubesphere.io/docs/reference/api-docs/
+    zh:
+      url: https://kubesphere.com.cn/docs
+      api: https://kubesphere.com.cn/docs/reference/api-docs/
 
   # current support lanaguages
   supportLangs:
@@ -209,7 +213,7 @@ client:
               }
             - {
                 name: s2ibuilders,
-                title: Image Builder,
+                title: ImageBuilderHistory,
                 icon: vnas,
                 clusterModule: devops,
               }

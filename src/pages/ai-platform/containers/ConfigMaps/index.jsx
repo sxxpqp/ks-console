@@ -4,11 +4,13 @@ import { Avatar } from 'components/Base'
 import Banner from 'components/Cards/Banner'
 import { withProjectList, ListPage } from 'components/HOCs/withList'
 import Table from 'components/Tables/List'
+import { Button as KButton } from '@kube-design/components'
 
 import { getLocalTime, getDisplayName } from 'utils'
 import { ICON_TYPES } from 'utils/constants'
 
 import ConfigMapStore from 'stores/configmap'
+import { Form, Row, Col, Input } from 'antd'
 
 @withProjectList({
   store: new ConfigMapStore(),
@@ -16,6 +18,12 @@ import ConfigMapStore from 'stores/configmap'
   name: 'ConfigMap',
 })
 export default class ConfigMaps extends React.Component {
+  constructor(props) {
+    super(props)
+    this.form = React.createRef()
+    this.table = React.createRef()
+  }
+
   get itemActions() {
     const { trigger, name } = this.props
     return [
@@ -111,17 +119,68 @@ export default class ConfigMaps extends React.Component {
     })
   }
 
+  renderCustomFilter() {
+    const onReset = () => {
+      this.table && this.table.clearFilter()
+    }
+    const onSearch = () => {
+      const values = this.form.current.getFieldsValue()
+      this.table && this.table.handleOutSearch(values)
+    }
+
+    return (
+      <Form ref={this.form}>
+        <Row justify="space-between" align="middle" className="margin-b12">
+          <Row justify="space-between" gutter={15}>
+            <Col>
+              <Form.Item
+                label="名称"
+                name="name"
+                style={{ width: '280px', marginRight: '10px' }}
+              >
+                <Input placeholder="请输入名称" />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item>
+                <KButton type="control" onClick={onSearch}>
+                  搜索
+                </KButton>
+                <KButton type="default" onClick={onReset}>
+                  清空
+                </KButton>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Col>
+            <Form.Item>
+              <KButton type="control" onClick={this.showCreate}>
+                创建
+              </KButton>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+
   render() {
     const { bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
         <Banner {...bannerProps} tabs={this.tabs} />
         <Table
+          onRef={node => {
+            this.table = node
+          }}
           {...tableProps}
+          hideSearch
+          customFilter={this.renderCustomFilter()}
           itemActions={this.itemActions}
           columns={this.getColumns()}
           onCreate={this.showCreate}
           searchType="name"
+          formRef={this.form}
         />
       </ListPage>
     )

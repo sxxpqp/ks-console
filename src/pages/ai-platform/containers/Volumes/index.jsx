@@ -30,6 +30,15 @@ import StatusReason from 'projects/components/StatusReason'
 import { Avatar, Status } from 'components/Base'
 
 import Banner from 'components/Cards/Banner'
+import { Button as KButton } from '@kube-design/components'
+import {
+  // Popover,
+  Form,
+  Row,
+  Col,
+  Input,
+  Radio,
+} from 'antd'
 
 import styles from './index.scss'
 
@@ -41,18 +50,11 @@ import styles from './index.scss'
   rowKey: 'uid',
 })
 export default class Volumes extends React.Component {
-  // get tips() {
-  //   return [
-  //     {
-  //       title: t('WHAT_IS_STORAGE_CLASS_Q'),
-  //       description: t('WHAT_IS_STORAGE_CLASS_A'),
-  //     },
-  //     {
-  //       title: t('WHAT_IS_LOCAL_VOLUME_Q'),
-  //       description: t('WHAT_IS_LOCAL_VOLUME_A'),
-  //     },
-  //   ]
-  // }
+  constructor(props) {
+    super(props)
+    this.form = React.createRef()
+    this.table = React.createRef()
+  }
 
   get itemActions() {
     const { trigger, name } = this.props
@@ -187,21 +189,86 @@ export default class Volumes extends React.Component {
     })
   }
 
+  renderCustomFilter() {
+    const onReset = () => {
+      this.table && this.table.clearFilter()
+    }
+    const onSearch = () => {
+      const values = this.form.current.getFieldsValue()
+      this.table && this.table.handleOutSearch(values)
+    }
+    const radioChange = val => {
+      const values = this.form.current.getFieldsValue()
+      this.table && this.table.handleOutSearch({ ...values, status: val })
+    }
+
+    return (
+      <Form ref={this.form}>
+        <Row justify="space-between" align="middle" className="margin-b12">
+          <Row justify="space-between" gutter={15}>
+            <Col>
+              <Form.Item label="状态" name="status">
+                <Radio.Group
+                  defaultValue={''}
+                  onChange={e => radioChange(e.target.value)}
+                >
+                  <Radio value={''}>全部</Radio>
+                  <Radio value={'bound'}>准备就绪</Radio>
+                  <Radio value={'lost'}>丢失</Radio>
+                  <Radio value={'pending'}>等待中</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item
+                label="名称"
+                name="name"
+                style={{ width: '280px', marginRight: '10px' }}
+              >
+                <Input placeholder="请输入名称" />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item>
+                <KButton type="control" onClick={onSearch}>
+                  搜索
+                </KButton>
+                <KButton type="default" onClick={onReset}>
+                  清空
+                </KButton>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Col>
+            <Form.Item>
+              <KButton type="control" onClick={this.showCreate}>
+                创建
+              </KButton>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+
   render() {
     const { query, match, bannerProps, tableProps } = this.props
     return (
       <ListPage {...this.props}>
-        <Banner
-          {...bannerProps}
-          // tips={this.tips}
-        />
+        <Banner {...bannerProps} tips={this.tips} />
         <Table
+          onRef={node => {
+            this.table = node
+          }}
           {...tableProps}
+          hideSearch
+          customFilter={this.renderCustomFilter()}
           itemActions={this.itemActions}
           namespace={query.namespace}
           columns={this.getColumns()}
           onCreate={this.showCreate}
           cluster={match.params.cluster}
+          formRef={this.form}
         />
       </ListPage>
     )

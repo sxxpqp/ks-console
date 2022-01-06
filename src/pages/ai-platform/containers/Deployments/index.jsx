@@ -440,7 +440,7 @@ export default class Deployments extends React.Component {
               name="name"
               style={{ width: '280px', marginRight: '10px' }}
             >
-              <Input placeholder="请输入负载的名称" />
+              <Input placeholder="请输入名称" />
             </Form.Item>
           </Col>
           <Col>
@@ -490,7 +490,6 @@ export default class Deployments extends React.Component {
           columns={this.getColumns()}
           onCreate={this.showCreate}
           formRef={this.form}
-          reset={this.onReset}
         />
       </ListPage>
     )

@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Avatar } from 'components/Base'
+import { Button as KButton } from '@kube-design/components'
 import Banner from 'components/Cards/Banner'
 import { withProjectList, ListPage } from 'components/HOCs/withList'
 import WorkloadStatus from 'projects/components/WorkloadStatus'
@@ -10,6 +11,15 @@ import Table from 'components/Tables/List'
 import { getLocalTime, getDisplayName } from 'utils'
 import { getWorkloadStatus } from 'utils/status'
 import { WORKLOAD_STATUS, ICON_TYPES } from 'utils/constants'
+
+import {
+  // Popover,
+  Form,
+  Row,
+  Col,
+  Input,
+  Radio,
+} from 'antd'
 
 import WorkloadStore from 'stores/workload'
 
@@ -22,6 +32,8 @@ export default class StatefulSets extends React.Component {
   constructor(props) {
     super(props)
     this.props.rootStore.saveSelectNavKey('workloadsPods')
+    this.form = React.createRef()
+    this.table = React.createRef()
   }
 
   get prefix() {
@@ -201,6 +213,79 @@ export default class StatefulSets extends React.Component {
     })
   }
 
+  renderCustomFilter() {
+    const onReset = () => {
+      this.table && this.table.clearFilter()
+    }
+    const onSearch = () => {
+      const values = this.form.current.getFieldsValue()
+      this.table && this.table.handleOutSearch(values)
+    }
+    const radioChange = val => {
+      const values = this.form.current.getFieldsValue()
+      this.table && this.table.handleOutSearch({ ...values, status: val })
+    }
+
+    return (
+      <Form ref={this.form}>
+        <Row justify="space-between" align="middle" className="margin-b12">
+          <Row justify="space-between" gutter={15}>
+            <Col>
+              <Form.Item label="状态" name="status">
+                <Radio.Group
+                  defaultValue={''}
+                  onChange={e => radioChange(e.target.value)}
+                >
+                  <Radio value={''}>全部</Radio>
+                  <Radio value={'running'}>运行中</Radio>
+                  <Radio value={'updating'}>更新中</Radio>
+                  <Radio value={'stopped'}>已停止</Radio>
+                </Radio.Group>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Col>
+            <Form.Item>
+              <KButton type="control" onClick={this.showCreate}>
+                创建
+              </KButton>
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Form.Item
+              label="名称"
+              name="name"
+              style={{ width: '280px', marginRight: '10px' }}
+            >
+              <Input placeholder="请输入名称" />
+            </Form.Item>
+          </Col>
+          <Col>
+            <Form.Item
+              label="应用"
+              name="app"
+              style={{ width: '280px', marginRight: '10px' }}
+            >
+              <Input placeholder="请输入应用的名称" />
+            </Form.Item>
+          </Col>
+          <Col>
+            <Form.Item>
+              <KButton type="control" onClick={onSearch}>
+                搜索
+              </KButton>
+              <KButton type="default" onClick={onReset}>
+                清空
+              </KButton>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+
   render() {
     const { bannerProps, tableProps } = this.props
     return (
@@ -212,7 +297,12 @@ export default class StatefulSets extends React.Component {
           description="有状态副本集 (StatefulSet)，是为了解决有状态服务的问题，在运行过程中会保存数据或状态，例如 Mysql，它需要存储产生的新数据。"
         />
         <Table
+          onRef={node => {
+            this.table = node
+          }}
           {...tableProps}
+          hideSearch
+          customFilter={this.renderCustomFilter()}
           itemActions={this.itemActions}
           tableActions={this.tableActions}
           columns={this.getColumns()}

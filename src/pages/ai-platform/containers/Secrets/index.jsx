@@ -7,8 +7,10 @@ import Table from 'components/Tables/List'
 
 import { getLocalTime, getDisplayName } from 'utils'
 import { ICON_TYPES, SECRET_TYPES } from 'utils/constants'
+import { Button as KButton } from '@kube-design/components'
 
 import SecretStore from 'stores/secret'
+import { Form, Row, Col, Input } from 'antd'
 
 @withProjectList({
   store: new SecretStore(),
@@ -16,6 +18,12 @@ import SecretStore from 'stores/secret'
   name: 'Secret',
 })
 export default class Secrets extends React.Component {
+  constructor(props) {
+    super(props)
+    this.form = React.createRef()
+    this.table = React.createRef()
+  }
+
   get itemActions() {
     const { getData, trigger, name } = this.props
     return [
@@ -118,6 +126,51 @@ export default class Secrets extends React.Component {
     })
   }
 
+  renderCustomFilter() {
+    const onReset = () => {
+      this.table && this.table.clearFilter()
+    }
+    const onSearch = () => {
+      const values = this.form.current.getFieldsValue()
+      this.table && this.table.handleOutSearch(values)
+    }
+
+    return (
+      <Form ref={this.form}>
+        <Row justify="space-between" align="middle" className="margin-b12">
+          <Row justify="space-between" gutter={15}>
+            <Col>
+              <Form.Item
+                label="名称"
+                name="name"
+                style={{ width: '280px', marginRight: '10px' }}
+              >
+                <Input placeholder="请输入名称" />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Form.Item>
+                <KButton type="control" onClick={onSearch}>
+                  搜索
+                </KButton>
+                <KButton type="default" onClick={onReset}>
+                  清空
+                </KButton>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Col>
+            <Form.Item>
+              <KButton type="control" onClick={this.showCreate}>
+                创建
+              </KButton>
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+
   render() {
     const { bannerProps, tableProps } = this.props
     return (
@@ -125,6 +178,12 @@ export default class Secrets extends React.Component {
         <Banner {...bannerProps} tabs={this.tabs} />
         <Table
           {...tableProps}
+          onRef={node => {
+            this.table = node
+          }}
+          hideSearch
+          customFilter={this.renderCustomFilter()}
+          formRef={this.form}
           itemActions={this.itemActions}
           columns={this.getColumns()}
           onCreate={this.showCreate}
