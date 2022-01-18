@@ -1,7 +1,7 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: ks-console1
+  name: ks-console11
   namespace: kubesphere-system
   labels:
     app: ks-console1
